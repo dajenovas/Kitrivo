@@ -264,20 +264,7 @@ export const AddUserOverlay: React.FC<AddUserOverlayProps> = ({
     .slice(0, 2);
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleModalClose}
-      maxWidth="sm"
-      fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          p: 1,
-          border: `1px solid ${THEME.border}`,
-          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
-        },
-      }}
-    >
+    <Dialog open={open} onClose={handleModalClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, border: `1px solid ${THEME.border}`, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)" } }}>
       {/* Dialog Header */}
       <DialogTitle sx={{ display: "flex", justify: "space-between", alignItems: "center", pb: 1 }}>
         <Box width={'100%'} display="flex" alignItems="center" justifyContent={'space-between'} gap={1.5}>

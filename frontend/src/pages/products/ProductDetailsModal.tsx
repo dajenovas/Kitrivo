@@ -16,8 +16,8 @@ import {
   TableBody,
   TableCell,
   TableRow,
-  Button,
 } from "@mui/material";
+import { CustomButton } from "@/components/Buttons/CustomButton";
 import {
   Close as CloseIcon,
   Storefront as StorefrontIcon,
@@ -68,26 +68,12 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle
-        sx={{
-          m: 0,
-          p: 2.5,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          bgcolor: THEME.white,
-          borderBottom: `1px solid ${THEME.border}`,
-        }}
-      >
+      <DialogTitle sx={{ m: 0, p: 2.5, display: "flex", alignItems: "center", justifyContent: "space-between", bgcolor: THEME.white, borderBottom: `1px solid ${THEME.border}` }}>
         <Box display="flex" alignItems="center" gap={1.5}>
           <Typography fontSize={FONTSIZE.large} fontWeight={700} color={THEME.textPrimary}>
             Product Details
           </Typography>
-          <Chip
-            label={product.product_id}
-            size="small"
-            sx={{ bgcolor: `${THEME.primary}15`, color: THEME.primary, fontWeight: 600 }}
-          />
+          <Chip label={product.product_id} size="small" sx={{ bgcolor: `${THEME.primary}15`, color: THEME.primary, fontWeight: 600 }} />
         </Box>
         <IconButton onClick={onClose} size="small" sx={{ color: THEME.textSecondary }}>
           <CloseIcon />
@@ -380,7 +366,7 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                       </Typography>
                     </Box>
                   </Box>
-                  <Button
+                  <CustomButton
                     size="small"
                     variant="outlined"
                     component="a"
@@ -391,7 +377,7 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                     sx={{ borderRadius: 1.5, textTransform: "none", fontSize: FONTSIZE.small }}
                   >
                     View / Download
-                  </Button>
+                  </CustomButton>
                 </Box>
               </Paper>
             )}
@@ -400,11 +386,11 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
       </DialogContent>
 
       <DialogActions sx={{ p: 2, borderTop: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
-        <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 1.5 }}>
+        <CustomButton onClick={onClose} variant="outlined" sx={{ borderRadius: 1.5 }}>
           Close
-        </Button>
+        </CustomButton>
         {onEdit && (
-          <Button
+          <CustomButton
             onClick={() => {
               onClose();
               onEdit(product);
@@ -413,7 +399,7 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
             sx={{ borderRadius: 1.5, bgcolor: THEME.primary }}
           >
             Edit Product
-          </Button>
+          </CustomButton>
         )}
       </DialogActions>
     </Dialog>

@@ -1,4 +1,5 @@
-export type ProductStatus = "ACTIVE" | "INACTIVE" | "OUTOFSTOCK" | "DISCONTINUED";
+export type ProductStatus = "ACTIVE" | "INACTIVE" | "OUT_OF_STOCK" | "OUTOFSTOCK" | "DISCONTINUED";
+
 
 export interface Dimensions {
   height: number;
@@ -12,6 +13,18 @@ export interface Dimensions {
 }
 
 export interface CatalogDocument {
+  title?: string;
+  url: string;
+  file_type?: string;
+}
+
+export interface LabManual {
+  title?: string;
+  url: string;
+  file_type?: string;
+}
+
+export interface DemoVideo {
   title?: string;
   url: string;
   file_type?: string;
@@ -42,10 +55,13 @@ export interface Product {
   model_number?: string;
   description?: string;
   price: number;
+  stock_quantity?: number;
   status: ProductStatus;
   images: string[];
   specifications: Record<string, any>;
   catalog_document?: CatalogDocument;
+  lab_manual?: LabManual;
+  demo_video?: DemoVideo;
   warranty_service?: WarrantyService;
   dimensions: Dimensions;
   created_at: string;
@@ -60,10 +76,13 @@ export interface ProductCreatePayload {
   model_number?: string;
   description?: string;
   price: number;
+  stock_quantity?: number;
   status?: ProductStatus;
   images: string[];
   specifications?: Record<string, any>;
   catalog_document?: CatalogDocument;
+  lab_manual?: LabManual;
+  demo_video?: DemoVideo;
   warranty_service?: WarrantyService;
   dimensions: Dimensions;
 }
@@ -76,13 +95,17 @@ export interface ProductUpdatePayload {
   model_number?: string;
   description?: string;
   price?: number;
+  stock_quantity?: number;
   status?: ProductStatus;
   images?: string[];
   specifications?: Record<string, any>;
   catalog_document?: CatalogDocument;
+  lab_manual?: LabManual;
+  demo_video?: DemoVideo;
   warranty_service?: WarrantyService;
   dimensions?: Dimensions;
 }
+
 
 export interface ProductListResponse {
   items: Product[];

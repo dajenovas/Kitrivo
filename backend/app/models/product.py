@@ -32,12 +32,15 @@ class Product(Base):
     model_number = Column(String(100), nullable=True)
     description = Column(Text, nullable=True)
     price = Column(Float, default=0.0, nullable=False)
-    status = Column(String(50), default="ACTIVE", nullable=False, index=True)  # ACTIVE, INACTIVE, OUTOFSTOCK, DISCONTINUED
+    stock_quantity = Column(Integer, default=0, nullable=False)  # Stock level; <= 0 triggers OUT_OF_STOCK
+    status = Column(String(50), default="OUT_OF_STOCK", nullable=False, index=True)  # ACTIVE, OUT_OF_STOCK, INACTIVE, DISCONTINUED
     
     # Flexible JSON fields
     images = Column(JSON, nullable=False, default=list)  # Minimum 3 images enforced via schema
     specifications = Column(JSON, nullable=False, default=dict)  # Dynamic product specs e.g. {"Input Voltage": "230V AC", ...}
     catalog_document = Column(JSON, nullable=True)  # Document | PDF | Image metadata e.g. {"url": "...", "title": "..."}
+    lab_manual = Column(JSON, nullable=True)  # Lab Manual PDF metadata e.g. {"url": "...", "title": "..."}
+    demo_video = Column(JSON, nullable=True)  # Demo Video file metadata e.g. {"url": "...", "title": "..."}
     warranty_service = Column(JSON, nullable=True)  # Warranty & service details
     dimensions = Column(JSON, nullable=False, default=dict)  # height, width, length, weight all with units
 

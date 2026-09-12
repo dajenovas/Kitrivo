@@ -112,6 +112,13 @@ class ProductService:
         if data.get("dimensions"):
             data["dimensions"] = product_in.dimensions.model_dump()
 
+        # Automatic status logic based on stock_quantity
+        stock_qty = data.get("stock_quantity", 0)
+        if stock_qty <= 0:
+            data["status"] = "OUT_OF_STOCK"
+        elif not data.get("status"):
+            data["status"] = "ACTIVE"
+
         product = Product(**data)
         db.add(product)
         db.commit()
@@ -141,12 +148,21 @@ class ProductService:
         if "dimensions" in update_data:
             update_data["dimensions"] = product_in.dimensions.model_dump() if product_in.dimensions else None
 
+        # Auto update status based on updated stock_quantity
+        if "stock_quantity" in update_data:
+            new_stock = update_data["stock_quantity"]
+            if new_stock <= 0:
+                update_data["status"] = "OUT_OF_STOCK"
+            elif db_product.status == "OUT_OF_STOCK" or not update_data.get("status"):
+                update_data["status"] = "ACTIVE"
+
         for field, value in update_data.items():
             setattr(db_product, field, value)
 
         db.commit()
         db.refresh(db_product)
         return ProductService.get_product_by_id(db, str(db_product.id))
+
 
     @staticmethod
     def delete_product(db: Session, db_product: Product) -> None:

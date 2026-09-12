@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { RoleServices } from "@/services/roles.service";
 import type { UserRole } from "@/models/auth.models";
 import { RoleManagementTableHeaders } from "@/utils/StaticData";
-import { THEME } from "@/assets/theme";
+import { THEME, useAppTheme } from "@/assets/theme";
 import { CustomButton } from "@/components/Buttons/CustomButton";
 import {
     Box,
@@ -48,6 +48,7 @@ export const RoleListTable: React.FC<RoleListTableProps> = ({
     onAssignPermissions,
     onRoleDeleted,
 }) => {
+    const theme = useAppTheme();
     const [roles, setRoles] = useState<UserRole[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -192,12 +193,12 @@ export const RoleListTable: React.FC<RoleListTableProps> = ({
 
     return (
         <Box>
-            <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${THEME.border}`, borderRadius: 2 }}>
+            <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${theme.border}`, borderRadius: 2, bgcolor: theme.paperBg }}>
                 <Table>
-                    <TableHead sx={{ bgcolor: THEME.background }}>
+                    <TableHead sx={{ bgcolor: theme.isDark ? "#0f172a" : THEME.background }}>
                         <TableRow>
                             {RoleManagementTableHeaders.map((header) => (
-                                <TableCell key={header} sx={{ fontWeight: 600, color: THEME.textPrimary }}>
+                                <TableCell key={header} sx={{ fontWeight: 600, color: theme.textPrimary, borderColor: theme.border }}>
                                     {header}
                                 </TableCell>
                             ))}
@@ -206,33 +207,33 @@ export const RoleListTable: React.FC<RoleListTableProps> = ({
                     <TableBody>
                         {roles.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={RoleManagementTableHeaders.length} align="center" sx={{ py: 4 }}>
-                                    <Typography color="text.secondary">No roles found</Typography>
+                                <TableCell colSpan={RoleManagementTableHeaders.length} align="center" sx={{ py: 4, borderColor: theme.border }}>
+                                    <Typography color={theme.textSecondary}>No roles found</Typography>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             roles.map((role, index) => (
                                 <TableRow key={role.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                     {/* S.no */}
-                                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                                    <TableCell sx={{ color: theme.textPrimary, borderColor: theme.border }}>{page * rowsPerPage + index + 1}</TableCell>
 
                                     {/* Role Name */}
-                                    <TableCell sx={{ fontWeight: 600, color: THEME.textPrimary }}>
+                                    <TableCell sx={{ fontWeight: 600, color: theme.textPrimary, borderColor: theme.border }}>
                                         {role.name}
                                     </TableCell>
 
                                     {/* Code */}
-                                    <TableCell sx={{ fontWeight: 600, color: THEME.primary }}>
+                                    <TableCell sx={{ fontWeight: 600, color: THEME.primary, borderColor: theme.border }}>
                                         <Chip label={role.code} size="small" variant="outlined" color="primary" sx={{ fontWeight: 600 }} />
                                     </TableCell>
 
                                     {/* Description */}
-                                    <TableCell sx={{ color: THEME.textSecondary, maxWidth: 280 }}>
+                                    <TableCell sx={{ color: theme.textSecondary, maxWidth: 280, borderColor: theme.border }}>
                                         {role.description || "No description provided"}
                                     </TableCell>
 
                                     {/* Permissions Count */}
-                                    <TableCell>
+                                    <TableCell sx={{ borderColor: theme.border }}>
                                         <Chip
                                             label={`${role.permissions ? role.permissions.length : 0} Permissions`}
                                             size="small"
@@ -242,8 +243,8 @@ export const RoleListTable: React.FC<RoleListTableProps> = ({
                                     </TableCell>
 
                                     {/* Actions */}
-                                    <TableCell>
-                                        <IconButton size="small" onClick={(e) => handleOpenMenu(e, role)}>
+                                    <TableCell sx={{ borderColor: theme.border }}>
+                                        <IconButton size="small" onClick={(e) => handleOpenMenu(e, role)} sx={{ color: theme.textPrimary }}>
                                             <MoreVertIcon fontSize="small" />
                                         </IconButton>
                                     </TableCell>
@@ -260,9 +261,15 @@ export const RoleListTable: React.FC<RoleListTableProps> = ({
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    sx={{ borderTop: `1px solid ${THEME.border}` }}
+                    sx={{
+                        borderTop: `1px solid ${theme.border}`,
+                        color: theme.textPrimary,
+                        "& .MuiTablePagination-selectIcon": { color: theme.textSecondary },
+                        "& .MuiTablePagination-actions .MuiIconButton-root": { color: theme.textPrimary },
+                    }}
                 />
             </TableContainer>
+
 
             {/* 3-Dot Ellipsis Action Menu */}
             <Menu

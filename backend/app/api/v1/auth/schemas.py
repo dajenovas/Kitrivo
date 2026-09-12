@@ -12,6 +12,12 @@ class LoginRequest(BaseModel):
     username_or_email: str
     password: str
 
+class RegisterRequest(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+    full_name: Optional[str] = None
+
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 

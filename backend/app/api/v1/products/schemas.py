@@ -7,7 +7,8 @@ from pydantic import BaseModel, Field, ConfigDict, field_validator
 class ProductStatus(str, Enum):
     ACTIVE = "ACTIVE"
     INACTIVE = "INACTIVE"
-    OUTOFSTOCK = "OUTOFSTOCK"
+    OUT_OF_STOCK = "OUT_OF_STOCK"
+    OUTOFSTOCK = "OUT_OF_STOCK"
     DISCONTINUED = "DISCONTINUED"
 
 
@@ -26,6 +27,18 @@ class CatalogDocumentSchema(BaseModel):
     title: Optional[str] = Field(None, description="Catalog document title")
     url: str = Field(..., description="Document / PDF / Image URL")
     file_type: Optional[str] = Field("pdf", description="Document type e.g. pdf, doc, image")
+
+
+class LabManualSchema(BaseModel):
+    title: Optional[str] = Field(None, description="Lab manual title")
+    url: str = Field(..., description="Lab manual PDF URL")
+    file_type: Optional[str] = Field("pdf", description="File format e.g. pdf")
+
+
+class DemoVideoSchema(BaseModel):
+    title: Optional[str] = Field(None, description="Demo video title")
+    url: str = Field(..., description="Demo video file URL (mp4, webm, etc.)")
+    file_type: Optional[str] = Field("mp4", description="Video file format")
 
 
 class WarrantyServiceSchema(BaseModel):
@@ -68,12 +81,15 @@ class ProductCreate(BaseModel):
     model_number: Optional[str] = Field(None, description="Model Number")
     description: Optional[str] = Field(None, description="Product Description")
     price: float = Field(..., ge=0, description="Product Price")
-    status: ProductStatus = Field(ProductStatus.ACTIVE, description="Status: ACTIVE, INACTIVE, OUTOFSTOCK, DISCONTINUED")
+    stock_quantity: int = Field(0, ge=0, description="Initial stock quantity")
+    status: Optional[ProductStatus] = Field(None, description="Status: ACTIVE, OUT_OF_STOCK, etc. (computed automatically if omitted)")
     
     images: List[str] = Field(..., description="List of image URLs. Minimum 3 images required.")
     specifications: Dict[str, Any] = Field(default_factory=dict, description="Dynamic Key-Value Product Specifications")
     
     catalog_document: Optional[CatalogDocumentSchema] = Field(None, description="Catalog document / PDF / image metadata")
+    lab_manual: Optional[LabManualSchema] = Field(None, description="Lab manual PDF file metadata")
+    demo_video: Optional[DemoVideoSchema] = Field(None, description="Demo video file metadata")
     warranty_service: Optional[WarrantyServiceSchema] = Field(None, description="Warranty and service terms")
     dimensions: DimensionsSchema = Field(..., description="Product dimensions with units")
 
@@ -93,10 +109,13 @@ class ProductUpdate(BaseModel):
     model_number: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = Field(None, ge=0)
+    stock_quantity: Optional[int] = Field(None, ge=0)
     status: Optional[ProductStatus] = None
     images: Optional[List[str]] = None
     specifications: Optional[Dict[str, Any]] = None
     catalog_document: Optional[CatalogDocumentSchema] = None
+    lab_manual: Optional[LabManualSchema] = None
+    demo_video: Optional[DemoVideoSchema] = None
     warranty_service: Optional[WarrantyServiceSchema] = None
     dimensions: Optional[DimensionsSchema] = None
 
@@ -118,16 +137,20 @@ class ProductResponse(BaseModel):
     model_number: Optional[str] = None
     description: Optional[str] = None
     price: float
+    stock_quantity: int = 0
     status: str
     images: List[str]
     specifications: Dict[str, Any]
     catalog_document: Optional[Dict[str, Any]] = None
+    lab_manual: Optional[Dict[str, Any]] = None
+    demo_video: Optional[Dict[str, Any]] = None
     warranty_service: Optional[Dict[str, Any]] = None
     dimensions: Dict[str, Any]
     created_at: datetime
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
 
 
 class ProductListResponse(BaseModel):

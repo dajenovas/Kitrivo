@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { UserServices } from "@/services/users.services";
 import type { UserProfile } from "@/models/auth.models";
 import { UserManagementTableHeaders } from "@/utils/StaticData";
-import { FONTSIZE, THEME } from "@/assets/theme";
+import { FONTSIZE, THEME, useAppTheme } from "@/assets/theme";
 import { CustomButton } from "@/components/Buttons/CustomButton";
 import {
     Box,
@@ -44,6 +44,7 @@ interface UserListTableProps {
 }
 
 const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUser, onUserDeleted }) => {
+    const theme = useAppTheme();
     const [users, setUsers] = useState<UserProfile[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -244,12 +245,13 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
 
     return (
         <Box>
-            <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${THEME.border}`, borderRadius: 2 }}>
+            <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${theme.border}`, borderRadius: 2, bgcolor: theme.paperBg }}>
+
                 <Table>
-                    <TableHead sx={{ bgcolor: THEME.background }}>
+                    <TableHead sx={{ bgcolor: theme.isDark ? "#0f172a" : THEME.background }}>
                         <TableRow>
                             {UserManagementTableHeaders.map((header) => (
-                                <TableCell key={header} sx={{ fontWeight: 600, color: THEME.textPrimary }}>
+                                <TableCell key={header} sx={{ fontWeight: 600, color: theme.textPrimary, borderColor: theme.border }}>
                                     {header}
                                 </TableCell>
                             ))}
@@ -258,23 +260,23 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                     <TableBody>
                         {users.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={UserManagementTableHeaders.length} align="center" sx={{ py: 4 }}>
-                                    <Typography color="text.secondary">No users found</Typography>
+                                <TableCell colSpan={UserManagementTableHeaders.length} align="center" sx={{ py: 4, borderColor: theme.border }}>
+                                    <Typography color={theme.textSecondary}>No users found</Typography>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             users.map((user, index) => (
                                 <TableRow key={user.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                     {/* S.no */}
-                                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                                    <TableCell sx={{ color: theme.textPrimary, borderColor: theme.border }}>{page * rowsPerPage + index + 1}</TableCell>
 
                                     {/* Employee ID */}
-                                    <TableCell sx={{ fontWeight: 600, color: THEME.primary }}>
+                                    <TableCell sx={{ fontWeight: 600, color: theme.isDark ? "#60a5fa" : THEME.primary, borderColor: theme.border }}>
                                         {user.employee_id || "N/A"}
                                     </TableCell>
 
                                     {/* Full Name */}
-                                    <TableCell>
+                                    <TableCell sx={{ borderColor: theme.border }}>
                                         <Box display="flex" alignItems="center" gap={1.5}>
                                             <Avatar
                                                 src={user.profile_picture || undefined}
@@ -288,17 +290,17 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                                             >
                                                 {!user.profile_picture && (user.full_name || user.username || "U")[0].toUpperCase()}
                                             </Avatar>
-                                            <Typography fontSize={FONTSIZE.small} fontWeight={500}>
+                                            <Typography fontSize={FONTSIZE.small} fontWeight={500} color={theme.textPrimary}>
                                                 {user.full_name || user.username}
                                             </Typography>
                                         </Box>
                                     </TableCell>
 
                                     {/* Email */}
-                                    <TableCell>{user.email}</TableCell>
+                                    <TableCell sx={{ color: theme.textPrimary, borderColor: theme.border }}>{user.email}</TableCell>
 
                                     {/* Role */}
-                                    <TableCell>
+                                    <TableCell sx={{ borderColor: theme.border }}>
                                         {user.roles && user.roles.length > 0 ? (
                                             user.roles.map((role) => (
                                                 <Chip
@@ -306,16 +308,21 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                                                     label={role.name}
                                                     size="small"
                                                     variant="outlined"
-                                                    sx={{ mr: 0.5, mb: 0.5 }}
+                                                    sx={{
+                                                        mr: 0.5,
+                                                        mb: 0.5,
+                                                        borderColor: theme.isDark ? "#475569" : THEME.border,
+                                                        color: theme.textPrimary,
+                                                    }}
                                                 />
                                             ))
                                         ) : (
-                                            <Typography variant="body2" color="text.secondary">No Role</Typography>
+                                            <Typography variant="body2" color={theme.textSecondary}>No Role</Typography>
                                         )}
                                     </TableCell>
 
                                     {/* Status */}
-                                    <TableCell>
+                                    <TableCell sx={{ borderColor: theme.border }}>
                                         <Chip
                                             label={user.is_active ? "Active" : "Inactive"}
                                             size="small"
@@ -325,10 +332,11 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                                     </TableCell>
 
                                     {/* Actions */}
-                                    <TableCell>
+                                    <TableCell sx={{ borderColor: theme.border }}>
                                         <IconButton
                                             size="small"
                                             onClick={(e) => handleOpenMenu(e, user)}
+                                            sx={{ color: theme.textPrimary }}
                                         >
                                             <MoreVertIcon fontSize="small" />
                                         </IconButton>
@@ -346,9 +354,15 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    sx={{ borderTop: `1px solid ${THEME.border}` }}
+                    sx={{
+                        borderTop: `1px solid ${theme.border}`,
+                        color: theme.textPrimary,
+                        "& .MuiTablePagination-selectIcon": { color: theme.textSecondary },
+                        "& .MuiTablePagination-actions .MuiIconButton-root": { color: theme.textPrimary },
+                    }}
                 />
             </TableContainer>
+
 
             {/* 3-Dot Ellipsis Action Menu */}
             <Menu
@@ -389,33 +403,9 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
             </Menu>
 
             {/* Delete User Confirmation Dialog */}
-            <Dialog
-                open={deleteDialogOpen}
-                onClose={handleCancelDelete}
-                maxWidth="xs"
-                fullWidth
-                PaperProps={{
-                    sx: {
-                        borderRadius: 3,
-                        p: 1,
-                        border: `1px solid ${THEME.border}`,
-                        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
-                    },
-                }}
-            >
+            <Dialog open={deleteDialogOpen} onClose={handleCancelDelete} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, border: `1px solid ${THEME.border}`, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)" } }}>
                 <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1.5, pb: 1 }}>
-                    <Box
-                        sx={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: "50%",
-                            bgcolor: `${THEME.error}15`,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: THEME.error,
-                        }}
-                    >
+                    <Box sx={{ width: 40, height: 40, borderRadius: "50%", bgcolor: `${THEME.error}15`, display: "flex", alignItems: "center", justifyContent: "center", color: THEME.error }}>
                         <DeleteIcon fontSize="small" />
                     </Box>
                     <Typography fontSize="18px" fontWeight={600} color={THEME.textPrimary}>
@@ -439,59 +429,15 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                 </DialogContent>
 
                 <DialogActions sx={{ p: 2, pt: 1.5, gap: 1 }}>
-                    <CustomButton
-                        text="Cancel"
-                        width={100}
-                        height="38px"
-                        bgc={THEME.transparent}
-                        color={THEME.textSecondary}
-                        border={`1px solid ${THEME.border}`}
-                        hov={`${THEME.border}40`}
-                        onClick={handleCancelDelete}
-                        isDisabled={deleting}
-                    />
-                    <CustomButton
-                        text={deleting ? "Deleting..." : "Delete"}
-                        width={110}
-                        height="38px"
-                        bgc={THEME.error}
-                        color={THEME.white}
-                        hov="#c62828"
-                        onClick={handleConfirmDelete}
-                        isDisabled={deleting}
-                        Sicon={deleting ? <CircularProgress size={16} color="inherit" /> : undefined}
-                    />
+                    <CustomButton text="Cancel" width={100} height="38px" bgc={THEME.transparent} color={THEME.textSecondary} border={`1px solid ${THEME.border}`} hov={`${THEME.border}40`} onClick={handleCancelDelete} isDisabled={deleting} />
+                    <CustomButton text={deleting ? "Deleting..." : "Delete"} width={110} height="38px" bgc={THEME.error} color={THEME.white} hov="#c62828" onClick={handleConfirmDelete} isDisabled={deleting} Sicon={deleting ? <CircularProgress size={16} color="inherit" /> : undefined} />
                 </DialogActions>
             </Dialog>
 
             {/* Reset Password Modal */}
-            <Dialog
-                open={resetPasswordOpen}
-                onClose={handleCancelResetPassword}
-                maxWidth="xs"
-                fullWidth
-                PaperProps={{
-                    sx: {
-                        borderRadius: 3,
-                        p: 1,
-                        border: `1px solid ${THEME.border}`,
-                        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
-                    },
-                }}
-            >
+            <Dialog open={resetPasswordOpen} onClose={handleCancelResetPassword} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, border: `1px solid ${THEME.border}`, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)" } }}>
                 <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1.5, pb: 1 }}>
-                    <Box
-                        sx={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: "50%",
-                            bgcolor: `${THEME.primary}15`,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: THEME.primary,
-                        }}
-                    >
+                    <Box sx={{ width: 40, height: 40, borderRadius: "50%", bgcolor: `${THEME.primary}15`, display: "flex", alignItems: "center", justifyContent: "center", color: THEME.primary }}>
                         <LockResetIcon fontSize="small" />
                     </Box>
                     <Typography fontSize="18px" fontWeight={600} color={THEME.textPrimary}>
@@ -528,26 +474,8 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                 </DialogContent>
 
                 <DialogActions sx={{ p: 2, pt: 1.5, gap: 1 }}>
-                    <CustomButton
-                        text="Cancel"
-                        height="38px"
-                        bgc={THEME.transparent}
-                        color={THEME.textSecondary}
-                        border={`1px solid ${THEME.border}`}
-                        hov={`${THEME.border}40`}
-                        onClick={handleCancelResetPassword}
-                        isDisabled={resettingPassword}
-                    />
-                    <CustomButton
-                        text={resettingPassword ? "Saving..." : "Reset Password"}
-                        height="38px"
-                        bgc={THEME.primary}
-                        color={THEME.white}
-                        hov={THEME.primaryDark}
-                        onClick={handleConfirmResetPassword}
-                        isDisabled={resettingPassword}
-                        Sicon={resettingPassword ? <CircularProgress size={16} color="inherit" /> : undefined}
-                    />
+                    <CustomButton text="Cancel" height="38px" bgc={THEME.transparent} color={THEME.textSecondary} border={`1px solid ${THEME.border}`} hov={`${THEME.border}40`} onClick={handleCancelResetPassword} isDisabled={resettingPassword} />
+                    <CustomButton text={resettingPassword ? "Saving..." : "Reset Password"} height="38px" bgc={THEME.primary} color={THEME.white} hov={THEME.primaryDark} onClick={handleConfirmResetPassword} isDisabled={resettingPassword} Sicon={resettingPassword ? <CircularProgress size={16} color="inherit" /> : undefined} />
                 </DialogActions>
             </Dialog>
         </Box>

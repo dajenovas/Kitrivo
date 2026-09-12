@@ -10,8 +10,6 @@ import {
   CardMedia,
   CardContent,
   Chip,
-  Button,
-  TextField,
   InputAdornment,
   MenuItem,
   CircularProgress,
@@ -20,14 +18,16 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { CustomButton } from "@/components/Buttons/CustomButton";
+import { CustomInput } from "@/components/Inputs/CustomInput";
 import {
   Search as SearchIcon,
-  Visibility as VisibilityIcon,
   Storefront as StorefrontIcon,
   Description as DescriptionIcon,
   ShoppingCart as ShoppingCartIcon,
   CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
+import { useCartStore } from "@/store/useCartStore";
 import { ClientProductDetailModal } from "./ClientProductDetailModal";
 
 export const ProductShowcasePage: React.FC = () => {
@@ -102,24 +102,16 @@ export const ProductShowcasePage: React.FC = () => {
 
   const handleQuickInquire = (e: React.MouseEvent, prod: Product) => {
     e.stopPropagation();
-    setToastMsg(`Inquiry initiated for "${prod.product_name}". Cart & Quote features coming soon!`);
+    useCartStore.getState().addItem(prod);
+    setToastMsg(`Product "${prod.product_name}" added to your Inquiry Cart!`);
     setToastOpen(true);
   };
+
 
   return (
     <Box p={3}>
       {/* Header Banner */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 3.5,
-          mb: 3,
-          borderRadius: 3,
-          background: `linear-gradient(135deg, ${THEME.primary} 0%, #1e3a8a 100%)`,
-          color: THEME.white,
-          boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.3)",
-        }}
-      >
+      <Paper elevation={0} sx={{ p: 3.5, mb: 3, borderRadius: 3, background: `linear-gradient(135deg, ${THEME.primary} 0%, #1e3a8a 100%)`, color: THEME.white, boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.3)" }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
           <Box maxWidth={700}>
             <Box display="flex" alignItems="center" gap={1} mb={1}>
@@ -153,11 +145,11 @@ export const ProductShowcasePage: React.FC = () => {
       {/* Search & Sort Bar */}
       <Paper elevation={0} sx={{ p: 2, mb: 3, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
         <Box display="flex" flexDirection={{ xs: "column", sm: "row" }} gap={2} alignItems="center" justifyContent="space-between">
-          <TextField
+          <CustomInput
             size="small"
             placeholder="Search products by title, SKU, model number..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e: any) => setSearchQuery(e.target.value)}
             sx={{ flex: 1, minWidth: 280 }}
             InputProps={{
               startAdornment: (
@@ -168,19 +160,19 @@ export const ProductShowcasePage: React.FC = () => {
             }}
           />
 
-          <TextField
+          <CustomInput
             select
             size="small"
             label="Sort By"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e: any) => setSortBy(e.target.value)}
             sx={{ minWidth: 200 }}
           >
             <MenuItem value="featured">Featured / Default</MenuItem>
             <MenuItem value="price_asc">Price: Low to High</MenuItem>
             <MenuItem value="price_desc">Price: High to Low</MenuItem>
             <MenuItem value="name_asc">Name: A to Z</MenuItem>
-          </TextField>
+          </CustomInput>
         </Box>
       </Paper>
 
@@ -208,37 +200,19 @@ export const ProductShowcasePage: React.FC = () => {
           </Typography>
         </Paper>
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           {sortedProducts.map((prod) => {
             const thumbnail = prod.images && prod.images.length > 0 ? prod.images[0] : "";
             const firstTwoSpecs = Object.entries(prod.specifications || {}).slice(0, 2);
 
             return (
-              <Grid item xs={12} sm={6} md={4} key={prod.id}>
-                <Card
-                  elevation={0}
-                  onClick={() => handleOpenDetail(prod)}
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    borderRadius: 3,
-                    border: `1px solid ${THEME.border}`,
-                    transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-                    cursor: "pointer",
-                    overflow: "hidden",
-                    "&:hover": {
-                      transform: "translateY(-4px)",
-                      boxShadow: "0 12px 24px -6px rgba(0, 0, 0, 0.08)",
-                      borderColor: THEME.primary,
-                    },
-                  }}
-                >
+              <Grid item xs={12} sm={6} md={4} lg={3} key={prod.id}>
+                <Card elevation={0} onClick={() => handleOpenDetail(prod)} sx={{ height: "100%", display: "flex", flexDirection: "column", borderRadius: 2.5, border: `1px solid ${THEME.border}`, transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)", cursor: "pointer", overflow: "hidden", "&:hover": { transform: "translateY(-3px)", boxShadow: "0 10px 20px -5px rgba(0, 0, 0, 0.08)", borderColor: THEME.primary } }}>
                   {/* Image Container */}
-                  <Box position="relative" bgcolor="#f8fafc" height={210}>
+                  <Box position="relative" bgcolor="#f8fafc" height={150}>
                     <CardMedia
                       component="img"
-                      height="210"
+                      height="150"
                       image={thumbnail}
                       alt={prod.product_name}
                       sx={{ objectFit: "cover" }}
@@ -249,44 +223,44 @@ export const ProductShowcasePage: React.FC = () => {
                     />
                     <Box
                       position="absolute"
-                      top={12}
-                      left={12}
+                      top={8}
+                      left={8}
                       display="flex"
-                      gap={1}
+                      gap={0.5}
                     >
                       <Chip
                         label={prod.category?.name || "General"}
                         size="small"
-                        sx={{ bgcolor: "rgba(255,255,255,0.92)", fontWeight: 700, fontSize: 11, backdropFilter: "blur(4px)" }}
+                        sx={{ bgcolor: "rgba(255,255,255,0.92)", fontWeight: 700, fontSize: 10, height: 20, backdropFilter: "blur(4px)" }}
                       />
                     </Box>
-                    <Box position="absolute" top={12} right={12}>
+                    <Box position="absolute" top={8} right={8}>
                       <Chip
                         label={prod.product_id}
                         size="small"
-                        sx={{ bgcolor: THEME.primary, color: THEME.white, fontWeight: 700, fontSize: 11 }}
+                        sx={{ bgcolor: THEME.primary, color: THEME.white, fontWeight: 700, fontSize: 10, height: 20 }}
                       />
                     </Box>
                   </Box>
 
                   {/* Card Content */}
-                  <CardContent sx={{ p: 2.5, flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <CardContent sx={{ p: 1.75, flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", "&:last-child": { pb: 1.75 } }}>
                     <Box>
-                      <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary} mb={0.5} lineHeight={1.3}>
+                      <Typography fontSize="0.95rem" fontWeight={700} color={THEME.textPrimary} mb={0.25} lineHeight={1.3} noWrap title={prod.product_name}>
                         {prod.product_name}
                       </Typography>
 
                       {prod.model_number && (
-                        <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} mb={1.5}>
+                        <Typography fontSize="0.8rem" color={THEME.textSecondary} mb={1}>
                           Model: <strong>{prod.model_number}</strong>
                         </Typography>
                       )}
 
                       {/* Specs Snippets */}
                       {firstTwoSpecs.length > 0 && (
-                        <Box display="flex" flexDirection="column" gap={0.5} mb={2}>
+                        <Box display="flex" flexDirection="column" gap={0.25} mb={1}>
                           {firstTwoSpecs.map(([k, v]) => (
-                            <Typography key={k} fontSize={12} color={THEME.textSecondary} noWrap>
+                            <Typography key={k} fontSize={11} color={THEME.textSecondary} noWrap>
                               • <strong>{k}:</strong> {String(v)}
                             </Typography>
                           ))}
@@ -296,51 +270,38 @@ export const ProductShowcasePage: React.FC = () => {
 
                     {/* Price & Actions */}
                     <Box>
-                      <Divider sx={{ my: 1.5 }} />
+                      <Divider sx={{ my: 1 }} />
 
-                      <Box display="flex" alignItems="center" justifyContent="space-between" mb={1.5}>
+                      <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
                         <Box>
-                          <Typography fontSize={11} color={THEME.textSecondary}>Price</Typography>
-                          <Typography fontSize={FONTSIZE.large} fontWeight={800} color={THEME.primary}>
+                          <Typography fontSize={10} color={THEME.textSecondary}>Price</Typography>
+                          <Typography fontSize="1.1rem" fontWeight={800} color={THEME.primary}>
                             ₹{prod.price.toLocaleString("en-IN")}
                           </Typography>
                         </Box>
 
                         {prod.catalog_document && (
                           <Chip
-                            icon={<DescriptionIcon style={{ fontSize: 13 }} />}
+                            icon={<DescriptionIcon style={{ fontSize: 11 }} />}
                             label="Datasheet"
                             size="small"
                             variant="outlined"
-                            sx={{ height: 22, fontSize: 10, borderColor: `${THEME.primary}40`, color: THEME.primary }}
+                            sx={{ height: 20, fontSize: 9, borderColor: `${THEME.primary}40`, color: THEME.primary }}
                           />
                         )}
                       </Box>
 
-                      <Box display="flex" gap={1}>
-                        <Button
-                          fullWidth
-                          size="small"
-                          variant="outlined"
-                          startIcon={<VisibilityIcon fontSize="small" />}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenDetail(prod);
-                          }}
-                          sx={{ borderRadius: 1.5, textTransform: "none", fontWeight: 600 }}
-                        >
-                          View Details
-                        </Button>
-                        <Button
+                      <Box display="flex">
+                        <CustomButton
                           fullWidth
                           size="small"
                           variant="contained"
-                          startIcon={<ShoppingCartIcon fontSize="small" />}
-                          onClick={(e) => handleQuickInquire(e, prod)}
-                          sx={{ bgcolor: THEME.primary, borderRadius: 1.5, textTransform: "none", fontWeight: 600 }}
+                          startIcon={<ShoppingCartIcon sx={{ fontSize: "0.9rem !important" }} />}
+                          onClick={(e: any) => handleQuickInquire(e, prod)}
+                          sx={{ bgcolor: THEME.primary, borderRadius: 1.5, textTransform: "none", fontWeight: 700, fontSize: "0.8rem", py: 0.75 }}
                         >
                           Inquire
-                        </Button>
+                        </CustomButton>
                       </Box>
                     </Box>
                   </CardContent>

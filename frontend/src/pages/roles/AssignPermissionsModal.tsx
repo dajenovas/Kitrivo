@@ -15,8 +15,6 @@ import {
     Checkbox,
     FormControlLabel,
     Chip,
-    InputAdornment,
-    Divider,
     Switch,
 } from "@mui/material";
 import {
@@ -161,37 +159,12 @@ export const AssignPermissionsModal: React.FC<AssignPermissionsModalProps> = ({
     };
 
     return (
-        <Dialog
-            open={open}
-            onClose={onClose}
-            maxWidth="md"
-            fullWidth
-            PaperProps={{
-                sx: {
-                    borderRadius: 3,
-                    p: 1,
-                    maxHeight: "90vh",
-                    border: `1px solid ${THEME.border}`,
-                    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
-                },
-            }}
-        >
+        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, maxHeight: "90vh", border: `1px solid ${THEME.border}`, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)" } }}>
             {/* Header */}
             <DialogTitle sx={{ pb: 1 }}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                     <Box display="flex" alignItems="center" gap={1.5}>
-                        <Box
-                            sx={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: "50%",
-                                bgcolor: `${THEME.primary}15`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                color: THEME.primary,
-                            }}
-                        >
+                        <Box sx={{ width: 40, height: 40, borderRadius: "50%", bgcolor: `${THEME.primary}15`, display: "flex", alignItems: "center", justifyContent: "center", color: THEME.primary }}>
                             <KeyIcon fontSize="small" />
                         </Box>
                         <Box>

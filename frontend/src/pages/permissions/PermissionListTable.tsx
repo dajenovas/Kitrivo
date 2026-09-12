@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { PermissionServices } from "@/services/permissions.service";
 import type { Permission } from "@/models/auth.models";
 import { PermissionManagementTableHeaders } from "@/utils/StaticData";
-import { THEME } from "@/assets/theme";
+import { THEME, useAppTheme } from "@/assets/theme";
 import { CustomButton } from "@/components/Buttons/CustomButton";
 import { RenderSvgIcon } from "@/components/RenderSvgIcon";
 import {
@@ -46,6 +46,7 @@ export const PermissionListTable: React.FC<PermissionListTableProps> = ({
     onEditPermission,
     onPermissionDeleted,
 }) => {
+    const theme = useAppTheme();
     const [permissions, setPermissions] = useState<Permission[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -183,12 +184,12 @@ export const PermissionListTable: React.FC<PermissionListTableProps> = ({
 
     return (
         <Box>
-            <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${THEME.border}`, borderRadius: 2 }}>
+            <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${theme.border}`, borderRadius: 2, bgcolor: theme.paperBg }}>
                 <Table>
-                    <TableHead sx={{ bgcolor: THEME.background }}>
+                    <TableHead sx={{ bgcolor: theme.isDark ? "#0f172a" : THEME.background }}>
                         <TableRow>
                             {PermissionManagementTableHeaders.map((header) => (
-                                <TableCell key={header} sx={{ fontWeight: 600, color: THEME.textPrimary }}>
+                                <TableCell key={header} sx={{ fontWeight: 600, color: theme.textPrimary, borderColor: theme.border }}>
                                     {header}
                                 </TableCell>
                             ))}
@@ -197,53 +198,53 @@ export const PermissionListTable: React.FC<PermissionListTableProps> = ({
                     <TableBody>
                         {permissions.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={PermissionManagementTableHeaders.length} align="center" sx={{ py: 4 }}>
-                                    <Typography color="text.secondary">No permissions found</Typography>
+                                <TableCell colSpan={PermissionManagementTableHeaders.length} align="center" sx={{ py: 4, borderColor: theme.border }}>
+                                    <Typography color={theme.textSecondary}>No permissions found</Typography>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             permissions.map((perm) => (
                                 <TableRow key={perm.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                    {/* 1st Column: Icon (Rendered visually as SVG graphic, NOT raw text) */}
-                                    <TableCell>
+                                    {/* 1st Column: Icon */}
+                                    <TableCell sx={{ borderColor: theme.border }}>
                                         <Box
                                             sx={{
                                                 width: 34,
                                                 height: 34,
                                                 borderRadius: 1.5,
-                                                bgcolor: `${THEME.primary}12`,
+                                                bgcolor: theme.isDark ? "rgba(37, 99, 235, 0.2)" : `${THEME.primary}12`,
                                                 display: "inline-flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
-                                                border: `1px solid ${THEME.border}`,
+                                                border: `1px solid ${theme.border}`,
                                             }}
                                         >
-                                            <RenderSvgIcon svgString={perm.icon} size={18} color={THEME.primary} />
+                                            <RenderSvgIcon svgString={perm.icon} size={18} color={theme.isDark ? "#60a5fa" : THEME.primary} />
                                         </Box>
                                     </TableCell>
 
                                     {/* Name */}
-                                    <TableCell sx={{ fontWeight: 600, color: THEME.textPrimary }}>
+                                    <TableCell sx={{ fontWeight: 600, color: theme.textPrimary, borderColor: theme.border }}>
                                         {perm.name}
                                     </TableCell>
 
                                     {/* Code */}
-                                    <TableCell sx={{ fontWeight: 600, color: THEME.primary }}>
+                                    <TableCell sx={{ fontWeight: 600, color: THEME.primary, borderColor: theme.border }}>
                                         <Chip label={perm.code} size="small" variant="outlined" color="primary" sx={{ fontWeight: 600 }} />
                                     </TableCell>
 
                                     {/* Module */}
-                                    <TableCell>
+                                    <TableCell sx={{ borderColor: theme.border }}>
                                         <Chip label={perm.module || "General"} size="small" color="secondary" variant="outlined" />
                                     </TableCell>
 
                                     {/* Description */}
-                                    <TableCell sx={{ color: THEME.textSecondary, maxWidth: 220 }}>
+                                    <TableCell sx={{ color: theme.textSecondary, maxWidth: 220, borderColor: theme.border }}>
                                         {perm.description || "N/A"}
                                     </TableCell>
 
                                     {/* Is Menu */}
-                                    <TableCell>
+                                    <TableCell sx={{ borderColor: theme.border }}>
                                         <Chip
                                             label={perm.is_menu ? "Yes" : "No"}
                                             size="small"
@@ -253,18 +254,18 @@ export const PermissionListTable: React.FC<PermissionListTableProps> = ({
                                     </TableCell>
 
                                     {/* Path */}
-                                    <TableCell sx={{ fontSize: "13px", color: THEME.textSecondary }}>
+                                    <TableCell sx={{ fontSize: "13px", color: theme.textSecondary, borderColor: theme.border }}>
                                         {perm.path || "-"}
                                     </TableCell>
 
                                     {/* Sort Order */}
-                                    <TableCell sx={{ fontWeight: 500 }}>
+                                    <TableCell sx={{ fontWeight: 500, color: theme.textPrimary, borderColor: theme.border }}>
                                         {perm.sort_order ?? 0}
                                     </TableCell>
 
                                     {/* Actions */}
-                                    <TableCell>
-                                        <IconButton size="small" onClick={(e) => handleOpenMenu(e, perm)}>
+                                    <TableCell sx={{ borderColor: theme.border }}>
+                                        <IconButton size="small" onClick={(e) => handleOpenMenu(e, perm)} sx={{ color: theme.textPrimary }}>
                                             <MoreVertIcon fontSize="small" />
                                         </IconButton>
                                     </TableCell>
@@ -281,9 +282,15 @@ export const PermissionListTable: React.FC<PermissionListTableProps> = ({
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    sx={{ borderTop: `1px solid ${THEME.border}` }}
+                    sx={{
+                        borderTop: `1px solid ${theme.border}`,
+                        color: theme.textPrimary,
+                        "& .MuiTablePagination-selectIcon": { color: theme.textSecondary },
+                        "& .MuiTablePagination-actions .MuiIconButton-root": { color: theme.textPrimary },
+                    }}
                 />
             </TableContainer>
+
 
             {/* 3-Dot Action Menu */}
             <Menu

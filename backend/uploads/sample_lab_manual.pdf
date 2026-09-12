@@ -1,0 +1,34 @@
+%PDF-1.4
+1 0 obj <</Type /Catalog /Pages 2 0 R>> endobj
+2 0 obj <</Type /Pages /Kids [3 0 R] /Count 1>> endobj
+3 0 obj <</Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources <</Font <</F1 5 0 R>>>> >> endobj
+4 0 obj <</Length 680>> stream
+BT
+/F1 20 Tf 50 730 Td (KITRIVO LABORATORY MANUAL) Tj
+/F1 13 Tf 0 -28 Td (Model: DICT-9000X | Advanced Digital IC Trainer Kit) Tj
+/F1 10 Tf 0 -22 Td (Department of Electronics & Communication Engineering) Tj
+/F1 12 Tf 0 -35 Td (LIST OF EXPERIMENTS:) Tj
+/F1 10 Tf 0 -20 Td (1. Verification of Truth Tables of Basic Logic Gates (AND, OR, NOT, NAND, NOR, XOR)) Tj
+/F1 10 Tf 0 -20 Td (2. Design and Implementation of Half Adder and Full Adder Circuits) Tj
+/F1 10 Tf 0 -20 Td (3. Realization of Multiplexers and Demultiplexers using TTL 74 Series ICs) Tj
+/F1 10 Tf 0 -20 Td (4. Study of Synchronous and Asynchronous Binary Counters) Tj
+/F1 10 Tf 0 -20 Td (5. Design of 4-bit Shift Registers and Ring Counters) Tj
+/F1 12 Tf 0 -35 Td (SAFETY INSTRUCTIONS & OPERATING PROCEDURES:) Tj
+/F1 10 Tf 0 -20 Td (- Ensure 230V AC main supply is properly grounded before powering on the kit.) Tj
+/F1 10 Tf 0 -20 Td (- Never apply external DC supply higher than +5V to TTL logic IC breadboard socket.) Tj
+/F1 10 Tf 0 -20 Td (- Use provided patch cords for making connections between logic switches and LED indicators.) Tj
+ET
+endstream endobj
+5 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold>> endobj
+xref
+0 6
+0000000000 65535 f 
+0000000010 00000 n 
+0000000060 00000 n 
+0000000117 00000 n 
+0000000245 00000 n 
+0000000978 00000 n 
+trailer <</Size 6 /Root 1 0 R>>
+startxref
+1053
+%%EOF

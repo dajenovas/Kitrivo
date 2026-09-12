@@ -1,5 +1,5 @@
 /**
- * httpClient.ts
+ * Client.ts
  * Centralized Axios instance with:
  *  - Base URL / timeout config
  *  - Auth token attached to every outgoing request
@@ -14,6 +14,7 @@ import axios, {
   type AxiosRequestConfig,
   type InternalAxiosRequestConfig,
 } from "axios";
+import { useAuthStore } from "@/store/useAuthStore";
 
 // ─── Environment / Config ──────────────────────────────────────────────────
 
@@ -27,8 +28,6 @@ const STORAGE_KEYS = {
 } as const;
 
 // ─── Token Helpers ──────────────────────────────────────────────────────────
-// Single source of truth for auth token storage — AuthService (and anything
-// else that needs to read/write tokens) should go through this, not localStorage directly.
 
 const tokenStore = {
   getAccessToken: () => localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN),
@@ -99,8 +98,6 @@ httpClient.interceptors.request.use(
 );
 
 // ─── Refresh Queue ──────────────────────────────────────────────────────────
-// While a refresh is in flight, park every failed request's retry callback here
-// instead of firing off multiple parallel refresh calls.
 
 type QueuedRequest = {
   resolve: (token: string) => void;
@@ -128,19 +125,33 @@ async function refreshAccessToken(): Promise<string> {
     throw new Error("No refresh token found — user must re-authenticate");
   }
 
-  const { data } = await refreshClient.post<{
-    access_token: string;
-    refresh_token?: string;
-    expires_in?: number;
-  }>("/auth/refresh-token", { refresh_token: refreshToken });
+  const response = await refreshClient.post(
+    "/auth/refresh",
+    { refresh_token: refreshToken },
+    {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    }
+  );
 
-  tokenStore.setTokens(data.access_token, data.refresh_token, data.expires_in);
-  return data.access_token;
+  const resData = (response.data as any)?.data || response.data;
+  const newAccessToken = resData?.access_token;
+  const newRefreshToken = resData?.refresh_token;
+  const expiresIn = resData?.expires_in;
+
+  if (!newAccessToken) {
+    throw new Error("Invalid token refresh response from server");
+  }
+
+  tokenStore.setTokens(newAccessToken, newRefreshToken || refreshToken, expiresIn);
+  return newAccessToken;
 }
 
 function redirectToLogin() {
   tokenStore.clearTokens();
-  if (typeof window !== "undefined") {
+  useAuthStore.getState().clearAuth();
+  if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
     window.location.assign("/login");
   }
 }
@@ -157,9 +168,12 @@ httpClient.interceptors.response.use(
   async (error: AxiosError) => {
     const failedRequest = error.config as RetriableConfig | undefined;
     const status = error.response?.status;
-    const isAuthEndpoint = failedRequest?.url?.includes("/auth/");
+    const requestUrl = failedRequest?.url || "";
 
-    if (status !== 401 || !failedRequest || isAuthEndpoint || failedRequest._hasRetried) {
+    // Exclude login and refresh endpoints from refresh retry logic
+    const isExcludedEndpoint = requestUrl.includes("/auth/login") || requestUrl.includes("/auth/refresh");
+
+    if (status !== 401 || !failedRequest || isExcludedEndpoint || failedRequest._hasRetried) {
       return Promise.reject(error);
     }
 

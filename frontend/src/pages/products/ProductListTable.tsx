@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { Product, ProductCategory } from "@/models/product.models";
 import { ProductService } from "@/services/products.service";
-import { FONTSIZE, THEME } from "@/assets/theme";
+import { FONTSIZE, THEME, useAppTheme } from "@/assets/theme";
 import {
   Box,
   Table,
@@ -39,6 +39,8 @@ import {
   Verified as VerifiedIcon,
 } from "@mui/icons-material";
 import { ProductDetailsModal } from "./ProductDetailsModal";
+import { CustomInput } from "@/components/Inputs/CustomInput";
+import { CustomButton } from "@/components/Buttons/CustomButton";
 
 interface ProductListTableProps {
   refreshTrigger?: number;
@@ -51,7 +53,9 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
   onEditProduct,
   onProductDeleted,
 }) => {
+  const theme = useAppTheme();
   const [products, setProducts] = useState<Product[]>([]);
+
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -186,7 +190,8 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
   return (
     <Box display="flex" flexDirection="column" gap={2}>
       {/* Search & Filter Bar */}
-      <Paper elevation={0} sx={{ p: 2, borderRadius: 2, border: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
+      <Paper elevation={0} sx={{ p: 2, borderRadius: 2, border: `1px solid ${theme.border}`, bgcolor: theme.paperBg }}>
+
         <Box
           component="form"
           onSubmit={handleSearchSubmit}
@@ -195,11 +200,11 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
           gap={2}
           alignItems="center"
         >
-          <TextField
+          <CustomInput
             size="small"
             placeholder="Search by SKU, Product Name, HSN..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e: any) => setSearchQuery(e.target.value)}
             sx={{ flex: 1, minWidth: 260 }}
             InputProps={{
               startAdornment: (
@@ -210,12 +215,12 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
             }}
           />
 
-          <TextField
+          <CustomInput
             select
             size="small"
             label="Category"
             value={selectedCategory}
-            onChange={(e) => {
+            onChange={(e: any) => {
               setSelectedCategory(e.target.value ? Number(e.target.value) : "");
               setPage(0);
             }}
@@ -227,14 +232,14 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                 {cat.name}
               </MenuItem>
             ))}
-          </TextField>
+          </CustomInput>
 
-          <TextField
+          <CustomInput
             select
             size="small"
             label="Status"
             value={selectedStatus}
-            onChange={(e) => {
+            onChange={(e: any) => {
               setSelectedStatus(e.target.value);
               setPage(0);
             }}
@@ -245,15 +250,17 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
             <MenuItem value="INACTIVE">INACTIVE</MenuItem>
             <MenuItem value="OUTOFSTOCK">OUT OF STOCK</MenuItem>
             <MenuItem value="DISCONTINUED">DISCONTINUED</MenuItem>
-          </TextField>
+          </CustomInput>
 
-          <Button
+          <CustomButton
             type="submit"
-            variant="contained"
-            sx={{ bgcolor: THEME.primary, px: 3, height: 40, borderRadius: 1.5 }}
-          >
-            Search
-          </Button>
+            text="Search"
+            width="auto"
+            height="40px"
+            bgc={THEME.primary}
+            color={THEME.white}
+            sx={{ px: 3, borderRadius: 1.5 }}
+          />
         </Box>
       </Paper>
 
@@ -267,34 +274,34 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
       <TableContainer
         component={Paper}
         elevation={0}
-        sx={{ borderRadius: 2, border: `1px solid ${THEME.border}`, overflow: "hidden" }}
+        sx={{ borderRadius: 2, border: `1px solid ${theme.border}`, bgcolor: theme.paperBg, overflow: "hidden" }}
       >
         <Table sx={{ minWidth: 800 }}>
-          <TableHead sx={{ bgcolor: `${THEME.border}30` }}>
+          <TableHead sx={{ bgcolor: theme.isDark ? "#0f172a" : `${THEME.border}30` }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700, color: THEME.textPrimary }}>Product</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: THEME.textPrimary }}>SKU / Product ID</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: THEME.textPrimary }}>Category</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: THEME.textPrimary }}>Price (₹)</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: THEME.textPrimary }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: THEME.textPrimary }}>E-Commerce Store</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700, color: THEME.textPrimary }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>Product</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>SKU / Product ID</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>Category</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>Price (₹)</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>Status</TableCell>
+              <TableCell sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>E-Commerce Store</TableCell>
+              <TableCell align="right" sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                <TableCell colSpan={7} align="center" sx={{ py: 6, borderColor: theme.border }}>
                   <CircularProgress size={32} />
-                  <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} mt={1}>
+                  <Typography fontSize={FONTSIZE.small} color={theme.textSecondary} mt={1}>
                     Loading products...
                   </Typography>
                 </TableCell>
               </TableRow>
             ) : products.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                  <Typography fontSize={FONTSIZE.medium} color={THEME.textSecondary}>
+                <TableCell colSpan={7} align="center" sx={{ py: 6, borderColor: theme.border }}>
+                  <Typography fontSize={FONTSIZE.medium} color={theme.textSecondary}>
                     No products found.
                   </Typography>
                 </TableCell>
@@ -307,7 +314,7 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                 return (
                   <TableRow key={prod.id} hover sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                     {/* Product Name & Image */}
-                    <TableCell>
+                    <TableCell sx={{ borderColor: theme.border }}>
                       <Box display="flex" alignItems="center" gap={2}>
                         <Box
                           component="img"
@@ -318,8 +325,8 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                             height: 48,
                             borderRadius: 1.5,
                             objectFit: "cover",
-                            border: `1px solid ${THEME.border}`,
-                            bgcolor: "#f5f5f5",
+                            border: `1px solid ${theme.border}`,
+                            bgcolor: theme.isDark ? "#0f172a" : "#f5f5f5",
                           }}
                           onError={(e: any) => {
                             e.target.src =
@@ -327,11 +334,11 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                           }}
                         />
                         <Box>
-                          <Typography fontSize={FONTSIZE.medium} fontWeight={600} color={THEME.textPrimary}>
+                          <Typography fontSize={FONTSIZE.medium} fontWeight={600} color={theme.textPrimary}>
                             {prod.product_name}
                           </Typography>
                           {prod.model_number && (
-                            <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary}>
+                            <Typography fontSize={FONTSIZE.small} color={theme.textSecondary}>
                               Model: {prod.model_number}
                             </Typography>
                           )}
@@ -340,31 +347,31 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                     </TableCell>
 
                     {/* SKU */}
-                    <TableCell>
-                      <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.primary}>
+                    <TableCell sx={{ borderColor: theme.border }}>
+                      <Typography fontSize={FONTSIZE.small} fontWeight={600} color={theme.isDark ? "#60a5fa" : THEME.primary}>
                         {prod.product_id}
                       </Typography>
                     </TableCell>
 
                     {/* Category */}
-                    <TableCell>
-                      <Typography fontSize={FONTSIZE.small} color={THEME.textPrimary}>
+                    <TableCell sx={{ borderColor: theme.border }}>
+                      <Typography fontSize={FONTSIZE.small} color={theme.textPrimary}>
                         {prod.category?.name || "General"}
                       </Typography>
                     </TableCell>
 
                     {/* Price */}
-                    <TableCell>
-                      <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                    <TableCell sx={{ borderColor: theme.border }}>
+                      <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={theme.textPrimary}>
                         ₹{prod.price.toLocaleString("en-IN")}
                       </Typography>
                     </TableCell>
 
                     {/* Status */}
-                    <TableCell>{getStatusChip(prod.status)}</TableCell>
+                    <TableCell sx={{ borderColor: theme.border }}>{getStatusChip(prod.status)}</TableCell>
 
                     {/* E-Commerce Store Badge */}
-                    <TableCell>
+                    <TableCell sx={{ borderColor: theme.border }}>
                       <Chip
                         icon={
                           isStoreReflected ? (
@@ -378,8 +385,8 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                         variant="outlined"
                         sx={{
                           borderColor: isStoreReflected ? "#a5d6a7" : "#ffe0b2",
-                          bgcolor: isStoreReflected ? "#f1f8e9" : "#fffde7",
-                          color: isStoreReflected ? "#2e7d32" : "#e65100",
+                          bgcolor: isStoreReflected ? (theme.isDark ? "rgba(46, 125, 50, 0.2)" : "#f1f8e9") : (theme.isDark ? "rgba(237, 108, 2, 0.2)" : "#fffde7"),
+                          color: isStoreReflected ? (theme.isDark ? "#81c784" : "#2e7d32") : (theme.isDark ? "#ffb74d" : "#e65100"),
                           fontWeight: 600,
                           fontSize: FONTSIZE.small,
                         }}
@@ -387,8 +394,8 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                     </TableCell>
 
                     {/* Actions */}
-                    <TableCell align="right">
-                      <IconButton onClick={(e) => handleMenuOpen(e, prod)}>
+                    <TableCell align="right" sx={{ borderColor: theme.border }}>
+                      <IconButton onClick={(e) => handleMenuOpen(e, prod)} sx={{ color: theme.textPrimary }}>
                         <MoreVertIcon />
                       </IconButton>
                     </TableCell>
@@ -411,8 +418,15 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
             setPage(0);
           }}
           rowsPerPageOptions={[5, 10, 25, 50]}
+          sx={{
+            borderTop: `1px solid ${theme.border}`,
+            color: theme.textPrimary,
+            "& .MuiTablePagination-selectIcon": { color: theme.textSecondary },
+            "& .MuiTablePagination-actions .MuiIconButton-root": { color: theme.textPrimary },
+          }}
         />
       </TableContainer>
+
 
       {/* Action Menu */}
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
@@ -459,19 +473,23 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
             This action cannot be undone and will remove the product from the inventory and e-commerce catalog.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
-          <Button onClick={() => setDeleteDialogOpen(false)} disabled={deleting}>
-            Cancel
-          </Button>
-          <Button
+        <DialogActions sx={{ p: 2, gap: 1 }}>
+          <CustomButton
+            text="Cancel"
+            variant="outlined"
+            width="auto"
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={deleting}
+          />
+          <CustomButton
+            text={deleting ? "Deleting..." : "Delete"}
+            width="auto"
+            bgc={THEME.error}
+            color={THEME.white}
             onClick={handleDeleteConfirm}
-            variant="contained"
-            color="error"
             disabled={deleting}
             startIcon={deleting ? <CircularProgress size={16} color="inherit" /> : null}
-          >
-            {deleting ? "Deleting..." : "Delete"}
-          </Button>
+          />
         </DialogActions>
       </Dialog>
     </Box>

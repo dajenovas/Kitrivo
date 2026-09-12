@@ -28,3 +28,11 @@ export const PermissionManagementTableHeaders = [
     'Sort Order',
     'Actions'
 ];
+
+export const PaymentMethods = [
+    { id: "ALL", label: "All Payment Methods" },
+    { id: "RAZORPAY", label: "Razorpay" },
+    { id: "CREDIT_CARD", label: "Credit / Debit Card" },
+    { id: "BANK_TRANSFER", label: "Bank Transfer / NEFT" },
+    { id: "DIRECT", label: "Direct Checkout" },
+]

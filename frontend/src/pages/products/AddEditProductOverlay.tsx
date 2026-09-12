@@ -15,8 +15,6 @@ import {
   Box,
   Typography,
   IconButton,
-  Button,
-  TextField,
   MenuItem,
   Grid,
   Tabs,
@@ -27,17 +25,21 @@ import {
   Paper,
   Divider,
 } from "@mui/material";
+import { CustomButton } from "@/components/Buttons/CustomButton";
+import { CustomInput } from "@/components/Inputs/CustomInput";
 import {
   Close as CloseIcon,
   Add as AddIcon,
   Delete as DeleteIcon,
   CloudUpload as CloudUploadIcon,
-  Storefront as StorefrontIcon,
   PictureAsPdf as PictureAsPdfIcon,
   Description as DescriptionIcon,
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
   InsertDriveFile as InsertDriveFileIcon,
+  VideoLibrary as VideoLibraryIcon,
+  MenuBook as MenuBookIcon,
+  PlayCircleOutline as PlayCircleOutlineIcon,
 } from "@mui/icons-material";
 
 interface AddEditProductOverlayProps {
@@ -67,12 +69,19 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
   // File Input References
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const catalogInputRef = useRef<HTMLInputElement | null>(null);
+  const labManualInputRef = useRef<HTMLInputElement | null>(null);
+  const demoVideoInputRef = useRef<HTMLInputElement | null>(null);
 
   // Drag & upload state
   const [isDragOverImage, setIsDragOverImage] = useState<boolean>(false);
   const [isDragOverCatalog, setIsDragOverCatalog] = useState<boolean>(false);
+  const [isDragOverLabManual, setIsDragOverLabManual] = useState<boolean>(false);
+  const [isDragOverDemoVideo, setIsDragOverDemoVideo] = useState<boolean>(false);
+
   const [uploadingImages, setUploadingImages] = useState<boolean>(false);
   const [uploadingCatalog, setUploadingCatalog] = useState<boolean>(false);
+  const [uploadingLabManual, setUploadingLabManual] = useState<boolean>(false);
+  const [uploadingDemoVideo, setUploadingDemoVideo] = useState<boolean>(false);
 
   // Form State
   const [productId, setProductId] = useState<string>("");
@@ -82,7 +91,9 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
   const [modelNumber, setModelNumber] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [price, setPrice] = useState<string>("");
+  const [stockQuantity, setStockQuantity] = useState<string>("10");
   const [status, setStatus] = useState<ProductStatus>("ACTIVE");
+
 
   // Images state (min 3 images required)
   const [images, setImages] = useState<string[]>([]);
@@ -112,6 +123,16 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
   const [catalogFileType, setCatalogFileType] = useState<string>("pdf");
   const [catalogFileName, setCatalogFileName] = useState<string>("");
 
+  // Lab Manual
+  const [labManualTitle, setLabManualTitle] = useState<string>("");
+  const [labManualUrl, setLabManualUrl] = useState<string>("");
+  const [labManualFileName, setLabManualFileName] = useState<string>("");
+
+  // Demo Video
+  const [demoVideoTitle, setDemoVideoTitle] = useState<string>("");
+  const [demoVideoUrl, setDemoVideoUrl] = useState<string>("");
+  const [, setDemoVideoFileName] = useState<string>("");
+
   useEffect(() => {
     if (open) {
       fetchCategories();
@@ -124,7 +145,9 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
         setModelNumber(productToEdit.model_number || "");
         setDescription(productToEdit.description || "");
         setPrice(productToEdit.price ? String(productToEdit.price) : "");
+        setStockQuantity(productToEdit.stock_quantity !== undefined ? String(productToEdit.stock_quantity) : "10");
         setStatus(productToEdit.status || "ACTIVE");
+
         setImages(productToEdit.images && productToEdit.images.length > 0 ? productToEdit.images : []);
 
         if (productToEdit.specifications) {
@@ -165,6 +188,26 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
           setCatalogFileType("pdf");
           setCatalogFileName("");
         }
+
+        if (productToEdit.lab_manual) {
+          setLabManualTitle(productToEdit.lab_manual.title || "");
+          setLabManualUrl(productToEdit.lab_manual.url || "");
+          setLabManualFileName("Uploaded Lab Manual");
+        } else {
+          setLabManualTitle("");
+          setLabManualUrl("");
+          setLabManualFileName("");
+        }
+
+        if (productToEdit.demo_video) {
+          setDemoVideoTitle(productToEdit.demo_video.title || "");
+          setDemoVideoUrl(productToEdit.demo_video.url || "");
+          setDemoVideoFileName("Uploaded Demo Video");
+        } else {
+          setDemoVideoTitle("");
+          setDemoVideoUrl("");
+          setDemoVideoFileName("");
+        }
       } else {
         // Reset form for creation
         resetForm();
@@ -203,6 +246,12 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
     setCatalogUrl("");
     setCatalogFileType("pdf");
     setCatalogFileName("");
+    setLabManualTitle("");
+    setLabManualUrl("");
+    setLabManualFileName("");
+    setDemoVideoTitle("");
+    setDemoVideoUrl("");
+    setDemoVideoFileName("");
   };
 
   const fetchCategories = async () => {
@@ -286,6 +335,52 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
     }
   };
 
+  const handleLabManualFileSelected = async (file: File) => {
+    if (!file) return;
+    const titleWithoutExt = file.name.substring(0, file.name.lastIndexOf(".")) || file.name;
+
+    setUploadingLabManual(true);
+    try {
+      const res = await ProductService.uploadSingleFile(file);
+      if (res.data) {
+        setLabManualUrl(res.data.url);
+        setLabManualFileName(res.data.filename);
+        if (!labManualTitle.trim()) {
+          setLabManualTitle(titleWithoutExt);
+        }
+        setErrorMsg(null);
+      }
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || "Failed to upload Lab Manual PDF.";
+      setErrorMsg(msg);
+    } finally {
+      setUploadingLabManual(false);
+    }
+  };
+
+  const handleDemoVideoFileSelected = async (file: File) => {
+    if (!file) return;
+    const titleWithoutExt = file.name.substring(0, file.name.lastIndexOf(".")) || file.name;
+
+    setUploadingDemoVideo(true);
+    try {
+      const res = await ProductService.uploadSingleFile(file);
+      if (res.data) {
+        setDemoVideoUrl(res.data.url);
+        setDemoVideoFileName(res.data.filename);
+        if (!demoVideoTitle.trim()) {
+          setDemoVideoTitle(titleWithoutExt);
+        }
+        setErrorMsg(null);
+      }
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || "Failed to upload Demo Video file.";
+      setErrorMsg(msg);
+    } finally {
+      setUploadingDemoVideo(false);
+    }
+  };
+
   const handleAddSpecRow = () => {
     setSpecs((prev) => [...prev, { key: "", value: "" }]);
   };
@@ -347,7 +442,9 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
       model_number: modelNumber.trim() || undefined,
       description: description.trim() || undefined,
       price: Number(price),
+      stock_quantity: Number(stockQuantity) || 0,
       status: status,
+
       images: images,
       specifications: specificationsDict,
       dimensions: {
@@ -367,10 +464,24 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
       },
       catalog_document: catalogUrl.trim()
         ? {
-            title: catalogTitle.trim() || "Product Datasheet",
-            url: catalogUrl.trim(),
-            file_type: catalogFileType || "pdf",
-          }
+          title: catalogTitle.trim() || "Product Datasheet",
+          url: catalogUrl.trim(),
+          file_type: catalogFileType || "pdf",
+        }
+        : undefined,
+      lab_manual: labManualUrl.trim()
+        ? {
+          title: labManualTitle.trim() || "Lab Manual PDF",
+          url: labManualUrl.trim(),
+          file_type: "pdf",
+        }
+        : undefined,
+      demo_video: demoVideoUrl.trim()
+        ? {
+          title: demoVideoTitle.trim() || "Product Demo Video",
+          url: demoVideoUrl.trim(),
+          file_type: "mp4",
+        }
         : undefined,
     };
 
@@ -416,6 +527,30 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
         onChange={(e) => {
           if (e.target.files && e.target.files[0]) {
             handleCatalogFileSelected(e.target.files[0]);
+            e.target.value = "";
+          }
+        }}
+      />
+      <input
+        type="file"
+        accept=".pdf"
+        ref={labManualInputRef}
+        style={{ display: "none" }}
+        onChange={(e) => {
+          if (e.target.files && e.target.files[0]) {
+            handleLabManualFileSelected(e.target.files[0]);
+            e.target.value = "";
+          }
+        }}
+      />
+      <input
+        type="file"
+        accept="video/*,.mp4,.webm,.mov"
+        ref={demoVideoInputRef}
+        style={{ display: "none" }}
+        onChange={(e) => {
+          if (e.target.files && e.target.files[0]) {
+            handleDemoVideoFileSelected(e.target.files[0]);
             e.target.value = "";
           }
         }}
@@ -476,7 +611,8 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
             }
           />
           <Tab label="3. Specifications & Dimensions" />
-          <Tab label="4. Warranty & Documents" />
+          <Tab label="4. Warranty & Datasheet" />
+          <Tab label="5. Lab Manual & Demo Video" />
         </Tabs>
       </Box>
 
@@ -491,7 +627,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
         {tabIndex === 0 && (
           <Grid container spacing={2.5}>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
                 fullWidth
                 label="Product ID / SKU *"
                 value={productId}
@@ -502,7 +638,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
                 fullWidth
                 label="Product Name *"
                 value={productName}
@@ -511,7 +647,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
                 fullWidth
                 select
                 label="Category *"
@@ -524,10 +660,10 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                     {cat.name} ({cat.code})
                   </MenuItem>
                 ))}
-              </TextField>
+              </CustomInput>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
                 fullWidth
                 label="Price (₹) *"
                 type="number"
@@ -537,7 +673,19 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
+                fullWidth
+                label="Stock Quantity *"
+                type="number"
+                value={stockQuantity}
+                onChange={(e) => setStockQuantity(e.target.value)}
+                placeholder="e.g. 15"
+                helperText="If stock is 0, status automatically switches to OUT_OF_STOCK"
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <CustomInput
                 fullWidth
                 label="HSN Code"
                 value={hsnCode}
@@ -546,7 +694,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
                 fullWidth
                 label="Model Number"
                 value={modelNumber}
@@ -555,7 +703,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
                 fullWidth
                 select
                 label="Status *"
@@ -571,10 +719,10 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                 <MenuItem value="INACTIVE">INACTIVE</MenuItem>
                 <MenuItem value="OUTOFSTOCK">OUT OF STOCK</MenuItem>
                 <MenuItem value="DISCONTINUED">DISCONTINUED</MenuItem>
-              </TextField>
+              </CustomInput>
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <CustomInput
                 fullWidth
                 multiline
                 rows={3}
@@ -632,18 +780,17 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               sx={{
                 p: 4,
                 borderRadius: 3,
-                border: `2px dashed ${
-                  isDragOverImage
+                border: `2px dashed ${isDragOverImage
                     ? THEME.primary
                     : images.length < 3
-                    ? "#ef4444"
-                    : "#3b82f6"
-                }`,
+                      ? "#ef4444"
+                      : "#3b82f6"
+                  }`,
                 bgcolor: isDragOverImage
                   ? `${THEME.primary}0D`
                   : images.length < 3
-                  ? "#fef2f2"
-                  : "#f0f9ff",
+                    ? "#fef2f2"
+                    : "#f0f9ff",
                 textAlign: "center",
                 cursor: uploadingImages ? "wait" : "pointer",
                 transition: "all 0.2s ease-in-out",
@@ -692,7 +839,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                       </Typography>
                     </Box>
 
-                    <Button
+                    <CustomButton
                       variant="outlined"
                       size="small"
                       startIcon={<AddIcon />}
@@ -706,7 +853,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                       }}
                     >
                       Select Image Files
-                    </Button>
+                    </CustomButton>
                   </>
                 )}
               </Box>
@@ -714,7 +861,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
 
             {/* Fallback URL Input */}
             <Box display="flex" gap={1.5} alignItems="center">
-              <TextField
+              <CustomInput
                 fullWidth
                 size="small"
                 label="Or paste Image URL"
@@ -722,14 +869,14 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                 onChange={(e) => setNewImageUrl(e.target.value)}
                 placeholder="https://example.com/images/product.jpg"
               />
-              <Button
+              <CustomButton
                 variant="contained"
                 onClick={handleAddUrlImage}
                 startIcon={<AddIcon />}
                 sx={{ bgcolor: THEME.primary, flexShrink: 0 }}
               >
                 Add URL
-              </Button>
+              </CustomButton>
             </Box>
 
             {/* Images Grid */}
@@ -797,14 +944,14 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                 <Typography fontSize={FONTSIZE.medium} fontWeight={700}>
                   Technical Specifications (Key - Value Pairs)
                 </Typography>
-                <Button size="small" startIcon={<AddIcon />} onClick={handleAddSpecRow}>
+                <CustomButton size="small" startIcon={<AddIcon />} onClick={handleAddSpecRow}>
                   Add Specification Row
-                </Button>
+                </CustomButton>
               </Box>
 
               {specs.map((row, idx) => (
                 <Box key={idx} display="flex" gap={1.5} mb={1.5} alignItems="center">
-                  <TextField
+                  <CustomInput
                     size="small"
                     label="Specification Key"
                     value={row.key}
@@ -812,7 +959,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                     placeholder="e.g. Frequency Range"
                     sx={{ flex: 1 }}
                   />
-                  <TextField
+                  <CustomInput
                     size="small"
                     label="Specification Value"
                     value={row.value}
@@ -836,7 +983,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={6} sm={3}>
-                  <TextField
+                  <CustomInput
                     fullWidth
                     size="small"
                     label="Length"
@@ -846,7 +993,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                   />
                 </Grid>
                 <Grid item xs={6} sm={3}>
-                  <TextField
+                  <CustomInput
                     fullWidth
                     size="small"
                     label="Width"
@@ -856,7 +1003,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                   />
                 </Grid>
                 <Grid item xs={6} sm={3}>
-                  <TextField
+                  <CustomInput
                     fullWidth
                     size="small"
                     label="Height"
@@ -866,7 +1013,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                   />
                 </Grid>
                 <Grid item xs={6} sm={3}>
-                  <TextField
+                  <CustomInput
                     fullWidth
                     size="small"
                     label="Weight"
@@ -884,7 +1031,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
         {tabIndex === 3 && (
           <Grid container spacing={2.5}>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
                 fullWidth
                 label="Warranty Period"
                 value={warrantyPeriod}
@@ -893,7 +1040,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <CustomInput
                 fullWidth
                 label="Service Type"
                 value={serviceType}
@@ -902,7 +1049,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <CustomInput
                 fullWidth
                 multiline
                 rows={2}
@@ -966,13 +1113,13 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                     </Box>
 
                     <Box display="flex" gap={1}>
-                      <Button
+                      <CustomButton
                         size="small"
                         variant="outlined"
                         onClick={() => catalogInputRef.current?.click()}
                       >
                         Replace File
-                      </Button>
+                      </CustomButton>
                       <IconButton
                         color="error"
                         onClick={() => {
@@ -986,7 +1133,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
                     </Box>
                   </Box>
 
-                  <TextField
+                  <CustomInput
                     fullWidth
                     size="small"
                     label="Catalog Title"
@@ -1050,13 +1197,226 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
             </Grid>
           </Grid>
         )}
+
+        {/* Tab 4: Lab Manual & Demo Video Resources */}
+        {tabIndex === 4 && (
+          <Box display="flex" flexDirection="column" gap={3}>
+            {/* Header & Explanation */}
+            <Box>
+              <Typography fontSize={FONTSIZE.large} fontWeight={700} color={THEME.textPrimary}>
+                Lab Manual & Demo Video Resources (Optional)
+              </Typography>
+              <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} mt={0.5}>
+                Upload optional learning materials and video demonstrations for laboratory instruction and equipment training.
+                In future releases, dedicated portals for Lab Manuals and Demo Videos will connect directly to these uploaded assets.
+              </Typography>
+            </Box>
+
+            <Divider />
+
+            {/* Section 1: Lab Manual PDF Upload */}
+            <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
+              <Box display="flex" alignItems="center" gap={1.5} mb={2}>
+                <MenuBookIcon sx={{ color: THEME.primary, fontSize: 24 }} />
+                <Box>
+                  <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                    1. Lab Manual Document (PDF)
+                  </Typography>
+                  <Typography fontSize={11} color={THEME.textSecondary}>
+                    Optional experiment guide & instruction manual for students & lab instructors (PDF format).
+                  </Typography>
+                </Box>
+              </Box>
+
+              {labManualUrl ? (
+                <Box display="flex" flexDirection="column" gap={2}>
+                  <Box display="flex" alignItems="center" justifyContent="space-between" p={2} borderRadius={2} bgcolor="#eff6ff" border="1px solid #bfdbfe">
+                    <Box display="flex" alignItems="center" gap={2}>
+                      <PictureAsPdfIcon sx={{ fontSize: 32, color: "#dc2626" }} />
+                      <Box>
+                        <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                          {labManualTitle || "Lab Manual PDF"}
+                        </Typography>
+                        <Typography fontSize={11} color={THEME.textSecondary}>
+                          File: {labManualFileName || "Uploaded PDF"} • PDF Format
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box display="flex" gap={1}>
+                      <CustomButton size="small" variant="outlined" component="a" href={labManualUrl} target="_blank" rel="noopener noreferrer">
+                        Preview PDF
+                      </CustomButton>
+                      <CustomButton size="small" variant="outlined" onClick={() => labManualInputRef.current?.click()}>
+                        Replace
+                      </CustomButton>
+                      <IconButton color="error" size="small" onClick={() => { setLabManualUrl(""); setLabManualTitle(""); setLabManualFileName(""); }}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  </Box>
+
+                  <CustomInput
+                    fullWidth
+                    size="small"
+                    label="Lab Manual Display Title"
+                    value={labManualTitle}
+                    onChange={(e) => setLabManualTitle(e.target.value)}
+                    placeholder="e.g. Digital Electronics Lab Practical Manual v1.0"
+                  />
+                </Box>
+              ) : (
+                <Paper
+                  elevation={0}
+                  onClick={() => !uploadingLabManual && labManualInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragOverLabManual(true); }}
+                  onDragLeave={() => setIsDragOverLabManual(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragOverLabManual(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files[0] && !uploadingLabManual) {
+                      handleLabManualFileSelected(e.dataTransfer.files[0]);
+                    }
+                  }}
+                  sx={{
+                    p: 3,
+                    borderRadius: 2,
+                    border: `2px dashed ${isDragOverLabManual ? THEME.primary : "#94a3b8"}`,
+                    bgcolor: isDragOverLabManual ? `${THEME.primary}0D` : "#f8fafc",
+                    textAlign: "center",
+                    cursor: uploadingLabManual ? "wait" : "pointer",
+                    "&:hover": { bgcolor: `${THEME.primary}0F`, borderColor: THEME.primary },
+                  }}
+                >
+                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                    {uploadingLabManual ? (
+                      <>
+                        <CircularProgress size={32} color="primary" />
+                        <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.primary}>
+                          Uploading Lab Manual PDF...
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <PictureAsPdfIcon sx={{ fontSize: 36, color: "#dc2626" }} />
+                        <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.textPrimary}>
+                          Click or drag Lab Manual (PDF) to upload
+                        </Typography>
+                        <Typography fontSize={11} color={THEME.textSecondary}>
+                          Not mandatory. Upload PDF files for student practicals.
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                </Paper>
+              )}
+            </Paper>
+
+            {/* Section 2: Demo Video Upload */}
+            <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
+              <Box display="flex" alignItems="center" gap={1.5} mb={2}>
+                <VideoLibraryIcon sx={{ color: THEME.primary, fontSize: 24 }} />
+                <Box>
+                  <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                    2. Product Demo Video (HTML5 Video)
+                  </Typography>
+                  <Typography fontSize={11} color={THEME.textSecondary}>
+                    Optional video demonstration of equipment setup and operation. Plays natively via built-in HTML5 player (no third-party platforms needed).
+                  </Typography>
+                </Box>
+              </Box>
+
+              {demoVideoUrl ? (
+                <Box display="flex" flexDirection="column" gap={2}>
+                  <Box p={2} borderRadius={2} bgcolor="#fafafa" border={`1px solid ${THEME.border}`}>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={1.5}>
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <PlayCircleOutlineIcon sx={{ color: THEME.primary, fontSize: 24 }} />
+                        <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                          {demoVideoTitle || "Product Demo Video"}
+                        </Typography>
+                      </Box>
+                      <Box display="flex" gap={1}>
+                        <CustomButton size="small" variant="outlined" onClick={() => demoVideoInputRef.current?.click()}>
+                          Replace Video
+                        </CustomButton>
+                        <IconButton color="error" size="small" onClick={() => { setDemoVideoUrl(""); setDemoVideoTitle(""); setDemoVideoFileName(""); }}>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    </Box>
+
+                    {/* Native HTML5 Video Player Preview */}
+                    <Box sx={{ width: "100%", borderRadius: 2, overflow: "hidden", bgcolor: "#000", border: "1px solid #334155" }}>
+                      <video controls src={demoVideoUrl} style={{ width: "100%", maxHeight: 260, display: "block" }}>
+                        Your browser does not support native HTML5 video playback.
+                      </video>
+                    </Box>
+                  </Box>
+
+                  <CustomInput
+                    fullWidth
+                    size="small"
+                    label="Demo Video Display Title"
+                    value={demoVideoTitle}
+                    onChange={(e) => setDemoVideoTitle(e.target.value)}
+                    placeholder="e.g. Oscilloscope Setup & Waveform Measurement Demo"
+                  />
+                </Box>
+              ) : (
+                <Paper
+                  elevation={0}
+                  onClick={() => !uploadingDemoVideo && demoVideoInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragOverDemoVideo(true); }}
+                  onDragLeave={() => setIsDragOverDemoVideo(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragOverDemoVideo(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files[0] && !uploadingDemoVideo) {
+                      handleDemoVideoFileSelected(e.dataTransfer.files[0]);
+                    }
+                  }}
+                  sx={{
+                    p: 3,
+                    borderRadius: 2,
+                    border: `2px dashed ${isDragOverDemoVideo ? THEME.primary : "#94a3b8"}`,
+                    bgcolor: isDragOverDemoVideo ? `${THEME.primary}0D` : "#f8fafc",
+                    textAlign: "center",
+                    cursor: uploadingDemoVideo ? "wait" : "pointer",
+                    "&:hover": { bgcolor: `${THEME.primary}0F`, borderColor: THEME.primary },
+                  }}
+                >
+                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                    {uploadingDemoVideo ? (
+                      <>
+                        <CircularProgress size={32} color="primary" />
+                        <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.primary}>
+                          Uploading Demo Video file...
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <PlayCircleOutlineIcon sx={{ fontSize: 36, color: THEME.primary }} />
+                        <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.textPrimary}>
+                          Click or drag Demo Video (MP4, WebM, MOV) to upload
+                        </Typography>
+                        <Typography fontSize={11} color={THEME.textSecondary}>
+                          Not mandatory. Plays directly in native video player without third-party platforms.
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                </Paper>
+              )}
+            </Paper>
+          </Box>
+        )}
       </DialogContent>
 
       <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
-        <Button onClick={onClose} variant="outlined" sx={{ borderRadius: 1.5 }} disabled={submitting}>
+        <CustomButton onClick={onClose} variant="outlined" sx={{ borderRadius: 1.5 }} disabled={submitting}>
           Cancel
-        </Button>
-        <Button
+        </CustomButton>
+        <CustomButton
           onClick={handleSubmit}
           variant="contained"
           sx={{ borderRadius: 1.5, bgcolor: THEME.primary, px: 3 }}
@@ -1064,7 +1424,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
           startIcon={submitting ? <CircularProgress size={18} color="inherit" /> : null}
         >
           {submitting ? "Saving..." : productToEdit ? "Update Product" : "Save Product"}
-        </Button>
+        </CustomButton>
       </DialogActions>
     </Dialog>
   );

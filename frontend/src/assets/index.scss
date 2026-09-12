@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Sunflower:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sunflower:wght@300;500;700&display=swap');
 
 * {
   margin: 0;
@@ -8,7 +8,109 @@
 }
 
 body {
-  background-color: #f3f3f3;
+  background-color: #f8fafc;
+  color: #0f172a;
   min-height: 100vh;
   width: 100%;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* DARK MODE GLOBAL OVERRIDES */
+[data-theme="dark"] body,
+body.dark-mode {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .MuiPaper-root {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .MuiAccordionSummary-root {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .MuiAccordionDetails-root {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .MuiTableCell-root {
+  border-color: #334155 !important;
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .MuiTableCell-head {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .MuiInputBase-root {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .MuiInputLabel-root {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .MuiOutlinedInput-notchedOutline {
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .MuiDialog-paper {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .MuiCard-root {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .MuiMenu-paper {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .MuiDivider-root {
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .MuiTab-root {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .MuiTab-root.Mui-selected {
+  color: #60a5fa !important;
+}
+
+/* CUSTOM APP SCROLLBARS */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
 }

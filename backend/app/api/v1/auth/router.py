@@ -8,9 +8,11 @@ from app.core.security import create_access_token, create_refresh_token, decode_
 from app.core.response import APIResponse, api_response
 from app.api.deps import get_db, get_current_active_user
 from app.api.v1.auth.schemas import (
-    TokenResponse, LoginRequest, RefreshTokenRequest, LogoutRequest, ChangePasswordRequest, UserProfileResponse, UpdateProfileRequest
+    TokenResponse, LoginRequest, RegisterRequest, RefreshTokenRequest, LogoutRequest, ChangePasswordRequest, UserProfileResponse, UpdateProfileRequest
 )
 from app.api.v1.auth import service as auth_service
+from app.api.v1.users import service as user_service
+from app.api.v1.users.schemas import UserCreate
 from app.models.user import User
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -101,6 +103,47 @@ async def login(request: Request, db: Session = Depends(get_db)) -> Any:
         "user": user_profile
     }
     return api_response(data=token_payload, message="Login successful")
+
+# Register
+
+@router.post(
+    "/register",
+    response_model=APIResponse[TokenResponse]
+)
+def register_user(body: RegisterRequest, db: Session = Depends(get_db)) -> Any:
+    """Register a new user account."""
+    if user_service.get_user_by_email(db, body.email):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email address is already registered."
+        )
+    if user_service.get_user_by_username(db, body.username):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username is already taken."
+        )
+
+    user_in = UserCreate(
+        username=body.username,
+        email=body.email,
+        password=body.password,
+        full_name=body.full_name,
+        is_active=True
+    )
+    user = user_service.create_user(db, user_in)
+
+    access_token = create_access_token(subject=user.id)
+    refresh_token = create_refresh_token(subject=user.id)
+    user_profile = auth_service.build_user_profile(user, db)
+
+    token_payload = {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "expires_in": settings.ACCESS_TOKEN_EXPIRE_SECONDS,
+        "user": user_profile
+    }
+    return api_response(data=token_payload, message="Account registered successfully")
 
 # Refresh Token
 
