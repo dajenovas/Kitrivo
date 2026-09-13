@@ -12,9 +12,11 @@ import SettingsPage from '@/pages/settings/SettingsPage';
 import CartPage from '@/pages/cart/CartPage';
 import CompanyManagementPage from '@/pages/company/CompanyManagementPage';
 import StockManagementPage from '@/pages/stock/StockManagementPage';
+import CustomerManagementPage from '@/pages/customer/CustomerManagementPage';
 import { CheckoutPage } from '@/pages/checkout/CheckoutPage';
 import { QuotationHistoryPage } from '@/pages/quotations/QuotationHistoryPage';
 import { BillHistoryPage } from '@/pages/billing/BillHistoryPage';
+import { SystemLogsPage } from '@/pages/logs/SystemLogsPage';
 import { tokenStore } from '@/api/Client';
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -56,11 +58,13 @@ const AppRoutes = () => {
           <Route path="/lab-manuals" element={<LabManualsPage />} />
           <Route path="/demo-videos" element={<DemoVideosPage />} />
           <Route path="/companies" element={<CompanyManagementPage />} />
+          <Route path="/customers" element={<CustomerManagementPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/quotations" element={<QuotationHistoryPage />} />
           <Route path="/bills" element={<BillHistoryPage />} />
+          <Route path="/logs" element={<SystemLogsPage />} />
         </Route>
       </Route>
 

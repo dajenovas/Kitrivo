@@ -2,7 +2,9 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.response import APIResponse, api_response
-from app.api.deps import get_db, require_permission
+from app.api.deps import get_db, require_permission, get_current_active_user
+from app.services.audit_service import log_activity
+from app.models.user import User
 from app.api.v1.permissions.schemas import (
     PermissionCreate, PermissionUpdate, PermissionResponse, MenuItemTreeResponse, GroupedPermissionsResponse
 )
@@ -38,7 +40,8 @@ def get_menu_tree(db: Session = Depends(get_db)):
 @router.post("", response_model=APIResponse[PermissionResponse], status_code=status.HTTP_201_CREATED, dependencies=[require_permission("PERMISSION_CREATE")])
 def create_permission(
     permission_in: PermissionCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Create a new permission (supports is_menu, icon, code, path, module, sort_order)."""
     existing = permission_service.get_permission_by_code(db, permission_in.code)
@@ -48,6 +51,21 @@ def create_permission(
             detail=f"Permission with code '{permission_in.code}' already exists."
         )
     perm = permission_service.create_permission(db, permission_in)
+
+    try:
+        log_activity(
+            db=db,
+            user=current_user,
+            action="CREATE",
+            module="Permission Management",
+            entity_type="Permission",
+            entity_id=perm.id,
+            description=f"Created permission '{perm.name}' ({perm.code})",
+            changes_diff=permission_in.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=perm, message="Permission created successfully")
 
 @router.get("/{permission_id}", response_model=APIResponse[PermissionResponse], dependencies=[require_permission("PERMISSION_READ")])
@@ -65,7 +83,8 @@ def get_permission(
 def update_permission(
     permission_id: int,
     permission_in: PermissionUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Update permission details."""
     permission = permission_service.get_permission_by_id(db, permission_id)
@@ -81,16 +100,47 @@ def update_permission(
             )
             
     updated_perm = permission_service.update_permission(db, permission, permission_in)
+
+    try:
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="Permission Management",
+            entity_type="Permission",
+            entity_id=updated_perm.id,
+            description=f"Updated permission '{updated_perm.name}' ({updated_perm.code})",
+            changes_diff=permission_in.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=updated_perm, message="Permission updated successfully")
 
 @router.delete("/{permission_id}", response_model=APIResponse[None], dependencies=[require_permission("PERMISSION_DELETE")])
 def delete_permission(
     permission_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Delete a permission."""
     permission = permission_service.get_permission_by_id(db, permission_id)
     if not permission:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Permission not found")
+    perm_code = permission.code
     permission_service.delete_permission(db, permission)
+
+    try:
+        log_activity(
+            db=db,
+            user=current_user,
+            action="DELETE",
+            module="Permission Management",
+            entity_type="Permission",
+            entity_id=permission_id,
+            description=f"Deleted permission '{perm_code}' (# {permission_id})"
+        )
+    except Exception:
+        pass
+
     return api_response(data=None, message="Permission deleted successfully")

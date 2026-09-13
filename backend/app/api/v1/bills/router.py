@@ -118,4 +118,19 @@ def create_bill(
     db.commit()
     db.refresh(bill)
 
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="CREATE",
+            module="Bills & Invoices",
+            entity_type="Bill",
+            entity_id=bill.id,
+            description=f"Generated bill/invoice '{bill_number}' for {bill.customer_name} (Total: ₹{bill.total_amount})",
+            changes_diff=payload.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=bill, message=f"Bill {bill_number} generated successfully")

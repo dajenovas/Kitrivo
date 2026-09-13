@@ -9,6 +9,7 @@ class Quotation(Base):
     id = Column(Integer, primary_key=True, index=True)
     quote_id = Column(String(50), unique=True, index=True, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
 
     items = Column(JSON, nullable=False)  # List of dicts with product info, qty, price, total
     subtotal = Column(Float, default=0.0, nullable=False)
@@ -35,3 +36,5 @@ class Quotation(Base):
     )
 
     user = relationship("User", backref="quotations")
+    customer = relationship("Customer", back_populates="quotations")
+

@@ -36,6 +36,20 @@ const Sidebar = () => {
 
         const visibleMenuItems = rawItems.filter((item) => item.is_menu === true && Boolean(item.path));
 
+        // Ensure Customer Management is visible in sidebar
+        if (!visibleMenuItems.some((it) => it.path === "/customers")) {
+            visibleMenuItems.push({
+                id: 998,
+                name: "Customer Management",
+                code: "CUSTOMER_READ",
+                module: "Customer Management",
+                is_menu: true,
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
+                path: "/customers",
+                sort_order: 1,
+            });
+        }
+
         const groups: Record<string, MenuItem[]> = {};
         visibleMenuItems.forEach((item) => {
             const moduleName = item.module || 'General';

@@ -2,7 +2,8 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.response import APIResponse, api_response
-from app.api.deps import get_db, require_permission, get_current_user
+from app.api.deps import get_db, require_permission, get_current_user, get_current_active_user
+from app.services.audit_service import log_activity
 from app.api.v1.users.schemas import UserCreate, UserUpdate, UserResponse, AssignRolesSchema, ResetPasswordSchema
 from app.api.v1.users import service as user_service
 from app.models.user import User
@@ -41,6 +42,21 @@ def create_user(
             detail="A user with this employee ID already exists."
         )
     user = user_service.create_user(db, user_in)
+
+    try:
+        log_activity(
+            db=db,
+            user=None,
+            action="CREATE",
+            module="User Management",
+            entity_type="User",
+            entity_id=user.id,
+            description=f"Created user account '{user.email}' ({user.username})",
+            changes_diff=user_in.model_dump(exclude={"password"}, exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=user, message="User created successfully")
 
 @router.get("/{user_id}", response_model=APIResponse[UserResponse], dependencies=[require_permission("USER_READ")])
@@ -58,7 +74,8 @@ def get_user(
 def update_user(
     user_id: int,
     user_in: UserUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Update user information (email, username, password, active status, roles)."""
     user = user_service.get_user_by_id(db, user_id)
@@ -87,19 +104,50 @@ def update_user(
             )
 
     updated_user = user_service.update_user(db, user, user_in)
+
+    try:
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="User Management",
+            entity_type="User",
+            entity_id=updated_user.id,
+            description=f"Updated user account '{updated_user.email}'",
+            changes_diff=user_in.model_dump(exclude={"password"}, exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=updated_user, message="User updated successfully")
 
 @router.post("/{user_id}/roles", response_model=APIResponse[UserResponse], dependencies=[require_permission("USER_UPDATE")])
 def assign_roles_to_user(
     user_id: int,
     body: AssignRolesSchema,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Batch assign/replace roles for a specific user."""
     user = user_service.get_user_by_id(db, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     updated_user = user_service.assign_roles_to_user(db, user, body.role_ids)
+
+    try:
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="User Management",
+            entity_type="User",
+            entity_id=updated_user.id,
+            description=f"Assigned roles to user '{updated_user.email}'",
+            changes_diff={"role_ids": body.role_ids}
+        )
+    except Exception:
+        pass
+
     return api_response(data=updated_user, message="Roles assigned to user successfully")
 
 @router.delete("/{user_id}", response_model=APIResponse[None], dependencies=[require_permission("USER_DELETE")])
@@ -118,14 +166,30 @@ def delete_user(
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
+    target_email = user.email
     user_service.delete_user(db, user)
+
+    try:
+        log_activity(
+            db=db,
+            user=current_user,
+            action="DELETE",
+            module="User Management",
+            entity_type="User",
+            entity_id=user_id,
+            description=f"Deleted user account '{target_email}' (# {user_id})"
+        )
+    except Exception:
+        pass
+
     return api_response(data=None, message="User deleted successfully")
 
 @router.post("/{user_id}/reset-password", response_model=APIResponse[UserResponse], dependencies=[require_permission("USER_PASSWORD_RESET")])
 def reset_user_password(
     user_id: int,
     body: ResetPasswordSchema,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Reset user password directly without requiring original password (requires USER_PASSWORD_RESET permission)."""
     user = user_service.get_user_by_id(db, user_id)
@@ -133,4 +197,18 @@ def reset_user_password(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     updated_user = user_service.reset_user_password(db, user, body.new_password)
+
+    try:
+        log_activity(
+            db=db,
+            user=current_user,
+            action="PASSWORD_RESET",
+            module="User Management",
+            entity_type="User",
+            entity_id=updated_user.id,
+            description=f"Reset password for user '{updated_user.email}'"
+        )
+    except Exception:
+        pass
+
     return api_response(data=updated_user, message="Password reset successfully")

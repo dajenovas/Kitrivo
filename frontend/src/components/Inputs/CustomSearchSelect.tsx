@@ -13,7 +13,7 @@ export const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({ label, p
   const open = Boolean(anchorEl);
   const activeSearchTerm = externalSearchTerm !== undefined ? externalSearchTerm : internalSearchTerm;
 
-  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOpen = (event: any) => {
     if (!disabled) {
       setAnchorEl(event.currentTarget);
     }

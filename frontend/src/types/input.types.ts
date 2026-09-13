@@ -73,6 +73,7 @@ export interface CustomSelectProps {
   hasMore?: boolean;
   isLoading?: boolean;
   isFetchingMore?: boolean;
+  pageSize?: number;
   error?: string;
 }
 

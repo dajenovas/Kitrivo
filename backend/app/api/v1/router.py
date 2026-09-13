@@ -11,6 +11,9 @@ from app.api.v1.companies.router import router as companies_router
 from app.api.v1.stock.routers.stock_router import router as stock_router
 from app.api.v1.payments.routers.payment_router import router as payment_router
 from app.api.v1.bills.router import router as bills_router
+from app.api.v1.dashboard.router import router as dashboard_router
+from app.api.v1.customers.router import router as customers_router
+from app.api.v1.logs.router import router as logs_router
 
 api_v1_router = APIRouter()
 
@@ -26,6 +29,11 @@ api_v1_router.include_router(companies_router)
 api_v1_router.include_router(stock_router)
 api_v1_router.include_router(payment_router)
 api_v1_router.include_router(bills_router)
+api_v1_router.include_router(dashboard_router)
+api_v1_router.include_router(customers_router)
+api_v1_router.include_router(logs_router)
+
+
 
 
 

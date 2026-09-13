@@ -1,2 +1,14 @@
-env
-__pycache__
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environment and databases
+env/
+venv/
+.env
+.env*.local
+!.env.example
+*.db
+*.sqlite3

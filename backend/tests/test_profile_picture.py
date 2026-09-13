@@ -60,3 +60,24 @@ def test_update_profile_api_returns_profile_picture():
     json_resp = response.json()
     assert json_resp["success"] is True
     assert json_resp["data"]["profile_picture"] == pic_data
+
+def test_update_profile_creates_audit_log():
+    from app.models.audit_log import AuditLog
+    response = client.put(
+        "/api/v1/auth/me/profile",
+        json={"full_name": "John Doe Audit Test"},
+        headers=auth_headers
+    )
+    assert response.status_code == 200
+
+    db = SessionLocal()
+    try:
+        log_entry = db.query(AuditLog).filter(
+            AuditLog.module == "User Profile",
+            AuditLog.action == "UPDATE"
+        ).order_by(AuditLog.id.desc()).first()
+        assert log_entry is not None
+        assert "John Doe Audit Test" in log_entry.description
+        assert log_entry.changes_diff.get("full_name") == "John Doe Audit Test"
+    finally:
+        db.close()

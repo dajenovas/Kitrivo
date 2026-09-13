@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { THEME } from "@/assets/theme";
 import type { CustomSelectProps } from "@/types/input.types";
 import { ExpandMore as ExpandMoreIcon, Search as SearchIcon } from "@mui/icons-material";
@@ -6,21 +6,32 @@ import { Box, Checkbox, Chip, CircularProgress, FormControl, FormHelperText, Inp
 
 import { CustomInput } from "./CustomInput";
 
-export const CustomSelect: React.FC<CustomSelectProps> = ({ height = "40px", width = "100%", value, placeholder = "", label, options = [], state, onChange, fontSize, bgc, fontW = 400, bod, colorC, disabled = false, isMultiple = false, enableSearch = false, searchTerm: externalSearchTerm, onSearchChange, onScrollEnd, hasMore, isLoading = false, isFetchingMore = false, error }) => {
-  const [internalSearchTerm, setInternalSearchTerm] = useState("");
+export const CustomSelect: React.FC<CustomSelectProps> = ({ height = "40px", width = "100%", value, placeholder = "", label, options = [], state, onChange, fontSize, bgc, fontW = 400, bod, colorC, disabled = false, isMultiple = false, enableSearch = false, searchTerm: externalSearchTerm, onSearchChange, onScrollEnd, hasMore, isLoading = false, isFetchingMore = false, pageSize = 20, error }) => {
+  const [internalSearchTerm, setInternalSearchTerm] = useState(externalSearchTerm || "");
   const activeSearchTerm = externalSearchTerm !== undefined ? externalSearchTerm : internalSearchTerm;
 
+  const [visibleCount, setVisibleCount] = useState<number>(pageSize);
+
+  useEffect(() => {
+    if (externalSearchTerm !== undefined) {
+      setInternalSearchTerm(externalSearchTerm);
+    }
+  }, [externalSearchTerm]);
+
+  useEffect(() => {
+    setVisibleCount(pageSize);
+  }, [activeSearchTerm, options.length, pageSize]);
+
   const handleSearchInputChange = (term: string) => {
+    setInternalSearchTerm(term);
     if (onSearchChange) {
       onSearchChange(term);
-    } else {
-      setInternalSearchTerm(term);
     }
   };
 
   // Filter options client-side if no external search handler is provided
   const filteredOptions = useMemo(() => {
-    if (!enableSearch || !activeSearchTerm.trim()) return options;
+    if (!enableSearch || !activeSearchTerm.trim() || onSearchChange) return options;
     const term = activeSearchTerm.toLowerCase().trim();
     return options.filter(
       (opt) =>
@@ -28,7 +39,12 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({ height = "40px", wid
         (opt.code && opt.code.toLowerCase().includes(term)) ||
         (opt.subLabel && opt.subLabel.toLowerCase().includes(term))
     );
-  }, [options, enableSearch, activeSearchTerm]);
+  }, [options, enableSearch, activeSearchTerm, onSearchChange]);
+
+  const displayedOptions = useMemo(() => {
+    if (onScrollEnd) return filteredOptions;
+    return filteredOptions.slice(0, visibleCount);
+  }, [filteredOptions, onScrollEnd, visibleCount]);
 
   const handleSelectChange = (event: SelectChangeEvent<any>) => {
     const rawVal = event.target.value;
@@ -48,11 +64,16 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({ height = "40px", wid
   };
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    if (!onScrollEnd) return;
     const target = event.currentTarget;
     const isAtBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 25;
-    if (isAtBottom && hasMore && !isFetchingMore && !isLoading) {
-      onScrollEnd();
+    if (isAtBottom) {
+      if (onScrollEnd) {
+        if (hasMore && !isFetchingMore && !isLoading) {
+          onScrollEnd();
+        }
+      } else if (visibleCount < filteredOptions.length) {
+        setVisibleCount((prev) => prev + pageSize);
+      }
     }
   };
 
@@ -129,8 +150,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({ height = "40px", wid
       >
         {/* Search Header */}
         {enableSearch && (
-          <ListSubheader disableSticky={false} sx={{ bgcolor: THEME.white, p: 1, zIndex: 2, borderBottom: `1px solid ${THEME.border}` }}>
-            <CustomInput size="small" fullWidth placeholder="Search..." value={activeSearchTerm} onChange={(e: any) => handleSearchInputChange(e.target.value)} onKeyDown={(e: any) => e.stopPropagation()} InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ color: THEME.textSecondary, mr: 0.5 }} /> }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: "6px", fontSize: "13px" } }} />
+          <ListSubheader disableSticky={false} onClick={(e) => e.stopPropagation()} sx={{ bgcolor: THEME.white, p: 1, zIndex: 2, borderBottom: `1px solid ${THEME.border}` }}>
+            <CustomInput size="small" fullWidth placeholder="Search..." value={activeSearchTerm} onChange={(e: any) => handleSearchInputChange(e.target.value)} onKeyDown={(e: any) => e.stopPropagation()} onClick={(e: any) => e.stopPropagation()} InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ color: THEME.textSecondary, mr: 0.5 }} /> }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: "6px", fontSize: "13px" } }} />
           </ListSubheader>
         )}
 
@@ -140,12 +161,12 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({ height = "40px", wid
             <CircularProgress size={24} sx={{ color: THEME.primary }} />
             <Typography fontSize="14px" sx={{ ml: 1.5, color: THEME.textSecondary }}> Loading options... </Typography>
           </MenuItem>
-        ) : filteredOptions.length === 0 ? (
+        ) : displayedOptions.length === 0 ? (
           <MenuItem disabled sx={{ justifyContent: "center", py: 2 }}>
             <Typography fontSize="13px" color={THEME.textSecondary}> No options found </Typography>
           </MenuItem>
         ) : (
-          filteredOptions.map((opt) => {
+          displayedOptions.map((opt) => {
             const isChecked = selectedArray.some((v) => String(v) === String(opt.id));
             return (
               <MenuItem key={String(opt.id)} value={opt.id} sx={{ py: 0.8, px: 1.5, borderRadius: "4px", mx: 0.5, my: 0.2, "&:hover": { bgcolor: `${THEME.primary}10` } }}>
@@ -166,10 +187,15 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({ height = "40px", wid
           </MenuItem>
         )}
 
-        {/* End of Pagination Indicator */}
-        {hasMore === false && options.length > 0 && !isFetchingMore && (
+        {/* End of Pagination Indicator / Client-side pagination indicator */}
+        {onScrollEnd && hasMore === false && options.length > 0 && !isFetchingMore && (
           <Box textAlign="center" py={1} borderTop={`1px dashed ${THEME.border}`}>
             <Typography fontSize="11px" color={THEME.textSecondary}> All {options.length} items loaded </Typography>
+          </Box>
+        )}
+        {!onScrollEnd && visibleCount < filteredOptions.length && (
+          <Box textAlign="center" py={1} borderTop={`1px dashed ${THEME.border}`}>
+            <Typography fontSize="11px" color={THEME.textSecondary}> Showing {displayedOptions.length} of {filteredOptions.length} items (scroll for more) </Typography>
           </Box>
         )}
       </Select>

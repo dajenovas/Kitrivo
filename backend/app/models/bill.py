@@ -10,6 +10,7 @@ class Bill(Base):
     bill_number = Column(String(50), unique=True, index=True, nullable=False)
     quote_id = Column(String(50), index=True, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
 
     customer_name = Column(String(255), nullable=False)
     institution_name = Column(String(255), nullable=True)
@@ -36,3 +37,5 @@ class Bill(Base):
     )
 
     user = relationship("User", backref="bills")
+    customer = relationship("Customer", back_populates="bills")
+

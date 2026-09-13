@@ -15,9 +15,10 @@ from app.models.stock import StockTransaction
 from app.models.quotation import Quotation
 from app.api.v1.payments.schemas import CreateOrderRequest, CreateOrderResponse, VerifyPaymentRequest, OrderItemInput
 
-# Razorpay Test Mode Credentials (Overridable via environment variables)
-RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_51111111111111")
-RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "secret_test_1234567890abcdef")
+from app.core.config import settings
+
+RAZORPAY_KEY_ID = settings.RAZORPAY_KEY_ID
+RAZORPAY_KEY_SECRET = settings.RAZORPAY_KEY_SECRET
 
 class RazorpayService:
 
@@ -149,7 +150,7 @@ class RazorpayService:
 
         # 3. Update Quotation status to PAID if quotation_id provided
         if request.quotation_id:
-            quotation = db.query(Quotation).filter(Quotation.quotation_id == request.quotation_id).first()
+            quotation = db.query(Quotation).filter(Quotation.quote_id == request.quotation_id).first()
             if quotation:
                 quotation.status = "PAID"
 

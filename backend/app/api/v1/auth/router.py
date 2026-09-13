@@ -102,6 +102,22 @@ async def login(request: Request, db: Session = Depends(get_db)) -> Any:
         "expires_in": settings.ACCESS_TOKEN_EXPIRE_SECONDS,
         "user": user_profile
     }
+
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=user,
+            action="LOGIN",
+            module="Authentication",
+            entity_type="User",
+            entity_id=user.id,
+            description=f"User '{user.full_name or user.username}' ({user.email}) logged in successfully",
+            ip_address=request.client.host if request.client else None
+        )
+    except Exception:
+        pass
+
     return api_response(data=token_payload, message="Login successful")
 
 # Register
@@ -143,6 +159,21 @@ def register_user(body: RegisterRequest, db: Session = Depends(get_db)) -> Any:
         "expires_in": settings.ACCESS_TOKEN_EXPIRE_SECONDS,
         "user": user_profile
     }
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=user,
+            action="CREATE",
+            module="Authentication",
+            entity_type="User",
+            entity_id=user.id,
+            description=f"Registered new user account '{user.email}'",
+            changes_diff={"username": user.username, "email": user.email, "full_name": user.full_name}
+        )
+    except Exception:
+        pass
+
     return api_response(data=token_payload, message="Account registered successfully")
 
 # Refresh Token
@@ -304,6 +335,22 @@ def update_current_user_profile(
     db.refresh(current_user)
 
     profile = auth_service.build_user_profile(current_user, db)
+
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="User Profile",
+            entity_type="User",
+            entity_id=current_user.id,
+            description=f"Updated profile details for '{current_user.full_name or current_user.username}'",
+            changes_diff=body.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=profile, message="Profile updated successfully")
 
 # Change Password
@@ -329,4 +376,19 @@ def change_password(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid current password"
         )
+
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="PASSWORD_CHANGE",
+            module="User Profile",
+            entity_type="User",
+            entity_id=current_user.id,
+            description=f"User '{current_user.full_name or current_user.username}' updated password"
+        )
+    except Exception:
+        pass
+
     return api_response(data=None, message="Password updated successfully")

@@ -8,6 +8,9 @@ import { THEME } from "@/assets/theme";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Typography, Chip, IconButton, Paper, Divider, Table, TableBody, TableCell, TableHead, TableRow, Grid, Alert, Snackbar } from "@mui/material";
 import { CustomButton } from "@/components/Buttons/CustomButton";
 import { CustomInput } from "@/components/Inputs/CustomInput";
+import { CustomSelect } from "@/components/Inputs/CustomSelect";
+import { useCustomerStore } from "@/store/useCustomerStore";
+import type { SelectOption } from "@/types/input.types";
 import { Close as CloseIcon, GetApp as DownloadIcon, Edit as EditIcon, Visibility as VisibilityIcon, Save as SaveIcon, ArrowForward as ArrowForwardIcon, Receipt as ReceiptIcon } from "@mui/icons-material";
 import type { QuotationTemplateModalProps } from "@/types/common.types";
 import type { QuotationModel, QuoteItemPayload } from "@/models/quotation.models";
@@ -37,13 +40,52 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
   const [toastOpen, setToastOpen] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<string>("");
 
+  const {
+    customers,
+    isLoading: isCustomersLoading,
+    isFetchingMore: isCustomersFetchingMore,
+    hasMore: hasMoreCustomers,
+    fetchCustomers,
+    fetchMoreCustomers,
+    searchTerm: customerSearchTerm,
+    setSearchTerm: setCustomerSearchTerm,
+  } = useCustomerStore();
+
+  const [selectedCustId, setSelectedCustId] = useState<string>("");
+
   useEffect(() => {
     if (open) {
       CompanyService.getActiveCompany().then((res) => {
         if (res.data) setActiveCompany(res.data);
       });
+      fetchCustomers();
     }
-  }, [open]);
+  }, [open, fetchCustomers]);
+
+  const customerOptions: SelectOption[] = React.useMemo(
+    () => [
+      { id: "", label: "-- Enter / Keep Client Details Manually --" },
+      ...customers.map((c) => ({
+        id: String(c.id),
+        label: `[${c.customer_code}] ${c.company_name} (${c.customer_type})`,
+      })),
+    ],
+    [customers]
+  );
+
+  const handleSelectCustomer = (custIdStr: string) => {
+    setSelectedCustId(custIdStr);
+    if (!custIdStr) return;
+    const found = customers.find((c) => String(c.id) === custIdStr);
+    if (found) {
+      const primaryContact = found.contact_persons && found.contact_persons.length > 0 ? found.contact_persons[0].name : found.company_name;
+      setInstitutionName(found.company_name);
+      setContactName(primaryContact);
+      setEmail(found.email || (found.contact_persons && found.contact_persons[0]?.email) || "");
+      setPhone(found.phone || (found.contact_persons && found.contact_persons[0]?.phone) || "");
+      setBillingAddress(found.billing_address || "");
+    }
+  };
 
 
   useEffect(() => {
@@ -330,6 +372,27 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
                 </Paper>
 
                 <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <CustomSelect
+                      enableSearch
+                      label="Auto-fill from Registered Customer Account"
+                      value={selectedCustId}
+                      options={customerOptions}
+                      onChange={(val) => handleSelectCustomer(String(val || ""))}
+                      searchTerm={customerSearchTerm}
+                      onSearchChange={setCustomerSearchTerm}
+                      onScrollEnd={fetchMoreCustomers}
+                      hasMore={hasMoreCustomers}
+                      isLoading={isCustomersLoading}
+                      isFetchingMore={isCustomersFetchingMore}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <CustomInput fullWidth size="small" label="Institution / Client Name" value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <CustomInput fullWidth size="small" label="Contact Person Name" value={contactName} onChange={(e) => setContactName(e.target.value)} />
+                  </Grid>
                   <Grid item xs={12} sm={6}>
                     <CustomInput fullWidth type="date" size="small" label="Quotation Validity Date" InputLabelProps={{ shrink: true }} value={validUntilDate} onChange={(e) => setValidUntilDate(e.target.value)} />
                   </Grid>

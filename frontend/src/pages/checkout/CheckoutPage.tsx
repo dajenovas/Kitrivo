@@ -5,6 +5,9 @@ import { QuotationService } from "@/services/quotation.service";
 import { CompanyService } from "@/services/company.service";
 import { PaymentService, type OrderItemInput } from "@/services/payment.service";
 import type { Company } from "@/models/company.models";
+import { CustomSelect } from "@/components/Inputs/CustomSelect";
+import { useCustomerStore } from "@/store/useCustomerStore";
+import type { SelectOption } from "@/types/input.types";
 import {
   Box,
   Typography,
@@ -67,13 +70,53 @@ export const CheckoutPage: React.FC = () => {
       }
     };
   }, []);
-
-
   useEffect(() => {
     CompanyService.getActiveCompany().then((res) => {
       if (res.data) setActiveCompany(res.data);
     });
   }, []);
+
+  const {
+    customers,
+    isLoading: isCustomersLoading,
+    isFetchingMore: isCustomersFetchingMore,
+    hasMore: hasMoreCustomers,
+    fetchCustomers,
+    fetchMoreCustomers,
+    searchTerm: customerSearchTerm,
+    setSearchTerm: setCustomerSearchTerm,
+  } = useCustomerStore();
+
+  const [selectedCustId, setSelectedCustId] = useState<string>("");
+
+  useEffect(() => {
+    fetchCustomers();
+  }, [fetchCustomers]);
+
+  const customerOptions: SelectOption[] = React.useMemo(
+    () => [
+      { id: "", label: "-- Enter Details Manually --" },
+      ...customers.map((c) => ({
+        id: String(c.id),
+        label: `[${c.customer_code}] ${c.company_name} (${c.customer_type})`,
+      })),
+    ],
+    [customers]
+  );
+
+  const handleSelectCustomer = (custIdStr: string) => {
+    setSelectedCustId(custIdStr);
+    if (!custIdStr) return;
+    const found = customers.find((c) => String(c.id) === custIdStr);
+    if (found) {
+      const contactName = found.contact_persons && found.contact_persons.length > 0 ? found.contact_persons[0].name : found.company_name;
+      setCustomerName(contactName);
+      setInstitutionName(found.company_name);
+      setEmail(found.email || (found.contact_persons && found.contact_persons[0]?.email) || "");
+      setPhone(found.phone || (found.contact_persons && found.contact_persons[0]?.phone) || "");
+      setShippingAddress(found.shipping_address || found.billing_address || "");
+    }
+  };
 
   useEffect(() => {
     const paramQuoteId = searchParams.get("quote_id");
@@ -472,6 +515,21 @@ export const CheckoutPage: React.FC = () => {
               </Typography>
 
               <Grid container spacing={2} mb={3}>
+                <Grid item xs={12}>
+                  <CustomSelect
+                    enableSearch
+                    label="Auto-fill from Registered Customer Account"
+                    value={selectedCustId}
+                    options={customerOptions}
+                    onChange={(val) => handleSelectCustomer(String(val || ""))}
+                    searchTerm={customerSearchTerm}
+                    onSearchChange={setCustomerSearchTerm}
+                    onScrollEnd={fetchMoreCustomers}
+                    hasMore={hasMoreCustomers}
+                    isLoading={isCustomersLoading}
+                    isFetchingMore={isCustomersFetchingMore}
+                  />
+                </Grid>
                 <Grid item xs={12}>
                   <CustomInput
                     fullWidth

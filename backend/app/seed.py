@@ -2,7 +2,7 @@ import logging
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal, engine, Base
 from app.core.security import get_password_hash
-from app.models import User, Role, Permission, Product, ProductCategory, TokenBlocklist, Company
+from app.models import User, Role, Permission, Product, ProductCategory, TokenBlocklist, Company, Customer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,6 +20,9 @@ COMPANY_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vi
 STOCK_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
 QUOTATION_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>'
 BILL_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>'
+CUSTOMER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>'
+LOGS_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>'
+
 
 
 
@@ -319,6 +322,56 @@ def seed_db(db: Session) -> None:
             "path": None,
             "sort_order": 0,
         },
+        {
+            "name": "Customer Management",
+            "code": "CUSTOMER_READ",
+            "module": "Customer Management",
+            "description": "View and manage institution and college customer accounts",
+            "is_menu": True,
+            "icon": CUSTOMER_SVG,
+            "path": "/customers",
+            "sort_order": 1,
+        },
+        {
+            "name": "Create Customer",
+            "code": "CUSTOMER_CREATE",
+            "module": "Customer Management",
+            "description": "Permission to register new customer accounts",
+            "is_menu": False,
+            "icon": None,
+            "path": None,
+            "sort_order": 0,
+        },
+        {
+            "name": "Update Customer",
+            "code": "CUSTOMER_UPDATE",
+            "module": "Customer Management",
+            "description": "Permission to edit customer profiles and contact persons",
+            "is_menu": False,
+            "icon": None,
+            "path": None,
+            "sort_order": 0,
+        },
+        {
+            "name": "Delete Customer",
+            "code": "CUSTOMER_DELETE",
+            "module": "Customer Management",
+            "description": "Permission to delete customer records",
+            "is_menu": False,
+            "icon": None,
+            "path": None,
+            "sort_order": 0,
+        },
+        {
+            "name": "System Audit Logs",
+            "code": "LOGS_READ",
+            "module": "System Audit",
+            "description": "View system activity and audit logs (SuperAdmin Only)",
+            "is_menu": True,
+            "icon": LOGS_SVG,
+            "path": "/logs",
+            "sort_order": 99,
+        },
     ]
 
 
@@ -344,6 +397,7 @@ def seed_db(db: Session) -> None:
         perm_map[perm.code] = perm
 
     all_permissions = list(perm_map.values())
+    admin_permissions = [p for p in all_permissions if p.code != "LOGS_READ"]
 
     # 2. Seed Roles
     roles_definition = [
@@ -357,7 +411,7 @@ def seed_db(db: Session) -> None:
             "name": "Admin",
             "code": "ROLE_ADMIN",
             "description": "Full administrative permissions",
-            "permissions": all_permissions
+            "permissions": admin_permissions
         },
         {
             "name": "Standard User",
@@ -565,18 +619,117 @@ def seed_db(db: Session) -> None:
         db.commit()
         logger.info(f"Seeded default active Company: {default_comp.company_name}")
 
+    # 7. Seed Sample Initial Customers
+    if db.query(Customer).count() == 0:
+        sample_customers = [
+            {
+                "customer_code": "CUST-2026-0001",
+                "company_name": "ABC Engineering College",
+                "customer_type": "COLLEGE",
+                "contact_persons": [
+                    {"name": "Prof. Rajesh Sharma", "designation": "HOD Electronics & Comm", "phone": "+91 98765 43210", "email": "r.sharma@abc.edu.in"},
+                    {"name": "Dr. Sunita Patel", "designation": "Lab Incharge", "phone": "+91 98765 43211", "email": "s.patel@abc.edu.in"}
+                ],
+                "phone": "+91 98765 43210",
+                "email": "procurement@abc.edu.in",
+                "billing_address": "ABC College Campus, Sector 4, Technical Zone, Mumbai 400001",
+                "shipping_address": "Central Electronics Lab, ABC College Campus, Sector 4, Mumbai 400001",
+                "gstin": "27AAACA1234F1Z5",
+                "pan": "AAACA1234F",
+                "state": "Maharashtra",
+                "city": "Mumbai",
+                "notes": "Key repeat customer for Embedded Systems & Digital Oscilloscopes labs. Prefers 14 days credit terms.",
+                "documents": [
+                    {"title": "Institutional GST Certificate", "url": "/uploads/documents/gst_abc_college.pdf", "file_type": "PDF", "uploaded_at": "Jan 15, 2026"}
+                ]
+            },
+            {
+                "customer_code": "CUST-2026-0002",
+                "company_name": "BITS Pilani Institute of Technology",
+                "customer_type": "UNIVERSITY",
+                "contact_persons": [
+                    {"name": "Dr. Anita Desai", "designation": "Dean Research & Labs", "phone": "+91 98123 99881", "email": "anita.desai@pilani.bits-pilani.ac.in"}
+                ],
+                "phone": "+91 98123 99881",
+                "email": "purchase@bits-pilani.ac.in",
+                "billing_address": "Vidya Vihar, Pilani, Rajasthan 333031",
+                "shipping_address": "Department of EEE, BITS Pilani, Rajasthan 333031",
+                "gstin": "08AAAAA0000A1Z2",
+                "pan": "AAAAA0000A",
+                "state": "Rajasthan",
+                "city": "Pilani",
+                "notes": "Requires DSIR tax exemption certificate attachment with all quotations.",
+                "documents": []
+            }
+        ]
+        for cust_data in sample_customers:
+            cust = Customer(**cust_data)
+            db.add(cust)
+        db.commit()
+        logger.info("Seeded initial sample Customer accounts")
+
+
 
 
 def run_migrations():
     from sqlalchemy import text
-    try:
-        with engine.begin() as conn:
-            conn.execute(text("ALTER TABLE products ADD COLUMN IF NOT EXISTS lab_manual JSON;"))
-            conn.execute(text("ALTER TABLE products ADD COLUMN IF NOT EXISTS demo_video JSON;"))
-            conn.execute(text("ALTER TABLE products ADD COLUMN IF NOT EXISTS stock_quantity INTEGER DEFAULT 0 NOT NULL;"))
-            logger.info("Database migrations applied successfully (lab_manual, demo_video & stock_quantity columns verified).")
-    except Exception as e:
-        logger.warning(f"Database migration notice: {e}")
+    alter_statements = [
+        "ALTER TABLE products ADD COLUMN IF NOT EXISTS lab_manual JSON",
+        "ALTER TABLE products ADD COLUMN IF NOT EXISTS demo_video JSON",
+        "ALTER TABLE products ADD COLUMN IF NOT EXISTS stock_quantity INTEGER DEFAULT 0 NOT NULL",
+        """
+        CREATE TABLE IF NOT EXISTS customers (
+            id SERIAL PRIMARY KEY,
+            customer_code VARCHAR(50) UNIQUE NOT NULL,
+            company_name VARCHAR(255) NOT NULL,
+            customer_type VARCHAR(50) DEFAULT 'COLLEGE' NOT NULL,
+            contact_persons JSON DEFAULT '[]'::json NOT NULL,
+            phone VARCHAR(50),
+            email VARCHAR(255),
+            billing_address TEXT,
+            shipping_address TEXT,
+            gstin VARCHAR(50),
+            pan VARCHAR(50),
+            state VARCHAR(100),
+            city VARCHAR(100),
+            notes TEXT,
+            documents JSON DEFAULT '[]'::json NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+        )
+        """,
+        "ALTER TABLE customers ALTER COLUMN name DROP NOT NULL",
+        "ALTER TABLE customers ALTER COLUMN status DROP NOT NULL",
+        "ALTER TABLE customers ALTER COLUMN code DROP NOT NULL",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS customer_code VARCHAR(50)",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS company_name VARCHAR(255)",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS customer_type VARCHAR(50) DEFAULT 'COLLEGE'",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS contact_persons JSON DEFAULT '[]'::json",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS phone VARCHAR(50)",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS email VARCHAR(255)",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS billing_address TEXT",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS shipping_address TEXT",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS gstin VARCHAR(50)",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS pan VARCHAR(50)",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS state VARCHAR(100)",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS city VARCHAR(100)",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS notes TEXT",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS documents JSON DEFAULT '[]'::json",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP",
+        "ALTER TABLE customers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP",
+        "ALTER TABLE quotations ADD COLUMN IF NOT EXISTS customer_id INTEGER REFERENCES customers(id)",
+        "ALTER TABLE bills ADD COLUMN IF NOT EXISTS customer_id INTEGER REFERENCES customers(id)"
+    ]
+
+    for stmt in alter_statements:
+        try:
+            with engine.begin() as conn:
+                conn.execute(text(stmt))
+        except Exception as err:
+            logger.debug(f"Migration statement ignored: {err}")
+    logger.info("Database migrations applied successfully.")
+
+
 
 
 def init_db():

@@ -151,6 +151,21 @@ def create_quotation(
     db.commit()
     db.refresh(quotation)
 
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="CREATE",
+            module="Quotations & Checkout",
+            entity_type="Quotation",
+            entity_id=quotation.id,
+            description=f"Created quotation '{quote_id}' for {quotation.institution_name or quotation.contact_name} (Total: ₹{total})",
+            changes_diff=payload.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=build_quotation_response(quotation), message=f"Quotation {quote_id} created successfully")
 
 
@@ -179,7 +194,8 @@ def get_quotation_by_id(
 def update_quotation(
     quote_id: str,
     payload: QuotationUpdateRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """
     Update an existing quotation's line items, institution, customer details, discount,
@@ -223,6 +239,21 @@ def update_quotation(
     db.commit()
     db.refresh(quotation)
 
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="Quotations & Checkout",
+            entity_type="Quotation",
+            entity_id=quotation.id,
+            description=f"Updated quotation '{cleaned_id}' details",
+            changes_diff=payload.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=build_quotation_response(quotation), message=f"Quotation {cleaned_id} updated successfully")
 
 
@@ -230,7 +261,8 @@ def update_quotation(
 def checkout_quotation(
     quote_id: str,
     payload: QuotationCheckoutRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """
     Process quotation checkout using Quote ID, record customer details, and mark status as CHECKED_OUT.
@@ -300,6 +332,21 @@ def checkout_quotation(
 
     db.commit()
     db.refresh(quotation)
+
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="Quotations & Checkout",
+            entity_type="Quotation",
+            entity_id=quotation.id,
+            description=f"Completed checkout for quotation '{cleaned_id}'",
+            changes_diff=payload.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
 
     return api_response(
         data=build_quotation_response(quotation, db),

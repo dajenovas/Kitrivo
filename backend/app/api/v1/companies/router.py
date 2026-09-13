@@ -62,7 +62,8 @@ def get_company_by_id(
 @router.post("", response_model=APIResponse[CompanyResponse], status_code=status.HTTP_201_CREATED)
 def create_company(
     payload: CompanyCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """
     Create a new company.
@@ -93,6 +94,21 @@ def create_company(
     db.commit()
     db.refresh(company)
 
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="CREATE",
+            module="Company Management",
+            entity_type="Company",
+            entity_id=company.id,
+            description=f"Created company '{company.company_name}'",
+            changes_diff=payload.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=company, message="Company created successfully.")
 
 
@@ -100,7 +116,8 @@ def create_company(
 def update_company(
     company_id: int,
     payload: CompanyUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """
     Update an existing company by ID.
@@ -124,13 +141,29 @@ def update_company(
     db.commit()
     db.refresh(company)
 
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="Company Management",
+            entity_type="Company",
+            entity_id=company.id,
+            description=f"Updated company details for '{company.company_name}'",
+            changes_diff=payload.model_dump(exclude_unset=True)
+        )
+    except Exception:
+        pass
+
     return api_response(data=company, message="Company details updated successfully.")
 
 
 @router.post("/{company_id}/activate", response_model=APIResponse[CompanyResponse])
 def set_active_company(
     company_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """
     Set the specified company as active.
@@ -148,13 +181,28 @@ def set_active_company(
     db.commit()
     db.refresh(target_company)
 
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="STATUS_CHANGE",
+            module="Company Management",
+            entity_type="Company",
+            entity_id=target_company.id,
+            description=f"Set company '{target_company.company_name}' as active"
+        )
+    except Exception:
+        pass
+
     return api_response(data=target_company, message=f"'{target_company.company_name}' is now set as the Active Company.")
 
 
 @router.delete("/{company_id}", response_model=APIResponse[dict])
 def delete_company(
     company_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """
     Delete a company by ID.
@@ -168,6 +216,7 @@ def delete_company(
         )
 
     was_active = company.is_active
+    comp_name = company.company_name
     db.delete(company)
     db.commit()
 
@@ -176,5 +225,19 @@ def delete_company(
         if remaining:
             remaining.is_active = True
             db.commit()
+
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="DELETE",
+            module="Company Management",
+            entity_type="Company",
+            entity_id=company_id,
+            description=f"Deleted company '{comp_name}' (# {company_id})"
+        )
+    except Exception:
+        pass
 
     return api_response(data={"deleted_id": company_id}, message="Company deleted successfully.")

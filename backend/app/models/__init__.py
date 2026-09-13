@@ -8,10 +8,13 @@ from app.models.stock import StockTransaction
 from app.models.quotation import Quotation
 from app.models.company import Company
 from app.models.bill import Bill
+from app.models.customer import Customer
+from app.models.audit_log import AuditLog
 
 __all__ = [
     "user_roles", "role_permissions", "Permission", "Role", "User", "TokenBlocklist",
-    "ProductCategory", "Product", "StockTransaction", "Quotation", "Company", "Bill"
+    "ProductCategory", "Product", "StockTransaction", "Quotation", "Company", "Bill", "Customer", "AuditLog"
 ]
+
 
 

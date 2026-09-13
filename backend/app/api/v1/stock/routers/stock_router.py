@@ -6,6 +6,9 @@ from app.api.deps import get_db, get_current_active_user
 from app.api.v1.stock.schemas import StockSummaryResponse, StockAdjustmentRequest, StockOverviewItem, StockTransactionResponse
 from app.api.v1.stock.services.stock_service import StockService
 
+from app.services.audit_service import log_activity
+from app.models.user import User
+
 router = APIRouter(
     prefix="/stock",
     tags=["Stock Management"],
@@ -31,10 +34,26 @@ def get_stock_summary(
 @router.post("/adjust", response_model=APIResponse[StockOverviewItem])
 def adjust_stock(
     request: StockAdjustmentRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     """Adjust product stock quantity. Automatically transitions status to OUT_OF_STOCK (if 0) or ACTIVE (if >0)."""
     item = StockService.adjust_stock(db, request)
+
+    try:
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="Stock Management",
+            entity_type="Product",
+            entity_id=item.id,
+            description=f"Adjusted stock for '{item.product_name}' (New Qty: {item.stock_quantity}, Change: {request.quantity_change})",
+            changes_diff=request.model_dump()
+        )
+    except Exception:
+        pass
+
     return api_response(data=item, message="Stock adjusted successfully")
 
 @router.get("/transactions", response_model=APIResponse[List[StockTransactionResponse]])

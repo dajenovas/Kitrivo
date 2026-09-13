@@ -1,0 +1,27 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.db
+*.sqlite3
+
+# Environment files
+.env
+.env.*
+env/
+venv/
+ENV/
+
+# Node modules and build
+node_modules/
+dist/
+dist-ssr/
+
+# Logs
+*.log
+
+# Editor & OS files
+.DS_Store
+.vscode/
+.idea/
