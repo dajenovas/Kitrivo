@@ -47,6 +47,13 @@ class QuotationCheckoutRequest(BaseModel):
     payment_method: Optional[str] = "Pending Configuration"
     notes: Optional[str] = None
 
+class QuotationStatusUpdateRequest(BaseModel):
+    status: str = Field(..., description="DRAFT, GENERATED, SENT, APPROVED, REJECTED, INVOICED, EXPIRED")
+
+class SendEmailRequest(BaseModel):
+    to_email: str
+    custom_message: Optional[str] = None
+
 class QuotationResponse(BaseModel):
     id: int
     quote_id: str
@@ -65,6 +72,7 @@ class QuotationResponse(BaseModel):
     phone: Optional[str] = None
     billing_address: Optional[str] = None
     notes: Optional[str] = None
+    converted_bill_id: Optional[int] = None
     created_at: datetime
     updated_at: datetime
 

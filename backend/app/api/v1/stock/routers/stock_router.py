@@ -64,3 +64,29 @@ def get_stock_transactions(
     """Retrieve audit log history of recent stock adjustments and order deductions."""
     txs = StockService.get_transactions(db, limit)
     return api_response(data=txs, message="Stock audit transactions retrieved successfully")
+
+
+@router.get("/alerts", response_model=APIResponse[List[dict]])
+def get_low_stock_alerts(
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve products that are running low (stock_quantity <= min_stock_threshold).
+    """
+    from app.models.product import Product
+    low_stock_items = db.query(Product).filter(Product.stock_quantity <= Product.min_stock_threshold).all()
+    
+    data = [
+        {
+            "id": p.id,
+            "product_id": p.product_id,
+            "product_name": p.product_name,
+            "stock_quantity": p.stock_quantity,
+            "min_stock_threshold": p.min_stock_threshold,
+            "price": p.price,
+            "status": p.status
+        }
+        for p in low_stock_items
+    ]
+    return api_response(data=data, message=f"Found {len(data)} low stock alert(s)")
+

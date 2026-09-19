@@ -11,9 +11,11 @@ from app.models.bill import Bill
 from app.models.customer import Customer
 from app.models.audit_log import AuditLog
 
+from app.models.payment_record import PaymentRecord
+
 __all__ = [
     "user_roles", "role_permissions", "Permission", "Role", "User", "TokenBlocklist",
-    "ProductCategory", "Product", "StockTransaction", "Quotation", "Company", "Bill", "Customer", "AuditLog"
+    "ProductCategory", "Product", "StockTransaction", "Quotation", "Company", "Bill", "Customer", "AuditLog", "PaymentRecord"
 ]
 
 

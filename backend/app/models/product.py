@@ -33,6 +33,7 @@ class Product(Base):
     description = Column(Text, nullable=True)
     price = Column(Float, default=0.0, nullable=False)
     stock_quantity = Column(Integer, default=0, nullable=False)  # Stock level; <= 0 triggers OUT_OF_STOCK
+    min_stock_threshold = Column(Integer, default=5, nullable=False)  # Threshold for low stock warning
     status = Column(String(50), default="OUT_OF_STOCK", nullable=False, index=True)  # ACTIVE, OUT_OF_STOCK, INACTIVE, DISCONTINUED
     
     # Flexible JSON fields

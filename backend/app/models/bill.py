@@ -21,12 +21,21 @@ class Bill(Base):
     items = Column(JSON, nullable=False)  # List of dicts: product_id, product_name, quantity, unit_price, total
     subtotal = Column(Float, default=0.0, nullable=False)
     tax_amount = Column(Float, default=0.0, nullable=False)
+    cgst_amount = Column(Float, default=0.0, nullable=False)
+    sgst_amount = Column(Float, default=0.0, nullable=False)
+    igst_amount = Column(Float, default=0.0, nullable=False)
+    is_interstate = Column(String(10), default="INTRA", nullable=False)  # INTRA (CGST+SGST) or INTER (IGST)
     discount_amount = Column(Float, default=0.0, nullable=False)
     total_amount = Column(Float, default=0.0, nullable=False)
 
-    payment_method = Column(String(50), default="DIRECT", nullable=False)  # RAZORPAY, CREDIT_CARD, BANK_TRANSFER, CASH_ON_DELIVERY, DIRECT
+    amount_paid = Column(Float, default=0.0, nullable=False)
+    balance_due = Column(Float, default=0.0, nullable=False)
+    due_date = Column(DateTime, nullable=True)
+
+    payment_method = Column(String(50), default="DIRECT", nullable=False)  # RAZORPAY, CREDIT_CARD, BANK_TRANSFER, CASH_ON_DELIVERY, DIRECT, CASH, UPI
     payment_id = Column(String(100), nullable=True)
     status = Column(String(30), default="PAID", nullable=False)  # PAID, PENDING, CANCELLED
+    payment_status = Column(String(30), default="PAID", nullable=False)  # PAID, PARTIAL, UNPAID, OVERDUE
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(

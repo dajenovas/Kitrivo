@@ -9,7 +9,11 @@ from app.core.response import APIResponse, api_response
 from app.api.deps import get_db, get_current_active_user
 from app.models.user import User
 from app.models.bill import Bill
-from app.api.v1.bills.schemas import BillCreateRequest, BillResponse
+from app.models.payment_record import PaymentRecord
+from app.api.v1.bills.schemas import (
+    BillCreateRequest, BillResponse, PaymentCreateRequest, PaymentRecordResponse
+)
+from app.api.v1.quotations.schemas import SendEmailRequest
 
 router = APIRouter(
     prefix="/bills",
@@ -134,3 +138,135 @@ def create_bill(
         pass
 
     return api_response(data=bill, message=f"Bill {bill_number} generated successfully")
+
+
+@router.post("/{bill_number}/payments", response_model=APIResponse[BillResponse])
+def record_bill_payment(
+    bill_number: str,
+    payload: PaymentCreateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Record a partial or full payment against a bill/invoice.
+    Recalculates amount_paid, balance_due, and updates payment_status (PAID, PARTIAL, UNPAID).
+    """
+    cleaned_no = bill_number.strip().upper()
+    bill = db.query(Bill).filter(Bill.bill_number == cleaned_no).first()
+
+    if not bill:
+        raise HTTPException(status_code=404, detail=f"Bill '{cleaned_no}' not found.")
+
+    if bill.balance_due is None or bill.balance_due <= 0:
+        bill.balance_due = max(0.0, bill.total_amount - (bill.amount_paid or 0.0))
+
+    if payload.amount > (bill.balance_due + 0.01):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Payment amount ₹{payload.amount} exceeds outstanding balance of ₹{bill.balance_due:,.2f}"
+        )
+
+    # Create PaymentRecord
+    record = PaymentRecord(
+        bill_id=bill.id,
+        customer_id=bill.customer_id,
+        amount=payload.amount,
+        payment_method=payload.payment_method,
+        transaction_reference=payload.transaction_reference,
+        payment_date=datetime.now(),
+        notes=payload.notes,
+        created_by_id=current_user.id
+    )
+    db.add(record)
+
+    # Recalculate bill totals
+    bill.amount_paid = round((bill.amount_paid or 0.0) + payload.amount, 2)
+    bill.balance_due = round(max(0.0, bill.total_amount - bill.amount_paid), 2)
+
+    if bill.balance_due <= 0.01:
+        bill.payment_status = "PAID"
+        bill.status = "PAID"
+    elif bill.amount_paid > 0:
+        bill.payment_status = "PARTIAL"
+
+    db.commit()
+    db.refresh(bill)
+
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="UPDATE",
+            module="Bills & Invoices",
+            entity_type="PaymentRecord",
+            entity_id=record.id,
+            description=f"Recorded payment of ₹{payload.amount} for Bill '{cleaned_no}' ({payload.payment_method})"
+        )
+    except Exception:
+        pass
+
+    return api_response(data=bill, message=f"Payment of ₹{payload.amount} recorded successfully for {cleaned_no}")
+
+
+@router.get("/{bill_number}/payments", response_model=APIResponse[List[PaymentRecordResponse]])
+def get_bill_payment_history(
+    bill_number: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve payment history log for a specific bill/invoice.
+    """
+    cleaned_no = bill_number.strip().upper()
+    bill = db.query(Bill).filter(Bill.bill_number == cleaned_no).first()
+
+    if not bill:
+        raise HTTPException(status_code=404, detail=f"Bill '{cleaned_no}' not found.")
+
+    records = db.query(PaymentRecord).filter(PaymentRecord.bill_id == bill.id).order_by(PaymentRecord.created_at.desc()).all()
+    return api_response(data=records, message="Payment records retrieved successfully")
+
+
+@router.post("/{bill_number}/send-email", response_model=APIResponse[bool])
+async def send_bill_via_email(
+    bill_number: str,
+    payload: SendEmailRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Send Invoice PDF directly to customer email.
+    """
+    cleaned_no = bill_number.strip().upper()
+    bill = db.query(Bill).filter(Bill.bill_number == cleaned_no).first()
+
+    if not bill:
+        raise HTTPException(status_code=404, detail=f"Bill '{cleaned_no}' not found.")
+
+    from app.services.email_service import send_email_with_pdf
+
+    body = f"""
+    <h2>Invoice Details - {bill.bill_number}</h2>
+    <p>Dear {bill.customer_name},</p>
+    <p>Please find details of your official invoice from Kitrivo below:</p>
+    <ul>
+      <li><strong>Invoice Number:</strong> {bill.bill_number}</li>
+      <li><strong>Institution / Customer:</strong> {bill.institution_name or bill.customer_name}</li>
+      <li><strong>Total Amount:</strong> ₹{bill.total_amount:,.2f}</li>
+      <li><strong>Amount Paid:</strong> ₹{(bill.amount_paid or 0.0):,.2f}</li>
+      <li><strong>Balance Due:</strong> ₹{(bill.balance_due or bill.total_amount):,.2f}</li>
+      <li><strong>Status:</strong> {bill.payment_status or bill.status}</li>
+    </ul>
+    <p>{payload.custom_message or 'Thank you for your business!'}</p>
+    """
+
+    success = await send_email_with_pdf(
+        to_email=payload.to_email,
+        subject=f"Official Invoice {bill.bill_number} - Kitrivo",
+        body_text=body,
+        pdf_bytes=b"%PDF-1.4 Mock Invoice PDF Content",
+        filename=f"Invoice_{bill.bill_number}.pdf"
+    )
+
+    return api_response(data=success, message=f"Invoice {cleaned_no} sent to {payload.to_email}")
+

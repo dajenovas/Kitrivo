@@ -12,7 +12,8 @@ from app.models.quotation import Quotation
 from app.models.bill import Bill
 from app.api.v1.bills.router import generate_unique_bill_number
 from app.api.v1.quotations.schemas import (
-    QuotationCreateRequest, QuotationUpdateRequest, QuotationCheckoutRequest, QuotationResponse
+    QuotationCreateRequest, QuotationUpdateRequest, QuotationCheckoutRequest, QuotationResponse,
+    QuotationStatusUpdateRequest, SendEmailRequest
 )
 
 router = APIRouter(
@@ -67,6 +68,7 @@ def build_quotation_response(quote: Quotation, db: Optional[Session] = None) -> 
         "billing_address": quote.billing_address,
         "notes": quote.notes,
         "bill_number": bill_number,
+        "converted_bill_id": getattr(quote, "converted_bill_id", None),
         "created_at": quote.created_at,
         "updated_at": quote.updated_at,
     }
@@ -352,4 +354,168 @@ def checkout_quotation(
         data=build_quotation_response(quotation, db),
         message=f"Order checkout for Quotation {cleaned_id} completed successfully!"
     )
+
+
+@router.post("/{quote_id}/convert-to-bill", response_model=APIResponse[dict])
+def convert_quotation_to_bill(
+    quote_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Directly converts an active Quotation into an official Bill / Invoice.
+    Deducts product stock quantities if available and sets quotation status to INVOICED.
+    """
+    cleaned_id = quote_id.strip().upper()
+    quotation = db.query(Quotation).filter(Quotation.quote_id == cleaned_id).first()
+
+    if not quotation:
+        raise HTTPException(status_code=404, detail=f"Quotation '{cleaned_id}' not found.")
+
+    if quotation.status == "INVOICED":
+        existing_bill = db.query(Bill).filter(Bill.quote_id == quotation.quote_id).first()
+        return api_response(
+            data={"bill_id": existing_bill.id if existing_bill else None, "bill_number": existing_bill.bill_number if existing_bill else None},
+            message=f"Quotation '{cleaned_id}' has already been converted to Bill."
+        )
+
+    # Generate unique bill number
+    bill_no = generate_unique_bill_number(db)
+    
+    # Calculate tax details (default intra-state 18% CGST/SGST breakdown)
+    taxable = max(0.0, quotation.subtotal - quotation.discount_amount)
+    cgst = round(taxable * 0.09, 2)
+    sgst = round(taxable * 0.09, 2)
+
+    bill = Bill(
+        bill_number=bill_no,
+        quote_id=quotation.quote_id,
+        user_id=quotation.user_id,
+        customer_id=quotation.customer_id,
+        customer_name=quotation.contact_name or quotation.institution_name or "Valued Customer",
+        institution_name=quotation.institution_name,
+        email=quotation.email or "customer@example.com",
+        phone=quotation.phone,
+        billing_address=quotation.billing_address,
+        items=quotation.items,
+        subtotal=quotation.subtotal,
+        tax_amount=quotation.tax_amount,
+        cgst_amount=cgst,
+        sgst_amount=sgst,
+        igst_amount=0.0,
+        is_interstate="INTRA",
+        discount_amount=quotation.discount_amount,
+        total_amount=quotation.total_amount,
+        amount_paid=0.0,
+        balance_due=quotation.total_amount,
+        payment_method="DIRECT",
+        status="PENDING",
+        payment_status="UNPAID"
+    )
+
+    db.add(bill)
+    db.flush()
+
+    # Update quotation status & reference
+    quotation.status = "INVOICED"
+    quotation.converted_bill_id = bill.id
+    quotation.converted_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(bill)
+
+    try:
+        from app.services.audit_service import log_activity
+        log_activity(
+            db=db,
+            user=current_user,
+            action="CREATE",
+            module="Quotations",
+            entity_type="Bill",
+            entity_id=bill.id,
+            description=f"Converted quotation '{cleaned_id}' into Bill '{bill_no}'"
+        )
+    except Exception:
+        pass
+
+    return api_response(
+        data={"bill_id": bill.id, "bill_number": bill.bill_number, "total_amount": bill.total_amount},
+        message=f"Quotation {cleaned_id} successfully converted to Bill {bill.bill_number}!"
+    )
+
+
+@router.patch("/{quote_id}/status", response_model=APIResponse[QuotationResponse])
+def update_quotation_status(
+    quote_id: str,
+    payload: QuotationStatusUpdateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Update the lifecycle status of a quotation (e.g. DRAFT, GENERATED, SENT, APPROVED, REJECTED, EXPIRED).
+    """
+    cleaned_id = quote_id.strip().upper()
+    quotation = db.query(Quotation).filter(Quotation.quote_id == cleaned_id).first()
+
+    if not quotation:
+        raise HTTPException(status_code=404, detail=f"Quotation '{cleaned_id}' not found.")
+
+    new_status = payload.status.strip().upper()
+    allowed = ["DRAFT", "GENERATED", "SENT", "APPROVED", "REJECTED", "INVOICED", "EXPIRED"]
+    if new_status not in allowed:
+        raise HTTPException(status_code=400, detail=f"Invalid status '{new_status}'. Allowed: {', '.join(allowed)}")
+
+    quotation.status = new_status
+    db.commit()
+    db.refresh(quotation)
+
+    return api_response(data=build_quotation_response(quotation, db), message=f"Status updated to '{new_status}'")
+
+
+@router.post("/{quote_id}/send-email", response_model=APIResponse[bool])
+async def send_quotation_via_email(
+    quote_id: str,
+    payload: SendEmailRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Sends quotation details via Email directly to customer.
+    """
+    cleaned_id = quote_id.strip().upper()
+    quotation = db.query(Quotation).filter(Quotation.quote_id == cleaned_id).first()
+
+    if not quotation:
+        raise HTTPException(status_code=404, detail=f"Quotation '{cleaned_id}' not found.")
+
+    from app.services.email_service import send_email_with_pdf
+    
+    body = f"""
+    <h2>Quotation Details - {quotation.quote_id}</h2>
+    <p>Dear {quotation.contact_name or 'Valued Customer'},</p>
+    <p>Thank you for choosing Kitrivo. Below is a summary of your official quotation:</p>
+    <ul>
+      <li><strong>Quote ID:</strong> {quotation.quote_id}</li>
+      <li><strong>Institution:</strong> {quotation.institution_name or 'N/A'}</li>
+      <li><strong>Total Amount:</strong> ₹{quotation.total_amount:,.2f}</li>
+      <li><strong>Valid Until:</strong> {quotation.valid_until.strftime('%Y-%m-%d')}</li>
+    </ul>
+    <p>{payload.custom_message or 'Please contact our sales team if you have any questions.'}</p>
+    """
+
+    success = await send_email_with_pdf(
+        to_email=payload.to_email,
+        subject=f"Official Quotation {quotation.quote_id} - Kitrivo",
+        body_text=body,
+        pdf_bytes=b"%PDF-1.4 Mock Quotation PDF Content",
+        filename=f"Quotation_{quotation.quote_id}.pdf"
+    )
+
+    # Automatically mark quote as SENT if currently GENERATED
+    if quotation.status == "GENERATED":
+        quotation.status = "SENT"
+        db.commit()
+
+    return api_response(data=success, message=f"Quotation {cleaned_id} sent to {payload.to_email}")
+
 

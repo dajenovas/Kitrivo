@@ -63,6 +63,18 @@ export interface QuotationModel {
     billing_address?: string;
     notes?: string;
     bill_number?: string;
+    converted_bill_id?: number;
     created_at: string;
     updated_at: string;
+}
+
+export interface ConvertToBillResponse {
+    bill_id: number;
+    bill_number: string;
+    total_amount: number;
+}
+
+export interface SendEmailPayload {
+    to_email: string;
+    custom_message?: string;
 }

@@ -49,10 +49,6 @@ const DashboardPage: React.FC = () => {
         setToastMsg("Dashboard analytics refreshed");
     };
 
-    const handleExport = () => {
-        setToastMsg("Exporting dashboard report summary...");
-    };
-
     return (
         <Box sx={{ p: { xs: 2, sm: 3 }, bgcolor: theme.background, minHeight: "100vh" }}>
             {/* Header Banner */}
@@ -78,8 +74,19 @@ const DashboardPage: React.FC = () => {
                         </IconButton>
                     </Tooltip>
 
-                    <Button variant="contained" onClick={handleExport} startIcon={<DownloadIcon sx={{ fontSize: 18 }} />} sx={{ borderRadius: 2.5, px: 2.5, py: 1, fontWeight: 700, textTransform: "none", bgcolor: THEME.primary, boxShadow: "0 4px 12px rgba(37,99,235,0.3)", "&:hover": { bgcolor: THEME.primaryDark } }}>
-                        Export Report
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            const reportType = prompt("Enter report type to export (bills, quotations, stock, customers):", "bills");
+                            if (reportType) {
+                                window.open(DashboardService.exportReportUrl(reportType.trim()), "_blank");
+                                setToastMsg(`Exporting ${reportType} report...`);
+                            }
+                        }}
+                        startIcon={<DownloadIcon sx={{ fontSize: 18 }} />}
+                        sx={{ borderRadius: 2.5, px: 2.5, py: 1, fontWeight: 700, textTransform: "none", bgcolor: THEME.primary, boxShadow: "0 4px 12px rgba(37,99,235,0.3)", "&:hover": { bgcolor: THEME.primaryDark } }}
+                    >
+                        Export CSV Report
                     </Button>
                 </Box>
             </Paper>

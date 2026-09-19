@@ -18,7 +18,9 @@ class Quotation(Base):
     total_amount = Column(Float, default=0.0, nullable=False)
 
     valid_until = Column(DateTime, nullable=False)
-    status = Column(String(30), default="GENERATED", nullable=False)  # GENERATED, CHECKED_OUT, EXPIRED
+    status = Column(String(30), default="GENERATED", nullable=False)  # DRAFT, GENERATED, SENT, APPROVED, REJECTED, INVOICED, EXPIRED
+    converted_bill_id = Column(Integer, ForeignKey("bills.id", ondelete="SET NULL"), nullable=True)
+    converted_at = Column(DateTime, nullable=True)
 
     institution_name = Column(String(255), nullable=True)
     contact_name = Column(String(255), nullable=True)

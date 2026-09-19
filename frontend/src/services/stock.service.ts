@@ -54,6 +54,11 @@ export class StockService {
     const response = await Client.get("/stock/transactions", { params: { limit } });
     return response.data;
   }
+
+  public static async getLowStockAlerts() {
+    const response = await Client.get("/stock/alerts");
+    return response.data;
+  }
 }
 
 export default StockService;

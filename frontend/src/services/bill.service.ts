@@ -1,5 +1,5 @@
 import { apiClient } from "@/api/Client";
-import type { BillCreatePayload, BillModel } from "@/models/bill.models";
+import type { BillCreatePayload, BillModel, PaymentCreatePayload, PaymentRecordModel } from "@/models/bill.models";
 import type { ApiResponse } from "@/models/common.models";
 
 export const BillService = {
@@ -17,5 +17,17 @@ export const BillService = {
 
   createBill: async (payload: BillCreatePayload): Promise<ApiResponse<BillModel>> => {
     return await apiClient.post<ApiResponse<BillModel>>("/bills", payload);
+  },
+
+  recordPayment: async (billNumber: string, payload: PaymentCreatePayload): Promise<ApiResponse<BillModel>> => {
+    return await apiClient.post<ApiResponse<BillModel>>(`/bills/${billNumber}/payments`, payload);
+  },
+
+  getPaymentHistory: async (billNumber: string): Promise<ApiResponse<PaymentRecordModel[]>> => {
+    return await apiClient.get<ApiResponse<PaymentRecordModel[]>>(`/bills/${billNumber}/payments`);
+  },
+
+  sendBillEmail: async (billNumber: string, toEmail: string, customMessage?: string): Promise<ApiResponse<boolean>> => {
+    return await apiClient.post<ApiResponse<boolean>>(`/bills/${billNumber}/send-email`, { to_email: toEmail, custom_message: customMessage });
   },
 };

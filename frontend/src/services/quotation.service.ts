@@ -28,5 +28,17 @@ export const QuotationService = {
   checkoutQuotation: async (quoteId: string, payload: QuotationCheckoutPayload): Promise<ApiResponse<QuotationModel>> => {
     return await apiClient.post<ApiResponse<QuotationModel>>(`/quotations/${quoteId}/checkout`, payload);
   },
+
+  convertQuotationToBill: async (quoteId: string): Promise<ApiResponse<{ bill_id: number; bill_number: string; total_amount: number }>> => {
+    return await apiClient.post<ApiResponse<{ bill_id: number; bill_number: string; total_amount: number }>>(`/quotations/${quoteId}/convert-to-bill`);
+  },
+
+  updateStatus: async (quoteId: string, status: string): Promise<ApiResponse<QuotationModel>> => {
+    return await apiClient.patch<ApiResponse<QuotationModel>>(`/quotations/${quoteId}/status`, { status });
+  },
+
+  sendQuotationEmail: async (quoteId: string, toEmail: string, customMessage?: string): Promise<ApiResponse<boolean>> => {
+    return await apiClient.post<ApiResponse<boolean>>(`/quotations/${quoteId}/send-email`, { to_email: toEmail, custom_message: customMessage });
+  },
 };
 

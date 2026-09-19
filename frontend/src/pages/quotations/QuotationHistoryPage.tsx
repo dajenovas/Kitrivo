@@ -281,7 +281,7 @@ export const QuotationHistoryPage: React.FC = () => {
                       </TableCell>
 
                       <TableCell align="right">
-                        <Box display="flex" justifyContent="flex-end" gap={1}>
+                        <Box display="flex" justifyContent="flex-end" gap={1} alignItems="center">
                           <Tooltip title="View / Print Quotation Template">
                             <IconButton
                               size="small"
@@ -292,7 +292,41 @@ export const QuotationHistoryPage: React.FC = () => {
                             </IconButton>
                           </Tooltip>
 
-                          {quote.status !== "CHECKED_OUT" && !isExpired && (
+                          <Tooltip title="Share via WhatsApp">
+                            <IconButton
+                              size="small"
+                              onClick={() => {
+                                const text = encodeURIComponent(`Hello ${quote.contact_name || 'Customer'},\nHere is your Quotation Details (${quote.quote_id}) for Total Amount: ₹${quote.total_amount.toLocaleString('en-IN')}.\nValid until: ${new Date(quote.valid_until).toLocaleDateString('en-IN')}`);
+                                window.open(`https://wa.me/?text=${text}`, '_blank');
+                              }}
+                              sx={{ color: '#25D366', bgcolor: '#25D36615' }}
+                            >
+                              <ReceiptIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+
+                          {quote.status !== "INVOICED" && quote.status !== "CHECKED_OUT" && (
+                            <CustomButton
+                              size="small"
+                              variant="outlined"
+                              onClick={async () => {
+                                try {
+                                  const res = await QuotationService.convertQuotationToBill(quote.quote_id);
+                                  if (res.data) {
+                                    alert(`Quotation ${quote.quote_id} converted to Bill ${res.data.bill_number}!`);
+                                    fetchQuotations();
+                                  }
+                                } catch (err: any) {
+                                  alert(err.response?.data?.message || "Failed to convert quotation");
+                                }
+                              }}
+                              sx={{ borderRadius: 2, fontSize: 12, fontWeight: 700, borderColor: THEME.primary }}
+                            >
+                              Convert to Bill
+                            </CustomButton>
+                          )}
+
+                          {quote.status !== "CHECKED_OUT" && quote.status !== "INVOICED" && !isExpired && (
                             <CustomButton
                               size="small"
                               variant="contained"
