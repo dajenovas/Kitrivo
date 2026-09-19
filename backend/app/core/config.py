@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_SECONDS: int = 86400    # 1 day
     
     # CORS Origins
-    BACKEND_CORS_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://localhost:3000", "https://kitrivo.jenovas.dev"]
+    BACKEND_CORS_ORIGINS: Union[List[str], str] = ["https://kitrivo.jenovas.dev","http://localhost:5173", "http://localhost:3000", "https://kitrivo.jenovas.dev"]
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
