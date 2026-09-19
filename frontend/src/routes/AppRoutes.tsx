@@ -16,7 +16,7 @@ import CustomerManagementPage from '@/pages/customer/CustomerManagementPage';
 import { CheckoutPage } from '@/pages/checkout/CheckoutPage';
 import { QuotationHistoryPage } from '@/pages/quotations/QuotationHistoryPage';
 import { BillHistoryPage } from '@/pages/billing/BillHistoryPage';
-import { SystemLogsPage } from '@/pages/logs/SystemLogsPage';
+import { SystemLogsPage } from '@/pages/SystemLogsPage/SystemLogsPage';
 import { tokenStore } from '@/api/Client';
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
