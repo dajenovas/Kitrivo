@@ -50,6 +50,7 @@ cors_origins = settings.BACKEND_CORS_ORIGINS if isinstance(settings.BACKEND_CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
+    allow_origin_regex=r"https://.*\.workers\.dev|https://.*\.vercel\.app|https://.*\.jenovas\.dev|http://localhost:.*|http://127\.0\.0\.1:.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
