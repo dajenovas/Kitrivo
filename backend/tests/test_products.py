@@ -11,6 +11,7 @@ from app.core.database import Base, engine, SessionLocal
 from app.core.security import create_access_token
 from app.seed import seed_db
 from app.models.user import User
+from app.models.product import Product, ProductCategory
 
 client = TestClient(app)
 
@@ -36,6 +37,42 @@ def setup_database():
         token = create_access_token(admin_user.id)
         global auth_headers
         auth_headers = {"Authorization": f"Bearer {token}"}
+
+        # Seed mock categories and products for testing product endpoints
+        cat1 = ProductCategory(name="Digital Trainers", code="CAT-DIGITAL-TRAINERS", description="Test Category 1")
+        cat2 = ProductCategory(name="Signal Generators", code="CAT-SIGNAL-GEN", description="Test Category 2")
+        db.add_all([cat1, cat2])
+        db.commit()
+        db.refresh(cat1)
+        db.refresh(cat2)
+
+        prod1 = Product(
+            product_id="PRD-DIG-001",
+            product_name="Advanced Digital IC Trainer Kit",
+            category_id=cat1.id,
+            hsn_code="8542.31.00",
+            model_number="DICT-9000X",
+            description="Test product 1",
+            price=24500.0,
+            stock_quantity=15,
+            status="ACTIVE",
+            images=["img1.jpg", "img2.jpg", "img3.jpg"],
+            specifications={"Logic Family": "TTL / CMOS"}
+        )
+        prod2 = Product(
+            product_id="PRD-FGEN-002",
+            product_name="Precision DDS Function Generator",
+            category_id=cat2.id,
+            hsn_code="9030.84.00",
+            model_number="FG-DDS-20M",
+            description="Test product 2",
+            price=18900.0,
+            stock_quantity=12,
+            status="ACTIVE",
+            images=["img1.jpg", "img2.jpg", "img3.jpg"]
+        )
+        db.add_all([prod1, prod2])
+        db.commit()
     finally:
         db.close()
     yield

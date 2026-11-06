@@ -299,7 +299,7 @@ export const QuotationHistoryPage: React.FC = () => {
                                 const text = encodeURIComponent(`Hello ${quote.contact_name || 'Customer'},\nHere is your Quotation Details (${quote.quote_id}) for Total Amount: ₹${quote.total_amount.toLocaleString('en-IN')}.\nValid until: ${new Date(quote.valid_until).toLocaleDateString('en-IN')}`);
                                 window.open(`https://wa.me/?text=${text}`, '_blank');
                               }}
-                              sx={{ color: '#25D366', bgcolor: '#25D36615' }}
+                              sx={{ color: THEME.whatsapp, bgcolor: THEME.whatsappBg }}
                             >
                               <ReceiptIcon fontSize="small" />
                             </IconButton>

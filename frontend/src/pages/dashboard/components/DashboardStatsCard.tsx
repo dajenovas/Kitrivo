@@ -49,15 +49,15 @@ export const DashboardStatsCard: React.FC<DashboardStatsCardProps> = ({ data, lo
     const getGradientBg = () => {
         switch (data.icon_type) {
             case "revenue":
-                return "linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)";
+                return `linear-gradient(135deg, ${THEME.primary} 0%, ${THEME.primaryDark} 100%)`;
             case "quotation":
-                return "linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)";
+                return `linear-gradient(135deg, ${THEME.secondary} 0%, ${THEME.purple700} 100%)`;
             case "invoice":
-                return "linear-gradient(135deg, #059669 0%, #047857 100%)";
+                return `linear-gradient(135deg, ${THEME.emerald600} 0%, ${THEME.emerald700} 100%)`;
             case "product":
-                return "linear-gradient(135deg, #EA580C 0%, #C2410C 100%)";
+                return `linear-gradient(135deg, ${THEME.warning} 0%, ${THEME.amber700} 100%)`;
             default:
-                return "linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)";
+                return `linear-gradient(135deg, ${THEME.primary} 0%, ${THEME.primaryDark} 100%)`;
         }
     };
 
@@ -65,12 +65,12 @@ export const DashboardStatsCard: React.FC<DashboardStatsCardProps> = ({ data, lo
     const isDown = data.change_type === "down";
 
     return (
-        <Card elevation={0} sx={{ p: 2.5, borderRadius: 3, bgcolor: theme.cardBg, border: `1px solid ${theme.border}`, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", transition: "all 0.25s ease-in-out", "&:hover": { transform: "translateY(-3px)", boxShadow: theme.isDark ? "0 12px 28px rgba(0,0,0,0.4)" : "0 12px 28px rgba(37,99,235,0.12)" } }}>
+        <Card elevation={0} sx={{ p: 2.5, borderRadius: 3, bgcolor: theme.cardBg, border: `1px solid ${theme.border}`, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", transition: "all 0.25s ease-in-out", "&:hover": { transform: "translateY(-3px)", boxShadow: theme.isDark ? `0 12px 28px ${THEME.slate900}66` : `0 12px 28px ${THEME.primary}1F` } }}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5 }}>
                 <Typography variant="body2" sx={{ color: theme.textSecondary, fontWeight: 600, fontSize: "0.875rem", letterSpacing: 0.2 }}>
                     {data.title}
                 </Typography>
-                <Box sx={{ width: 44, height: 44, borderRadius: 2.5, background: getGradientBg(), display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
+                <Box sx={{ width: 44, height: 44, borderRadius: 2.5, background: getGradientBg(), display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 12px ${THEME.slate900}26` }}>
                     {renderIcon()}
                 </Box>
             </Box>
@@ -82,7 +82,7 @@ export const DashboardStatsCard: React.FC<DashboardStatsCardProps> = ({ data, lo
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
-                <Chip icon={isUp ? <TrendingUpIcon style={{ fontSize: 16 }} /> : isDown ? <TrendingDownIcon style={{ fontSize: 16 }} /> : <RemoveIcon style={{ fontSize: 16 }} />} label={data.change_percentage} size="small" sx={{ height: 24, fontSize: "0.75rem", fontWeight: 700, borderRadius: 1.5, bgcolor: isUp ? (theme.isDark ? "rgba(22, 163, 74, 0.2)" : "#DCFCE7") : isDown ? (theme.isDark ? "rgba(220, 38, 38, 0.2)" : "#FEE2E2") : (theme.isDark ? "rgba(148, 163, 184, 0.2)" : "#F1F5F9"), color: isUp ? (theme.isDark ? "#4ADE80" : "#15803D") : isDown ? (theme.isDark ? "#F87171" : "#B91C1C") : theme.textSecondary, "& .MuiChip-icon": { color: "inherit" } }} />
+                <Chip icon={isUp ? <TrendingUpIcon style={{ fontSize: 16 }} /> : isDown ? <TrendingDownIcon style={{ fontSize: 16 }} /> : <RemoveIcon style={{ fontSize: 16 }} />} label={data.change_percentage} size="small" sx={{ height: 24, fontSize: "0.75rem", fontWeight: 700, borderRadius: 1.5, bgcolor: isUp ? (theme.isDark ? `${THEME.success}33` : THEME.green100) : isDown ? (theme.isDark ? `${THEME.error}33` : THEME.red100) : (theme.isDark ? `${THEME.slate400}33` : THEME.slate100), color: isUp ? (theme.isDark ? THEME.green500 : THEME.green700) : isDown ? (theme.isDark ? THEME.red500 : THEME.red700) : theme.textSecondary, "& .MuiChip-icon": { color: "inherit" } }} />
                 <Typography variant="caption" sx={{ color: theme.textSecondary, fontSize: "0.75rem", fontWeight: 500 }}>
                     {data.subtitle}
                 </Typography>

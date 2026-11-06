@@ -6,7 +6,7 @@ import type {
   ProductStatus,
 } from "@/models/product.models";
 import { ProductService } from "@/services/products.service";
-import { FONTSIZE, THEME } from "@/assets/theme";
+import { FONTSIZE, THEME, useAppTheme } from "@/assets/theme";
 import {
   Dialog,
   DialogTitle,
@@ -60,6 +60,7 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const theme = useAppTheme();
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loadingCategories, setLoadingCategories] = useState<boolean>(false);
@@ -93,6 +94,14 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
   const [price, setPrice] = useState<string>("");
   const [stockQuantity, setStockQuantity] = useState<string>("10");
   const [status, setStatus] = useState<ProductStatus>("ACTIVE");
+
+  // Create Category Modal State
+  const [addCategoryModalOpen, setAddCategoryModalOpen] = useState<boolean>(false);
+  const [newCategoryName, setNewCategoryName] = useState<string>("");
+  const [newCategoryCode, setNewCategoryCode] = useState<string>("");
+  const [newCategoryDesc, setNewCategoryDesc] = useState<string>("");
+  const [creatingCategory, setCreatingCategory] = useState<boolean>(false);
+  const [createCategoryError, setCreateCategoryError] = useState<string | null>(null);
 
 
   // Images state (min 3 images required)
@@ -268,6 +277,36 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
       console.error("Failed to fetch categories:", err);
     } finally {
       setLoadingCategories(false);
+    }
+  };
+
+  const handleCreateCategory = async () => {
+    setCreateCategoryError(null);
+    if (!newCategoryName.trim()) {
+      setCreateCategoryError("Category Name is required.");
+      return;
+    }
+    const code = newCategoryCode.trim() || newCategoryName.trim().toUpperCase().replace(/\s+/g, "_");
+    setCreatingCategory(true);
+    try {
+      const res = await ProductService.createCategory({
+        name: newCategoryName.trim(),
+        code: code,
+        description: newCategoryDesc.trim() || undefined,
+      });
+      if (res.data) {
+        setCategories((prev) => [...prev, res.data]);
+        setCategoryId(res.data.id);
+        setAddCategoryModalOpen(false);
+        setNewCategoryName("");
+        setNewCategoryCode("");
+        setNewCategoryDesc("");
+      }
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || "Failed to create category.";
+      setCreateCategoryError(msg);
+    } finally {
+      setCreatingCategory(false);
     }
   };
 
@@ -504,929 +543,1008 @@ export const AddEditProductOverlay: React.FC<AddEditProductOverlayProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      {/* Hidden File Inputs */}
-      <input
-        type="file"
-        accept="image/*"
-        multiple
-        ref={imageInputRef}
-        style={{ display: "none" }}
-        onChange={(e) => {
-          if (e.target.files) {
-            handleImageFilesSelected(e.target.files);
-            e.target.value = "";
-          }
-        }}
-      />
-      <input
-        type="file"
-        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-        ref={catalogInputRef}
-        style={{ display: "none" }}
-        onChange={(e) => {
-          if (e.target.files && e.target.files[0]) {
-            handleCatalogFileSelected(e.target.files[0]);
-            e.target.value = "";
-          }
-        }}
-      />
-      <input
-        type="file"
-        accept=".pdf"
-        ref={labManualInputRef}
-        style={{ display: "none" }}
-        onChange={(e) => {
-          if (e.target.files && e.target.files[0]) {
-            handleLabManualFileSelected(e.target.files[0]);
-            e.target.value = "";
-          }
-        }}
-      />
-      <input
-        type="file"
-        accept="video/*,.mp4,.webm,.mov"
-        ref={demoVideoInputRef}
-        style={{ display: "none" }}
-        onChange={(e) => {
-          if (e.target.files && e.target.files[0]) {
-            handleDemoVideoFileSelected(e.target.files[0]);
-            e.target.value = "";
-          }
-        }}
-      />
+    <>
+      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+        {/* Hidden File Inputs */}
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          ref={imageInputRef}
+          style={{ display: "none" }}
+          onChange={(e) => {
+            if (e.target.files) {
+              handleImageFilesSelected(e.target.files);
+              e.target.value = "";
+            }
+          }}
+        />
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+          ref={catalogInputRef}
+          style={{ display: "none" }}
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              handleCatalogFileSelected(e.target.files[0]);
+              e.target.value = "";
+            }
+          }}
+        />
+        <input
+          type="file"
+          accept=".pdf"
+          ref={labManualInputRef}
+          style={{ display: "none" }}
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              handleLabManualFileSelected(e.target.files[0]);
+              e.target.value = "";
+            }
+          }}
+        />
+        <input
+          type="file"
+          accept="video/*,.mp4,.webm,.mov"
+          ref={demoVideoInputRef}
+          style={{ display: "none" }}
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              handleDemoVideoFileSelected(e.target.files[0]);
+              e.target.value = "";
+            }
+          }}
+        />
 
-      <DialogTitle
-        sx={{
-          m: 0,
-          p: 2.5,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          bgcolor: THEME.white,
-          borderBottom: `1px solid ${THEME.border}`,
-        }}
-      >
-        <Box display="flex" alignItems="center" gap={1}>
-          <Typography fontSize={FONTSIZE.large} fontWeight={700} color={THEME.textPrimary}>
-            {productToEdit ? "Edit Product" : "Add New Product"}
-          </Typography>
-        </Box>
-        <IconButton onClick={onClose} size="small" sx={{ color: THEME.textSecondary }}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-
-      {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: "divider", bgcolor: THEME.white, px: 2 }}>
-        <Tabs
-          value={tabIndex}
-          onChange={(_, val) => setTabIndex(val)}
-          variant="scrollable"
-          scrollButtons="auto"
-          textColor="primary"
-          indicatorColor="primary"
+        <DialogTitle
+          sx={{
+            m: 0,
+            p: 2.5,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            bgcolor: theme.paperBg,
+            borderBottom: `1px solid ${THEME.border}`,
+          }}
         >
-          <Tab label="1. Basic Info & Pricing" />
-          <Tab
-            label={
-              <Box display="flex" alignItems="center" gap={0.8}>
-                <span>2. Images & E-Commerce</span>
-                {images.length < 3 ? (
-                  <Chip
-                    label={`${images.length}/3`}
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography fontSize={FONTSIZE.large} fontWeight={700} color={THEME.textPrimary}>
+              {productToEdit ? "Edit Product" : "Add New Product"}
+            </Typography>
+          </Box>
+          <IconButton onClick={onClose} size="small" sx={{ color: THEME.textSecondary }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        {/* Tabs */}
+        <Box sx={{ borderBottom: 1, borderColor: "divider", bgcolor: theme.paperBg, px: 2 }}>
+          <Tabs
+            value={tabIndex}
+            onChange={(_, val) => setTabIndex(val)}
+            variant="scrollable"
+            scrollButtons="auto"
+            textColor="primary"
+            indicatorColor="primary"
+          >
+            <Tab label="1. Basic Info & Pricing" />
+            <Tab
+              label={
+                <Box display="flex" alignItems="center" gap={0.8}>
+                  <span>2. Images & E-Commerce</span>
+                  {images.length < 3 ? (
+                    <Chip
+                      label={`${images.length}/3`}
+                      size="small"
+                      color="error"
+                      sx={{ height: 20, fontSize: 11, fontWeight: 700 }}
+                    />
+                  ) : (
+                    <Chip
+                      label={`${images.length}`}
+                      size="small"
+                      color="success"
+                      sx={{ height: 20, fontSize: 11, fontWeight: 700 }}
+                    />
+                  )}
+                </Box>
+              }
+            />
+            <Tab label="3. Specifications & Dimensions" />
+            <Tab label="4. Warranty & Datasheet" />
+            <Tab label="5. Lab Manual & Demo Video" />
+          </Tabs>
+        </Box>
+
+        <DialogContent sx={{ p: 3, bgcolor: theme.isDark ? theme.paperBg : THEME.slate50 }}>
+          {errorMsg && (
+            <Alert severity="error" sx={{ mb: 2.5 }} onClose={() => setErrorMsg(null)}>
+              {errorMsg}
+            </Alert>
+          )}
+
+          {/* Tab 0: Basic Info */}
+          {tabIndex === 0 && (
+            <Grid container spacing={2.5}>
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  label="Product ID / SKU *"
+                  value={productId}
+                  onChange={(e) => setProductId(e.target.value)}
+                  placeholder="e.g. PRD-1001"
+                  disabled={Boolean(productToEdit)}
+                  helperText="Unique identifier for the product"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  label="Product Name *"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  placeholder="e.g. Digital Oscilloscope 100MHz"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.5}>
+                  <Typography fontSize={13} fontWeight={600} color={THEME.textPrimary}>
+                    Category *
+                  </Typography>
+                  <CustomButton
+                    variant="text"
                     size="small"
+                    startIcon={<AddIcon fontSize="small" />}
+                    onClick={() => setAddCategoryModalOpen(true)}
+                    sx={{ p: 0, minWidth: "auto", fontSize: 12, textTransform: "none" }}
+                  >
+                    + Add Category
+                  </CustomButton>
+                </Box>
+                <CustomInput
+                  fullWidth
+                  select
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(Number(e.target.value))}
+                  disabled={loadingCategories}
+                >
+                  {categories.map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name} ({cat.code})
+                    </MenuItem>
+                  ))}
+                </CustomInput>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  label="Price (₹) *"
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="e.g. 25000"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  label="Stock Quantity *"
+                  type="number"
+                  value={stockQuantity}
+                  onChange={(e) => setStockQuantity(e.target.value)}
+                  placeholder="e.g. 15"
+                  helperText="If stock is 0, status automatically switches to OUT_OF_STOCK"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  label="HSN Code"
+                  value={hsnCode}
+                  onChange={(e) => setHsnCode(e.target.value)}
+                  placeholder="e.g. 8542.31.00"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  label="Model Number"
+                  value={modelNumber}
+                  onChange={(e) => setModelNumber(e.target.value)}
+                  placeholder="e.g. MOD-9000X"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  select
+                  label="Status *"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as ProductStatus)}
+                  helperText={
+                    status === "ACTIVE"
+                      ? "Active products are visible and reflected on the E-Commerce Store catalog."
+                      : "Hidden / Draft state."
+                  }
+                >
+                  <MenuItem value="ACTIVE">ACTIVE (Reflected on E-Commerce)</MenuItem>
+                  <MenuItem value="INACTIVE">INACTIVE</MenuItem>
+                  <MenuItem value="OUTOFSTOCK">OUT OF STOCK</MenuItem>
+                  <MenuItem value="DISCONTINUED">DISCONTINUED</MenuItem>
+                </CustomInput>
+              </Grid>
+              <Grid item xs={12}>
+                <CustomInput
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Product Description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe product key features, overview, and applications..."
+                />
+              </Grid>
+            </Grid>
+          )}
+
+          {/* Tab 1: Images & E-Commerce */}
+          {tabIndex === 1 && (
+            <Box display="flex" flexDirection="column" gap={2.5}>
+              <Alert
+                severity={images.length >= 3 ? "success" : "warning"}
+                icon={images.length >= 3 ? <CheckCircleIcon /> : <WarningIcon />}
+              >
+                Product image upload requires a <strong>minimum of 3 images</strong> for catalog & e-commerce presentation.
+                {" "}Current status: <strong>{images.length} / 3 uploaded</strong>.
+              </Alert>
+
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                  Product Images ({images.length})
+                </Typography>
+                {images.length < 3 && (
+                  <Chip
+                    label="Minimum 3 Images Required"
                     color="error"
-                    sx={{ height: 20, fontSize: 11, fontWeight: 700 }}
-                  />
-                ) : (
-                  <Chip
-                    label={`${images.length}`}
+                    variant="outlined"
                     size="small"
-                    color="success"
-                    sx={{ height: 20, fontSize: 11, fontWeight: 700 }}
+                    sx={{ fontWeight: 600 }}
                   />
                 )}
               </Box>
-            }
-          />
-          <Tab label="3. Specifications & Dimensions" />
-          <Tab label="4. Warranty & Datasheet" />
-          <Tab label="5. Lab Manual & Demo Video" />
-        </Tabs>
-      </Box>
 
-      <DialogContent sx={{ p: 3, bgcolor: "#fafafa" }}>
-        {errorMsg && (
-          <Alert severity="error" sx={{ mb: 2.5 }} onClose={() => setErrorMsg(null)}>
-            {errorMsg}
-          </Alert>
-        )}
-
-        {/* Tab 0: Basic Info */}
-        {tabIndex === 0 && (
-          <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                label="Product ID / SKU *"
-                value={productId}
-                onChange={(e) => setProductId(e.target.value)}
-                placeholder="e.g. PRD-1001"
-                disabled={Boolean(productToEdit)}
-                helperText="Unique identifier for the product"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                label="Product Name *"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                placeholder="e.g. Digital Oscilloscope 100MHz"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                select
-                label="Category *"
-                value={categoryId}
-                onChange={(e) => setCategoryId(Number(e.target.value))}
-                disabled={loadingCategories}
-              >
-                {categories.map((cat) => (
-                  <MenuItem key={cat.id} value={cat.id}>
-                    {cat.name} ({cat.code})
-                  </MenuItem>
-                ))}
-              </CustomInput>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                label="Price (₹) *"
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="e.g. 25000"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                label="Stock Quantity *"
-                type="number"
-                value={stockQuantity}
-                onChange={(e) => setStockQuantity(e.target.value)}
-                placeholder="e.g. 15"
-                helperText="If stock is 0, status automatically switches to OUT_OF_STOCK"
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                label="HSN Code"
-                value={hsnCode}
-                onChange={(e) => setHsnCode(e.target.value)}
-                placeholder="e.g. 8542.31.00"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                label="Model Number"
-                value={modelNumber}
-                onChange={(e) => setModelNumber(e.target.value)}
-                placeholder="e.g. MOD-9000X"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                select
-                label="Status *"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ProductStatus)}
-                helperText={
-                  status === "ACTIVE"
-                    ? "Active products are visible and reflected on the E-Commerce Store catalog."
-                    : "Hidden / Draft state."
-                }
-              >
-                <MenuItem value="ACTIVE">ACTIVE (Reflected on E-Commerce)</MenuItem>
-                <MenuItem value="INACTIVE">INACTIVE</MenuItem>
-                <MenuItem value="OUTOFSTOCK">OUT OF STOCK</MenuItem>
-                <MenuItem value="DISCONTINUED">DISCONTINUED</MenuItem>
-              </CustomInput>
-            </Grid>
-            <Grid item xs={12}>
-              <CustomInput
-                fullWidth
-                multiline
-                rows={3}
-                label="Product Description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe product key features, overview, and applications..."
-              />
-            </Grid>
-          </Grid>
-        )}
-
-        {/* Tab 1: Images & E-Commerce */}
-        {tabIndex === 1 && (
-          <Box display="flex" flexDirection="column" gap={2.5}>
-            <Alert
-              severity={images.length >= 3 ? "success" : "warning"}
-              icon={images.length >= 3 ? <CheckCircleIcon /> : <WarningIcon />}
-            >
-              Product image upload requires a <strong>minimum of 3 images</strong> for catalog & e-commerce presentation.
-              {" "}Current status: <strong>{images.length} / 3 uploaded</strong>.
-            </Alert>
-
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
-                Product Images ({images.length})
-              </Typography>
-              {images.length < 3 && (
-                <Chip
-                  label="Minimum 3 Images Required"
-                  color="error"
-                  variant="outlined"
-                  size="small"
-                  sx={{ fontWeight: 600 }}
-                />
-              )}
-            </Box>
-
-            {/* Dropzone File Upload Placeholder */}
-            <Paper
-              elevation={0}
-              onClick={() => !uploadingImages && imageInputRef.current?.click()}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragOverImage(true);
-              }}
-              onDragLeave={() => setIsDragOverImage(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setIsDragOverImage(false);
-                if (e.dataTransfer.files && !uploadingImages) {
-                  handleImageFilesSelected(e.dataTransfer.files);
-                }
-              }}
-              sx={{
-                p: 4,
-                borderRadius: 3,
-                border: `2px dashed ${isDragOverImage
+              {/* Dropzone File Upload Placeholder */}
+              <Paper
+                elevation={0}
+                onClick={() => !uploadingImages && imageInputRef.current?.click()}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragOverImage(true);
+                }}
+                onDragLeave={() => setIsDragOverImage(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragOverImage(false);
+                  if (e.dataTransfer.files && !uploadingImages) {
+                    handleImageFilesSelected(e.dataTransfer.files);
+                  }
+                }}
+                sx={{
+                  p: 4,
+                  borderRadius: 3,
+                  border: `2px dashed ${isDragOverImage
                     ? THEME.primary
                     : images.length < 3
-                      ? "#ef4444"
-                      : "#3b82f6"
-                  }`,
-                bgcolor: isDragOverImage
-                  ? `${THEME.primary}0D`
-                  : images.length < 3
-                    ? "#fef2f2"
-                    : "#f0f9ff",
-                textAlign: "center",
-                cursor: uploadingImages ? "wait" : "pointer",
-                transition: "all 0.2s ease-in-out",
-                "&:hover": {
-                  bgcolor: `${THEME.primary}0F`,
-                  borderColor: THEME.primary,
-                  transform: "translateY(-1px)",
-                },
-              }}
-            >
-              <Box display="flex" flexDirection="column" alignItems="center" gap={1.5}>
-                {uploadingImages ? (
-                  <>
-                    <CircularProgress size={40} color="primary" />
-                    <Typography fontSize={FONTSIZE.medium} fontWeight={600} color={THEME.primary}>
-                      Uploading images to file storage...
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <Box
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: "50%",
-                        bgcolor: images.length < 3 ? "#fee2e2" : "#e0f2fe",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <CloudUploadIcon
-                        sx={{
-                          fontSize: 32,
-                          color: images.length < 3 ? "#dc2626" : THEME.primary,
-                        }}
-                      />
-                    </Box>
-
-                    <Box>
-                      <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
-                        Click or drag images to upload
-                      </Typography>
-                      <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} mt={0.5}>
-                        Supports PNG, JPG, WEBP formats (Upload at least 3 high-quality product images)
-                      </Typography>
-                    </Box>
-
-                    <CustomButton
-                      variant="outlined"
-                      size="small"
-                      startIcon={<AddIcon />}
-                      sx={{
-                        mt: 1,
-                        borderRadius: 2,
-                        textTransform: "none",
-                        fontWeight: 600,
-                        borderColor: THEME.primary,
-                        color: THEME.primary,
-                      }}
-                    >
-                      Select Image Files
-                    </CustomButton>
-                  </>
-                )}
-              </Box>
-            </Paper>
-
-            {/* Fallback URL Input */}
-            <Box display="flex" gap={1.5} alignItems="center">
-              <CustomInput
-                fullWidth
-                size="small"
-                label="Or paste Image URL"
-                value={newImageUrl}
-                onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="https://example.com/images/product.jpg"
-              />
-              <CustomButton
-                variant="contained"
-                onClick={handleAddUrlImage}
-                startIcon={<AddIcon />}
-                sx={{ bgcolor: THEME.primary, flexShrink: 0 }}
+                      ? THEME.red
+                      : THEME.blue
+                    }`,
+                  bgcolor: isDragOverImage
+                    ? `${THEME.primary}0D`
+                    : images.length < 3
+                      ? THEME.redLight
+                      : THEME.skyLight,
+                  textAlign: "center",
+                  cursor: uploadingImages ? "wait" : "pointer",
+                  transition: "all 0.2s ease-in-out",
+                  "&:hover": {
+                    bgcolor: `${THEME.primary}0F`,
+                    borderColor: THEME.primary,
+                    transform: "translateY(-1px)",
+                  },
+                }}
               >
-                Add URL
-              </CustomButton>
-            </Box>
-
-            {/* Images Grid */}
-            {images.length > 0 && (
-              <Grid container spacing={2}>
-                {images.map((imgUrl, idx) => (
-                  <Grid item xs={12} sm={4} key={idx}>
-                    <Paper
-                      elevation={0}
-                      sx={{
-                        p: 1.5,
-                        borderRadius: 2,
-                        border: `1px solid ${THEME.border}`,
-                        bgcolor: THEME.white,
-                        position: "relative",
-                      }}
-                    >
+                <Box display="flex" flexDirection="column" alignItems="center" gap={1.5}>
+                  {uploadingImages ? (
+                    <>
+                      <CircularProgress size={40} color="primary" />
+                      <Typography fontSize={FONTSIZE.medium} fontWeight={600} color={THEME.primary}>
+                        Uploading images to file storage...
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
                       <Box
-                        component="img"
-                        src={imgUrl}
-                        alt={`Product image ${idx + 1}`}
                         sx={{
-                          width: "100%",
-                          height: 140,
-                          objectFit: "cover",
-                          borderRadius: 1.5,
-                          mb: 1,
+                          width: 56,
+                          height: 56,
+                          borderRadius: "50%",
+                          bgcolor: images.length < 3 ? THEME.redLight : THEME.skyLight,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
-                        onError={(e: any) => {
-                          e.target.src =
-                            "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80";
+                      >
+                        <CloudUploadIcon
+                          sx={{
+                            fontSize: 32,
+                            color: images.length < 3 ? THEME.redDark : THEME.primary,
+                          }}
+                        />
+                      </Box>
+
+                      <Box>
+                        <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                          Click or drag images to upload
+                        </Typography>
+                        <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} mt={0.5}>
+                          Supports PNG, JPG, WEBP formats (Upload at least 3 high-quality product images)
+                        </Typography>
+                      </Box>
+
+                      <CustomButton
+                        variant="outlined"
+                        size="small"
+                        startIcon={<AddIcon />}
+                        sx={{
+                          mt: 1,
+                          borderRadius: 2,
+                          textTransform: "none",
+                          fontWeight: 600,
+                          borderColor: THEME.primary,
+                          color: THEME.primary,
                         }}
-                      />
-                      <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Box display="flex" alignItems="center" gap={1}>
-                          {idx === 0 && (
-                            <Chip label="Primary" size="small" color="primary" sx={{ height: 20, fontSize: 10 }} />
+                      >
+                        Select Image Files
+                      </CustomButton>
+                    </>
+                  )}
+                </Box>
+              </Paper>
+
+              {/* Fallback URL Input */}
+              <Box display="flex" gap={1.5} alignItems="center">
+                <CustomInput
+                  fullWidth
+                  size="small"
+                  label="Or paste Image URL"
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  placeholder="https://example.com/images/product.jpg"
+                />
+                <CustomButton
+                  variant="contained"
+                  onClick={handleAddUrlImage}
+                  startIcon={<AddIcon />}
+                  sx={{ bgcolor: THEME.primary, flexShrink: 0 }}
+                >
+                  Add URL
+                </CustomButton>
+              </Box>
+
+              {/* Images Grid */}
+              {images.length > 0 && (
+                <Grid container spacing={2}>
+                  {images.map((imgUrl, idx) => (
+                    <Grid item xs={12} sm={4} key={idx}>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          p: 1.5,
+                          borderRadius: 2,
+                          border: `1px solid ${THEME.border}`,
+                          bgcolor: THEME.white,
+                          position: "relative",
+                        }}
+                      >
+                        <Box
+                          component="img"
+                          src={imgUrl}
+                          alt={`Product image ${idx + 1}`}
+                          sx={{
+                            width: "100%",
+                            height: 140,
+                            objectFit: "cover",
+                            borderRadius: 1.5,
+                            mb: 1,
+                          }}
+                          onError={(e: any) => {
+                            e.target.src =
+                              "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80";
+                          }}
+                        />
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                          <Box display="flex" alignItems="center" gap={1}>
+                            {idx === 0 && (
+                              <Chip label="Primary" size="small" color="primary" sx={{ height: 20, fontSize: 10 }} />
+                            )}
+                            <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} noWrap>
+                              Image #{idx + 1}
+                            </Typography>
+                          </Box>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleRemoveImage(idx)}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+            </Box>
+          )}
+
+          {/* Tab 2: Specs & Dimensions */}
+          {tabIndex === 2 && (
+            <Box display="flex" flexDirection="column" gap={3}>
+              {/* Dynamic Specifications */}
+              <Box>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={1.5}>
+                  <Typography fontSize={FONTSIZE.medium} fontWeight={700}>
+                    Technical Specifications (Key - Value Pairs)
+                  </Typography>
+                  <CustomButton size="small" startIcon={<AddIcon />} onClick={handleAddSpecRow}>
+                    Add Specification Row
+                  </CustomButton>
+                </Box>
+
+                {specs.map((row, idx) => (
+                  <Box key={idx} display="flex" gap={1.5} mb={1.5} alignItems="center">
+                    <CustomInput
+                      size="small"
+                      label="Specification Key"
+                      value={row.key}
+                      onChange={(e) => handleSpecChange(idx, "key", e.target.value)}
+                      placeholder="e.g. Frequency Range"
+                      sx={{ flex: 1 }}
+                    />
+                    <CustomInput
+                      size="small"
+                      label="Specification Value"
+                      value={row.value}
+                      onChange={(e) => handleSpecChange(idx, "value", e.target.value)}
+                      placeholder="e.g. 0.1Hz to 20MHz"
+                      sx={{ flex: 1.5 }}
+                    />
+                    <IconButton size="small" color="error" onClick={() => handleRemoveSpecRow(idx)}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Box>
+
+              <Divider />
+
+              {/* Dimensions & Weight */}
+              <Box>
+                <Typography fontSize={FONTSIZE.medium} fontWeight={700} mb={1.5}>
+                  Dimensions & Shipping Weight
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={6} sm={3}>
+                    <CustomInput
+                      fullWidth
+                      size="small"
+                      label="Length"
+                      type="number"
+                      value={length}
+                      onChange={(e) => setLength(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <CustomInput
+                      fullWidth
+                      size="small"
+                      label="Width"
+                      type="number"
+                      value={width}
+                      onChange={(e) => setWidth(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <CustomInput
+                      fullWidth
+                      size="small"
+                      label="Height"
+                      type="number"
+                      value={height}
+                      onChange={(e) => setHeight(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <CustomInput
+                      fullWidth
+                      size="small"
+                      label="Weight"
+                      type="number"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+            </Box>
+          )}
+
+          {/* Tab 3: Warranty & Documents */}
+          {tabIndex === 3 && (
+            <Grid container spacing={2.5}>
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  label="Warranty Period"
+                  value={warrantyPeriod}
+                  onChange={(e) => setWarrantyPeriod(e.target.value)}
+                  placeholder="e.g. 1 Year / 2 Years"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomInput
+                  fullWidth
+                  label="Service Type"
+                  value={serviceType}
+                  onChange={(e) => setServiceType(e.target.value)}
+                  placeholder="e.g. Onsite Support / Carry-in"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <CustomInput
+                  fullWidth
+                  multiline
+                  rows={2}
+                  label="Warranty Terms"
+                  value={warrantyTerms}
+                  onChange={(e) => setWarrantyTerms(e.target.value)}
+                  placeholder="Detail warranty coverage and replacement policies..."
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Divider sx={{ my: 1 }} />
+                <Typography fontSize={FONTSIZE.medium} fontWeight={700} my={1}>
+                  Catalog Document / Datasheet Upload
+                </Typography>
+              </Grid>
+
+              {/* Catalog Upload Dropzone / Preview */}
+              <Grid item xs={12}>
+                {catalogUrl ? (
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2.5,
+                      borderRadius: 2,
+                      border: `1px solid ${THEME.border}`,
+                      bgcolor: THEME.white,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 2,
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" justifyContent="space-between">
+                      <Box display="flex" alignItems="center" gap={2}>
+                        <Box
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: 2,
+                            bgcolor: THEME.blueLight,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: THEME.primary,
+                          }}
+                        >
+                          {catalogFileType === "pdf" ? (
+                            <PictureAsPdfIcon sx={{ fontSize: 28, color: THEME.redDark }} />
+                          ) : (
+                            <DescriptionIcon sx={{ fontSize: 28 }} />
                           )}
-                          <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} noWrap>
-                            Image #{idx + 1}
+                        </Box>
+                        <Box>
+                          <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                            {catalogTitle || "Catalog Document"}
+                          </Typography>
+                          <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary}>
+                            {catalogFileName || "Uploaded File"} • {catalogFileType.toUpperCase()} Format
                           </Typography>
                         </Box>
-                        <IconButton
+                      </Box>
+
+                      <Box display="flex" gap={1}>
+                        <CustomButton
                           size="small"
+                          variant="outlined"
+                          onClick={() => catalogInputRef.current?.click()}
+                        >
+                          Replace File
+                        </CustomButton>
+                        <IconButton
                           color="error"
-                          onClick={() => handleRemoveImage(idx)}
+                          onClick={() => {
+                            setCatalogUrl("");
+                            setCatalogTitle("");
+                            setCatalogFileName("");
+                          }}
                         >
                           <DeleteIcon fontSize="small" />
                         </IconButton>
                       </Box>
-                    </Paper>
-                  </Grid>
-                ))}
-              </Grid>
-            )}
-          </Box>
-        )}
+                    </Box>
 
-        {/* Tab 2: Specs & Dimensions */}
-        {tabIndex === 2 && (
-          <Box display="flex" flexDirection="column" gap={3}>
-            {/* Dynamic Specifications */}
-            <Box>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1.5}>
-                <Typography fontSize={FONTSIZE.medium} fontWeight={700}>
-                  Technical Specifications (Key - Value Pairs)
+                    <CustomInput
+                      fullWidth
+                      size="small"
+                      label="Catalog Title"
+                      value={catalogTitle}
+                      onChange={(e) => setCatalogTitle(e.target.value)}
+                      placeholder="e.g. Technical Datasheet 2026"
+                    />
+                  </Paper>
+                ) : (
+                  <Paper
+                    elevation={0}
+                    onClick={() => !uploadingCatalog && catalogInputRef.current?.click()}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDragOverCatalog(true);
+                    }}
+                    onDragLeave={() => setIsDragOverCatalog(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDragOverCatalog(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0] && !uploadingCatalog) {
+                        handleCatalogFileSelected(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    sx={{
+                      p: 3.5,
+                      borderRadius: 2.5,
+                      border: `2px dashed ${isDragOverCatalog ? THEME.primary : THEME.slate400}`,
+                      bgcolor: isDragOverCatalog ? `${THEME.primary}0D` : THEME.slate50,
+                      textAlign: "center",
+                      cursor: uploadingCatalog ? "wait" : "pointer",
+                      transition: "all 0.2s ease-in-out",
+                      "&:hover": {
+                        bgcolor: `${THEME.primary}0F`,
+                        borderColor: THEME.primary,
+                      },
+                    }}
+                  >
+                    <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                      {uploadingCatalog ? (
+                        <>
+                          <CircularProgress size={36} color="primary" />
+                          <Typography fontSize={FONTSIZE.medium} fontWeight={600} color={THEME.primary}>
+                            Uploading catalog document to storage...
+                          </Typography>
+                        </>
+                      ) : (
+                        <>
+                          <InsertDriveFileIcon sx={{ fontSize: 40, color: THEME.textSecondary }} />
+                          <Typography fontSize={FONTSIZE.medium} fontWeight={600} color={THEME.textPrimary}>
+                            Click or drag catalog document (PDF / Doc) to upload
+                          </Typography>
+                          <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary}>
+                            Supports PDF, DOC, DOCX, PNG, JPG
+                          </Typography>
+                        </>
+                      )}
+                    </Box>
+                  </Paper>
+                )}
+              </Grid>
+            </Grid>
+          )}
+
+          {/* Tab 4: Lab Manual & Demo Video Resources */}
+          {tabIndex === 4 && (
+            <Box display="flex" flexDirection="column" gap={3}>
+              {/* Header & Explanation */}
+              <Box>
+                <Typography fontSize={FONTSIZE.large} fontWeight={700} color={THEME.textPrimary}>
+                  Lab Manual & Demo Video Resources (Optional)
                 </Typography>
-                <CustomButton size="small" startIcon={<AddIcon />} onClick={handleAddSpecRow}>
-                  Add Specification Row
-                </CustomButton>
+                <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} mt={0.5}>
+                  Upload optional learning materials and video demonstrations for laboratory instruction and equipment training.
+                  In future releases, dedicated portals for Lab Manuals and Demo Videos will connect directly to these uploaded assets.
+                </Typography>
               </Box>
 
-              {specs.map((row, idx) => (
-                <Box key={idx} display="flex" gap={1.5} mb={1.5} alignItems="center">
-                  <CustomInput
-                    size="small"
-                    label="Specification Key"
-                    value={row.key}
-                    onChange={(e) => handleSpecChange(idx, "key", e.target.value)}
-                    placeholder="e.g. Frequency Range"
-                    sx={{ flex: 1 }}
-                  />
-                  <CustomInput
-                    size="small"
-                    label="Specification Value"
-                    value={row.value}
-                    onChange={(e) => handleSpecChange(idx, "value", e.target.value)}
-                    placeholder="e.g. 0.1Hz to 20MHz"
-                    sx={{ flex: 1.5 }}
-                  />
-                  <IconButton size="small" color="error" onClick={() => handleRemoveSpecRow(idx)}>
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              ))}
-            </Box>
+              <Divider />
 
-            <Divider />
-
-            {/* Dimensions & Weight */}
-            <Box>
-              <Typography fontSize={FONTSIZE.medium} fontWeight={700} mb={1.5}>
-                Dimensions & Shipping Weight
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={6} sm={3}>
-                  <CustomInput
-                    fullWidth
-                    size="small"
-                    label="Length"
-                    type="number"
-                    value={length}
-                    onChange={(e) => setLength(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <CustomInput
-                    fullWidth
-                    size="small"
-                    label="Width"
-                    type="number"
-                    value={width}
-                    onChange={(e) => setWidth(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <CustomInput
-                    fullWidth
-                    size="small"
-                    label="Height"
-                    type="number"
-                    value={height}
-                    onChange={(e) => setHeight(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <CustomInput
-                    fullWidth
-                    size="small"
-                    label="Weight"
-                    type="number"
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-        )}
-
-        {/* Tab 3: Warranty & Documents */}
-        {tabIndex === 3 && (
-          <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                label="Warranty Period"
-                value={warrantyPeriod}
-                onChange={(e) => setWarrantyPeriod(e.target.value)}
-                placeholder="e.g. 1 Year / 2 Years"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomInput
-                fullWidth
-                label="Service Type"
-                value={serviceType}
-                onChange={(e) => setServiceType(e.target.value)}
-                placeholder="e.g. Onsite Support / Carry-in"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <CustomInput
-                fullWidth
-                multiline
-                rows={2}
-                label="Warranty Terms"
-                value={warrantyTerms}
-                onChange={(e) => setWarrantyTerms(e.target.value)}
-                placeholder="Detail warranty coverage and replacement policies..."
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Divider sx={{ my: 1 }} />
-              <Typography fontSize={FONTSIZE.medium} fontWeight={700} my={1}>
-                Catalog Document / Datasheet Upload
-              </Typography>
-            </Grid>
-
-            {/* Catalog Upload Dropzone / Preview */}
-            <Grid item xs={12}>
-              {catalogUrl ? (
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 2.5,
-                    borderRadius: 2,
-                    border: `1px solid ${THEME.border}`,
-                    bgcolor: THEME.white,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                  }}
-                >
-                  <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Box display="flex" alignItems="center" gap={2}>
-                      <Box
-                        sx={{
-                          width: 48,
-                          height: 48,
-                          borderRadius: 2,
-                          bgcolor: "#eff6ff",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: THEME.primary,
-                        }}
-                      >
-                        {catalogFileType === "pdf" ? (
-                          <PictureAsPdfIcon sx={{ fontSize: 28, color: "#dc2626" }} />
-                        ) : (
-                          <DescriptionIcon sx={{ fontSize: 28 }} />
-                        )}
-                      </Box>
-                      <Box>
-                        <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
-                          {catalogTitle || "Catalog Document"}
-                        </Typography>
-                        <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary}>
-                          {catalogFileName || "Uploaded File"} • {catalogFileType.toUpperCase()} Format
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    <Box display="flex" gap={1}>
-                      <CustomButton
-                        size="small"
-                        variant="outlined"
-                        onClick={() => catalogInputRef.current?.click()}
-                      >
-                        Replace File
-                      </CustomButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => {
-                          setCatalogUrl("");
-                          setCatalogTitle("");
-                          setCatalogFileName("");
-                        }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
+              {/* Section 1: Lab Manual PDF Upload */}
+              <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: theme.paperBg }}>
+                <Box display="flex" alignItems="center" gap={1.5} mb={2}>
+                  <MenuBookIcon sx={{ color: THEME.primary, fontSize: 24 }} />
+                  <Box>
+                    <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                      1. Lab Manual Document (PDF)
+                    </Typography>
+                    <Typography fontSize={11} color={THEME.textSecondary}>
+                      Optional experiment guide & instruction manual for students & lab instructors (PDF format).
+                    </Typography>
                   </Box>
-
-                  <CustomInput
-                    fullWidth
-                    size="small"
-                    label="Catalog Title"
-                    value={catalogTitle}
-                    onChange={(e) => setCatalogTitle(e.target.value)}
-                    placeholder="e.g. Technical Datasheet 2026"
-                  />
-                </Paper>
-              ) : (
-                <Paper
-                  elevation={0}
-                  onClick={() => !uploadingCatalog && catalogInputRef.current?.click()}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setIsDragOverCatalog(true);
-                  }}
-                  onDragLeave={() => setIsDragOverCatalog(false)}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setIsDragOverCatalog(false);
-                    if (e.dataTransfer.files && e.dataTransfer.files[0] && !uploadingCatalog) {
-                      handleCatalogFileSelected(e.dataTransfer.files[0]);
-                    }
-                  }}
-                  sx={{
-                    p: 3.5,
-                    borderRadius: 2.5,
-                    border: `2px dashed ${isDragOverCatalog ? THEME.primary : "#94a3b8"}`,
-                    bgcolor: isDragOverCatalog ? `${THEME.primary}0D` : "#f8fafc",
-                    textAlign: "center",
-                    cursor: uploadingCatalog ? "wait" : "pointer",
-                    transition: "all 0.2s ease-in-out",
-                    "&:hover": {
-                      bgcolor: `${THEME.primary}0F`,
-                      borderColor: THEME.primary,
-                    },
-                  }}
-                >
-                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                    {uploadingCatalog ? (
-                      <>
-                        <CircularProgress size={36} color="primary" />
-                        <Typography fontSize={FONTSIZE.medium} fontWeight={600} color={THEME.primary}>
-                          Uploading catalog document to storage...
-                        </Typography>
-                      </>
-                    ) : (
-                      <>
-                        <InsertDriveFileIcon sx={{ fontSize: 40, color: THEME.textSecondary }} />
-                        <Typography fontSize={FONTSIZE.medium} fontWeight={600} color={THEME.textPrimary}>
-                          Click or drag catalog document (PDF / Doc) to upload
-                        </Typography>
-                        <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary}>
-                          Supports PDF, DOC, DOCX, PNG, JPG
-                        </Typography>
-                      </>
-                    )}
-                  </Box>
-                </Paper>
-              )}
-            </Grid>
-          </Grid>
-        )}
-
-        {/* Tab 4: Lab Manual & Demo Video Resources */}
-        {tabIndex === 4 && (
-          <Box display="flex" flexDirection="column" gap={3}>
-            {/* Header & Explanation */}
-            <Box>
-              <Typography fontSize={FONTSIZE.large} fontWeight={700} color={THEME.textPrimary}>
-                Lab Manual & Demo Video Resources (Optional)
-              </Typography>
-              <Typography fontSize={FONTSIZE.small} color={THEME.textSecondary} mt={0.5}>
-                Upload optional learning materials and video demonstrations for laboratory instruction and equipment training.
-                In future releases, dedicated portals for Lab Manuals and Demo Videos will connect directly to these uploaded assets.
-              </Typography>
-            </Box>
-
-            <Divider />
-
-            {/* Section 1: Lab Manual PDF Upload */}
-            <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
-              <Box display="flex" alignItems="center" gap={1.5} mb={2}>
-                <MenuBookIcon sx={{ color: THEME.primary, fontSize: 24 }} />
-                <Box>
-                  <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
-                    1. Lab Manual Document (PDF)
-                  </Typography>
-                  <Typography fontSize={11} color={THEME.textSecondary}>
-                    Optional experiment guide & instruction manual for students & lab instructors (PDF format).
-                  </Typography>
                 </Box>
-              </Box>
 
-              {labManualUrl ? (
-                <Box display="flex" flexDirection="column" gap={2}>
-                  <Box display="flex" alignItems="center" justifyContent="space-between" p={2} borderRadius={2} bgcolor="#eff6ff" border="1px solid #bfdbfe">
-                    <Box display="flex" alignItems="center" gap={2}>
-                      <PictureAsPdfIcon sx={{ fontSize: 32, color: "#dc2626" }} />
-                      <Box>
-                        <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
-                          {labManualTitle || "Lab Manual PDF"}
-                        </Typography>
-                        <Typography fontSize={11} color={THEME.textSecondary}>
-                          File: {labManualFileName || "Uploaded PDF"} • PDF Format
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box display="flex" gap={1}>
-                      <CustomButton size="small" variant="outlined" component="a" href={labManualUrl} target="_blank" rel="noopener noreferrer">
-                        Preview PDF
-                      </CustomButton>
-                      <CustomButton size="small" variant="outlined" onClick={() => labManualInputRef.current?.click()}>
-                        Replace
-                      </CustomButton>
-                      <IconButton color="error" size="small" onClick={() => { setLabManualUrl(""); setLabManualTitle(""); setLabManualFileName(""); }}>
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
-                  </Box>
-
-                  <CustomInput
-                    fullWidth
-                    size="small"
-                    label="Lab Manual Display Title"
-                    value={labManualTitle}
-                    onChange={(e) => setLabManualTitle(e.target.value)}
-                    placeholder="e.g. Digital Electronics Lab Practical Manual v1.0"
-                  />
-                </Box>
-              ) : (
-                <Paper
-                  elevation={0}
-                  onClick={() => !uploadingLabManual && labManualInputRef.current?.click()}
-                  onDragOver={(e) => { e.preventDefault(); setIsDragOverLabManual(true); }}
-                  onDragLeave={() => setIsDragOverLabManual(false)}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setIsDragOverLabManual(false);
-                    if (e.dataTransfer.files && e.dataTransfer.files[0] && !uploadingLabManual) {
-                      handleLabManualFileSelected(e.dataTransfer.files[0]);
-                    }
-                  }}
-                  sx={{
-                    p: 3,
-                    borderRadius: 2,
-                    border: `2px dashed ${isDragOverLabManual ? THEME.primary : "#94a3b8"}`,
-                    bgcolor: isDragOverLabManual ? `${THEME.primary}0D` : "#f8fafc",
-                    textAlign: "center",
-                    cursor: uploadingLabManual ? "wait" : "pointer",
-                    "&:hover": { bgcolor: `${THEME.primary}0F`, borderColor: THEME.primary },
-                  }}
-                >
-                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                    {uploadingLabManual ? (
-                      <>
-                        <CircularProgress size={32} color="primary" />
-                        <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.primary}>
-                          Uploading Lab Manual PDF...
-                        </Typography>
-                      </>
-                    ) : (
-                      <>
-                        <PictureAsPdfIcon sx={{ fontSize: 36, color: "#dc2626" }} />
-                        <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.textPrimary}>
-                          Click or drag Lab Manual (PDF) to upload
-                        </Typography>
-                        <Typography fontSize={11} color={THEME.textSecondary}>
-                          Not mandatory. Upload PDF files for student practicals.
-                        </Typography>
-                      </>
-                    )}
-                  </Box>
-                </Paper>
-              )}
-            </Paper>
-
-            {/* Section 2: Demo Video Upload */}
-            <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
-              <Box display="flex" alignItems="center" gap={1.5} mb={2}>
-                <VideoLibraryIcon sx={{ color: THEME.primary, fontSize: 24 }} />
-                <Box>
-                  <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
-                    2. Product Demo Video (HTML5 Video)
-                  </Typography>
-                  <Typography fontSize={11} color={THEME.textSecondary}>
-                    Optional video demonstration of equipment setup and operation. Plays natively via built-in HTML5 player (no third-party platforms needed).
-                  </Typography>
-                </Box>
-              </Box>
-
-              {demoVideoUrl ? (
-                <Box display="flex" flexDirection="column" gap={2}>
-                  <Box p={2} borderRadius={2} bgcolor="#fafafa" border={`1px solid ${THEME.border}`}>
-                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={1.5}>
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <PlayCircleOutlineIcon sx={{ color: THEME.primary, fontSize: 24 }} />
-                        <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
-                          {demoVideoTitle || "Product Demo Video"}
-                        </Typography>
+                {labManualUrl ? (
+                  <Box display="flex" flexDirection="column" gap={2}>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" p={2} borderRadius={2} bgcolor={THEME.blueLight} border={`1px solid ${THEME.blueLight}`}>
+                      <Box display="flex" alignItems="center" gap={2}>
+                        <PictureAsPdfIcon sx={{ fontSize: 32, color: THEME.redDark }} />
+                        <Box>
+                          <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                            {labManualTitle || "Lab Manual PDF"}
+                          </Typography>
+                          <Typography fontSize={11} color={THEME.textSecondary}>
+                            File: {labManualFileName || "Uploaded PDF"} • PDF Format
+                          </Typography>
+                        </Box>
                       </Box>
                       <Box display="flex" gap={1}>
-                        <CustomButton size="small" variant="outlined" onClick={() => demoVideoInputRef.current?.click()}>
-                          Replace Video
+                        <CustomButton size="small" variant="outlined" component="a" href={labManualUrl} target="_blank" rel="noopener noreferrer">
+                          Preview PDF
                         </CustomButton>
-                        <IconButton color="error" size="small" onClick={() => { setDemoVideoUrl(""); setDemoVideoTitle(""); setDemoVideoFileName(""); }}>
+                        <CustomButton size="small" variant="outlined" onClick={() => labManualInputRef.current?.click()}>
+                          Replace
+                        </CustomButton>
+                        <IconButton color="error" size="small" onClick={() => { setLabManualUrl(""); setLabManualTitle(""); setLabManualFileName(""); }}>
                           <DeleteIcon fontSize="small" />
                         </IconButton>
                       </Box>
                     </Box>
 
-                    {/* Native HTML5 Video Player Preview */}
-                    <Box sx={{ width: "100%", borderRadius: 2, overflow: "hidden", bgcolor: "#000", border: "1px solid #334155" }}>
-                      <video controls src={demoVideoUrl} style={{ width: "100%", maxHeight: 260, display: "block" }}>
-                        Your browser does not support native HTML5 video playback.
-                      </video>
+                    <CustomInput
+                      fullWidth
+                      size="small"
+                      label="Lab Manual Display Title"
+                      value={labManualTitle}
+                      onChange={(e) => setLabManualTitle(e.target.value)}
+                      placeholder="e.g. Digital Electronics Lab Practical Manual v1.0"
+                    />
+                  </Box>
+                ) : (
+                  <Paper
+                    elevation={0}
+                    onClick={() => !uploadingLabManual && labManualInputRef.current?.click()}
+                    onDragOver={(e) => { e.preventDefault(); setIsDragOverLabManual(true); }}
+                    onDragLeave={() => setIsDragOverLabManual(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDragOverLabManual(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0] && !uploadingLabManual) {
+                        handleLabManualFileSelected(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    sx={{
+                      p: 3,
+                      borderRadius: 2,
+                      border: `2px dashed ${isDragOverLabManual ? THEME.primary : THEME.slate400}`,
+                      bgcolor: isDragOverLabManual ? `${THEME.primary}0D` : THEME.slate50,
+                      textAlign: "center",
+                      cursor: uploadingLabManual ? "wait" : "pointer",
+                      "&:hover": { bgcolor: `${THEME.primary}0F`, borderColor: THEME.primary },
+                    }}
+                  >
+                    <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                      {uploadingLabManual ? (
+                        <>
+                          <CircularProgress size={32} color="primary" />
+                          <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.primary}>
+                            Uploading Lab Manual PDF...
+                          </Typography>
+                        </>
+                      ) : (
+                        <>
+                          <PictureAsPdfIcon sx={{ fontSize: 36, color: THEME.redDark }} />
+                          <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.textPrimary}>
+                            Click or drag Lab Manual (PDF) to upload
+                          </Typography>
+                          <Typography fontSize={11} color={THEME.textSecondary}>
+                            Not mandatory. Upload PDF files for student practicals.
+                          </Typography>
+                        </>
+                      )}
                     </Box>
-                  </Box>
+                  </Paper>
+                )}
+              </Paper>
 
-                  <CustomInput
-                    fullWidth
-                    size="small"
-                    label="Demo Video Display Title"
-                    value={demoVideoTitle}
-                    onChange={(e) => setDemoVideoTitle(e.target.value)}
-                    placeholder="e.g. Oscilloscope Setup & Waveform Measurement Demo"
-                  />
+              {/* Section 2: Demo Video Upload */}
+              <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: theme.paperBg }}>
+                <Box display="flex" alignItems="center" gap={1.5} mb={2}>
+                  <VideoLibraryIcon sx={{ color: THEME.primary, fontSize: 24 }} />
+                  <Box>
+                    <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                      2. Product Demo Video (HTML5 Video)
+                    </Typography>
+                    <Typography fontSize={11} color={THEME.textSecondary}>
+                      Optional video demonstration of equipment setup and operation. Plays natively via built-in HTML5 player (no third-party platforms needed).
+                    </Typography>
+                  </Box>
                 </Box>
-              ) : (
-                <Paper
-                  elevation={0}
-                  onClick={() => !uploadingDemoVideo && demoVideoInputRef.current?.click()}
-                  onDragOver={(e) => { e.preventDefault(); setIsDragOverDemoVideo(true); }}
-                  onDragLeave={() => setIsDragOverDemoVideo(false)}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setIsDragOverDemoVideo(false);
-                    if (e.dataTransfer.files && e.dataTransfer.files[0] && !uploadingDemoVideo) {
-                      handleDemoVideoFileSelected(e.dataTransfer.files[0]);
-                    }
-                  }}
-                  sx={{
-                    p: 3,
-                    borderRadius: 2,
-                    border: `2px dashed ${isDragOverDemoVideo ? THEME.primary : "#94a3b8"}`,
-                    bgcolor: isDragOverDemoVideo ? `${THEME.primary}0D` : "#f8fafc",
-                    textAlign: "center",
-                    cursor: uploadingDemoVideo ? "wait" : "pointer",
-                    "&:hover": { bgcolor: `${THEME.primary}0F`, borderColor: THEME.primary },
-                  }}
-                >
-                  <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                    {uploadingDemoVideo ? (
-                      <>
-                        <CircularProgress size={32} color="primary" />
-                        <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.primary}>
-                          Uploading Demo Video file...
-                        </Typography>
-                      </>
-                    ) : (
-                      <>
-                        <PlayCircleOutlineIcon sx={{ fontSize: 36, color: THEME.primary }} />
-                        <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.textPrimary}>
-                          Click or drag Demo Video (MP4, WebM, MOV) to upload
-                        </Typography>
-                        <Typography fontSize={11} color={THEME.textSecondary}>
-                          Not mandatory. Plays directly in native video player without third-party platforms.
-                        </Typography>
-                      </>
-                    )}
-                  </Box>
-                </Paper>
-              )}
-            </Paper>
-          </Box>
-        )}
-      </DialogContent>
 
-      <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
-        <CustomButton onClick={onClose} variant="outlined" sx={{ borderRadius: 1.5 }} disabled={submitting}>
-          Cancel
-        </CustomButton>
-        <CustomButton
-          onClick={handleSubmit}
-          variant="contained"
-          sx={{ borderRadius: 1.5, bgcolor: THEME.primary, px: 3 }}
-          disabled={submitting}
-          startIcon={submitting ? <CircularProgress size={18} color="inherit" /> : null}
-        >
-          {submitting ? "Saving..." : productToEdit ? "Update Product" : "Save Product"}
-        </CustomButton>
-      </DialogActions>
-    </Dialog>
+                {demoVideoUrl ? (
+                  <Box display="flex" flexDirection="column" gap={2}>
+                    <Box p={2} borderRadius={2} bgcolor={THEME.slate50} border={`1px solid ${THEME.border}`}>
+                      <Box display="flex" alignItems="center" justifyContent="space-between" mb={1.5}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <PlayCircleOutlineIcon sx={{ color: THEME.primary, fontSize: 24 }} />
+                          <Typography fontSize={FONTSIZE.medium} fontWeight={700} color={THEME.textPrimary}>
+                            {demoVideoTitle || "Product Demo Video"}
+                          </Typography>
+                        </Box>
+                        <Box display="flex" gap={1}>
+                          <CustomButton size="small" variant="outlined" onClick={() => demoVideoInputRef.current?.click()}>
+                            Replace Video
+                          </CustomButton>
+                          <IconButton color="error" size="small" onClick={() => { setDemoVideoUrl(""); setDemoVideoTitle(""); setDemoVideoFileName(""); }}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </Box>
+
+                      {/* Native HTML5 Video Player Preview */}
+                      <Box sx={{ width: "100%", borderRadius: 2, overflow: "hidden", bgcolor: THEME.black, border: `1px solid ${THEME.slate700}` }}>
+                        <video controls src={demoVideoUrl} style={{ width: "100%", maxHeight: 260, display: "block" }}>
+                          Your browser does not support native HTML5 video playback.
+                        </video>
+                      </Box>
+                    </Box>
+
+                    <CustomInput
+                      fullWidth
+                      size="small"
+                      label="Demo Video Display Title"
+                      value={demoVideoTitle}
+                      onChange={(e) => setDemoVideoTitle(e.target.value)}
+                      placeholder="e.g. Oscilloscope Setup & Waveform Measurement Demo"
+                    />
+                  </Box>
+                ) : (
+                  <Paper
+                    elevation={0}
+                    onClick={() => !uploadingDemoVideo && demoVideoInputRef.current?.click()}
+                    onDragOver={(e) => { e.preventDefault(); setIsDragOverDemoVideo(true); }}
+                    onDragLeave={() => setIsDragOverDemoVideo(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDragOverDemoVideo(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0] && !uploadingDemoVideo) {
+                        handleDemoVideoFileSelected(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    sx={{
+                      p: 3,
+                      borderRadius: 2,
+                      border: `2px dashed ${isDragOverDemoVideo ? THEME.primary : THEME.slate400}`,
+                      bgcolor: isDragOverDemoVideo ? `${THEME.primary}0D` : THEME.slate50,
+                      textAlign: "center",
+                      cursor: uploadingDemoVideo ? "wait" : "pointer",
+                      "&:hover": { bgcolor: `${THEME.primary}0F`, borderColor: THEME.primary },
+                    }}
+                  >
+                    <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+                      {uploadingDemoVideo ? (
+                        <>
+                          <CircularProgress size={32} color="primary" />
+                          <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.primary}>
+                            Uploading Demo Video file...
+                          </Typography>
+                        </>
+                      ) : (
+                        <>
+                          <PlayCircleOutlineIcon sx={{ fontSize: 36, color: THEME.primary }} />
+                          <Typography fontSize={FONTSIZE.small} fontWeight={600} color={THEME.textPrimary}>
+                            Click or drag Demo Video (MP4, WebM, MOV) to upload
+                          </Typography>
+                          <Typography fontSize={11} color={THEME.textSecondary}>
+                            Not mandatory. Plays directly in native video player without third-party platforms.
+                          </Typography>
+                        </>
+                      )}
+                    </Box>
+                  </Paper>
+                )}
+              </Paper>
+            </Box>
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
+          <CustomButton onClick={onClose} variant="outlined" sx={{ borderRadius: 1.5 }} disabled={submitting}>
+            Cancel
+          </CustomButton>
+          <CustomButton
+            onClick={handleSubmit}
+            variant="contained"
+            sx={{ borderRadius: 1.5, bgcolor: THEME.primary, px: 3 }}
+            disabled={submitting}
+            startIcon={submitting ? <CircularProgress size={18} color="inherit" /> : null}
+          >
+            {submitting ? "Saving..." : productToEdit ? "Update Product" : "Save Product"}
+          </CustomButton>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add New Category Sub-Modal */}
+      <Dialog
+        open={addCategoryModalOpen}
+        onClose={() => !creatingCategory && setAddCategoryModalOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle sx={{ m: 0, p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Typography fontWeight={700} fontSize={FONTSIZE.large}>
+            Create New Category
+          </Typography>
+          <IconButton size="small" onClick={() => setAddCategoryModalOpen(false)} disabled={creatingCategory}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers sx={{ p: 2.5 }}>
+          {createCategoryError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {createCategoryError}
+            </Alert>
+          )}
+          <Box display="flex" flexDirection="column" gap={2}>
+            <CustomInput
+              fullWidth
+              label="Category Name *"
+              value={newCategoryName}
+              onChange={(e) => {
+                const val = e.target.value;
+                setNewCategoryName(val);
+                if (!newCategoryCode) {
+                  setNewCategoryCode(val.toUpperCase().replace(/\s+/g, "_"));
+                }
+              }}
+              placeholder="e.g. Test & Measurement"
+            />
+            <CustomInput
+              fullWidth
+              label="Category Code *"
+              value={newCategoryCode}
+              onChange={(e) => setNewCategoryCode(e.target.value.toUpperCase().replace(/\s+/g, "_"))}
+              placeholder="e.g. TEST_MEASUREMENT"
+              helperText="Unique identifier code for category"
+            />
+            <CustomInput
+              fullWidth
+              multiline
+              rows={2}
+              label="Description (Optional)"
+              value={newCategoryDesc}
+              onChange={(e) => setNewCategoryDesc(e.target.value)}
+              placeholder="Short description of this category..."
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <CustomButton variant="outlined" color="inherit" onClick={() => setAddCategoryModalOpen(false)} disabled={creatingCategory}>
+            Cancel
+          </CustomButton>
+          <CustomButton variant="contained" color="primary" onClick={handleCreateCategory} disabled={creatingCategory}>
+            {creatingCategory ? <CircularProgress size={20} color="inherit" /> : "Create Category"}
+          </CustomButton>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

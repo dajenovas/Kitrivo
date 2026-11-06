@@ -135,7 +135,7 @@ export const AddEditCustomerOverlay: React.FC<AddEditCustomerOverlayProps> = ({ 
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 3, bgcolor: theme.paperBg } }}>
             <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 3, py: 2.5, borderBottom: `1px solid ${theme.border}` }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: theme.isDark ? "rgba(37,99,235,0.2)" : "#EFF6FF", color: THEME.primary, display: "flex" }}>
+                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: theme.isDark ? "rgba(37,99,235,0.2)" : THEME.blueLight, color: THEME.primary, display: "flex" }}>
                         <BusinessIcon sx={{ fontSize: 22 }} />
                     </Box>
                     <Box>
@@ -227,7 +227,7 @@ export const AddEditCustomerOverlay: React.FC<AddEditCustomerOverlayProps> = ({ 
                     </Box>
 
                     {contactPersons.map((contact, idx) => (
-                        <Paper key={idx} elevation={0} sx={{ p: 2, mb: 1.5, borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC", border: `1px solid ${theme.border}` }}>
+                        <Paper key={idx} elevation={0} sx={{ p: 2, mb: 1.5, borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50, border: `1px solid ${theme.border}` }}>
                             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
                                 <Typography variant="caption" sx={{ fontWeight: 700, color: theme.textSecondary, display: "flex", alignItems: "center", gap: 0.5 }}>
                                     <PersonIcon sx={{ fontSize: 15 }} /> Contact Person #{idx + 1}
@@ -266,7 +266,7 @@ export const AddEditCustomerOverlay: React.FC<AddEditCustomerOverlayProps> = ({ 
 
                 <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${theme.border}` }}>
                     <CustomButton text="Cancel" onClick={onClose} bgc="transparent" color={theme.textSecondary} height={40} />
-                    <CustomButton text={customer ? "Update Customer" : "Save Customer"} type="submit" disabled={loading} Sicon={<SaveIcon sx={{ fontSize: 18 }} />} bgc={THEME.primary} color="#FFFFFF" height={40} />
+                    <CustomButton text={customer ? "Update Customer" : "Save Customer"} type="submit" disabled={loading} Sicon={<SaveIcon sx={{ fontSize: 18 }} />} bgc={THEME.primary} color={THEME.white} height={40} />
                 </DialogActions>
             </form>
         </Dialog>

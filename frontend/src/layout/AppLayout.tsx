@@ -7,11 +7,11 @@ import { Outlet } from 'react-router-dom';
 const AppLayout = () => {
     const theme = useAppTheme();
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: theme.background, transition: 'background-color 0.25s ease' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', background: theme.background, transition: 'background 0.25s ease' }}>
             {/* Sidebar */}
             <Sidebar />
             {/* Main Content Area */}
-            <Box ml={'300px'} sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <Box ml={'300px'} maxHeight={'100vh'} my={3} mr={3} sx={{ flexGrow: 1, background: theme.white, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                 {/* Fixed Top Header */}
                 <Header />
                 {/* Page Body */}

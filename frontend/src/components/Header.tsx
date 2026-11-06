@@ -47,14 +47,14 @@ const Header = () => {
   const initials = (user?.full_name || user?.username || "U").split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
   return (
-    <Box height={80} position="fixed" top={0} right={0} left="300px" bgcolor={theme.headerBg} borderBottom={`1px solid ${theme.border}`} display="flex" alignItems="center" justifyContent="space-between" px={4} zIndex={1100} sx={{ boxShadow: theme.isDark ? "0 2px 10px rgba(0, 0, 0, 0.3)" : "0 2px 10px rgba(0, 0, 0, 0.03)", transition: "all 0.25s ease-in-out" }}>
+    <Box height={80} position="fixed" top={0} right={0} left="300px" display="flex" alignItems="center" justifyContent="space-between" px={4} zIndex={1100} sx={{ boxShadow: theme.isDark ? "0 2px 10px rgba(0, 0, 0, 0.3)" : "0 2px 10px rgba(0, 0, 0, 0.03)", transition: "all 0.25s ease-in-out" }}>
       {/* Title */}
       <Typography fontSize={FONTSIZE.title} fontWeight={FONTWEIGHT.title} color={theme.textPrimary}> {headingTitle} </Typography>
       <Box display="flex" alignItems="center" gap={1.5}>
         {/* Theme Mode Toggle Button */}
         <Tooltip title={`Switch to ${mode === "light" ? "Dark" : "Light"} Mode`}>
           <IconButton onClick={toggleTheme} sx={{ color: theme.textPrimary, bgcolor: mode === "dark" ? "rgba(255, 255, 255, 0.1)" : `${THEME.border}60`, "&:hover": { bgcolor: mode === "dark" ? "rgba(255, 255, 255, 0.2)" : `${THEME.border}` }, transition: "all 0.2s ease" }}>
-            {mode === "dark" ? (<LightModeIcon sx={{ fontSize: 22, color: "#f59e0b" }} />) : (<DarkModeOutlinedIcon sx={{ fontSize: 22, color: "#0f172a" }} />)}
+            {mode === "dark" ? (<LightModeIcon sx={{ fontSize: 22, color: THEME.warning }} />) : (<DarkModeOutlinedIcon sx={{ fontSize: 22, color: theme.textPrimary }} />)}
           </IconButton>
         </Tooltip>
 

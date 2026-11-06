@@ -397,27 +397,14 @@ def seed_db(db: Session) -> None:
         perm_map[perm.code] = perm
 
     all_permissions = list(perm_map.values())
-    admin_permissions = [p for p in all_permissions if p.code != "LOGS_READ"]
 
-    # 2. Seed Roles
+    # 2. Seed Roles (Only SuperAdmin role)
     roles_definition = [
         {
             "name": "SuperAdmin",
             "code": "ROLE_SUPERADMIN",
             "description": "Full access to all system resources",
             "permissions": all_permissions
-        },
-        {
-            "name": "Admin",
-            "code": "ROLE_ADMIN",
-            "description": "Full administrative permissions",
-            "permissions": admin_permissions
-        },
-        {
-            "name": "Standard User",
-            "code": "ROLE_USER",
-            "description": "Basic user access with Dashboard view",
-            "permissions": [perm_map["DASHBOARD_VIEW"]] if "DASHBOARD_VIEW" in perm_map else []
         }
     ]
 
@@ -442,7 +429,7 @@ def seed_db(db: Session) -> None:
         if role.code == "ROLE_SUPERADMIN":
             super_admin_role = role
 
-    # 3. Seed Default SuperAdmin User
+    # 3. Seed Default SuperAdmin User (Login Credentials Seed)
     admin_user = db.query(User).filter(User.email == "admin@example.com").first()
     if not admin_user:
         admin_user = User(
@@ -457,216 +444,6 @@ def seed_db(db: Session) -> None:
         db.add(admin_user)
         db.commit()
         logger.info("Seeded default SuperAdmin user: admin@example.com / Admin@123!")
-
-    # 4. Seed Product Categories
-    categories_data = [
-        {
-            "name": "Digital Trainers",
-            "code": "CAT-DIGITAL-TRAINERS",
-            "description": "Digital IC and Microcontroller Training Equipment"
-        },
-        {
-            "name": "Signal Generators",
-            "code": "CAT-SIGNAL-GEN",
-            "description": "Function, Arbitrary, and Pulse Signal Generators"
-        },
-        {
-            "name": "Test & Measurement",
-            "code": "CAT-TEST-MEASURE",
-            "description": "Oscilloscopes, Multimeters, and Power Supplies"
-        }
-    ]
-
-    cat_map = {}
-    for c_data in categories_data:
-        cat = db.query(ProductCategory).filter(ProductCategory.code == c_data["code"]).first()
-        if not cat:
-            cat = ProductCategory(**c_data)
-            db.add(cat)
-            db.commit()
-            db.refresh(cat)
-            logger.info(f"Seeded Product Category: {cat.name}")
-        cat_map[cat.code] = cat
-
-    # 5. Seed Sample Products with Dynamic Specifications & Dimensions
-    sample_products = [
-        {
-            "product_id": "PRD-DIG-001",
-            "product_name": "Advanced Digital IC Trainer Kit",
-            "category_id": cat_map["CAT-DIGITAL-TRAINERS"].id,
-            "hsn_code": "8542.31.00",
-            "model_number": "DICT-9000X",
-            "description": "Comprehensive Digital Electronics Training Kit for engineering institutions and R&D labs.",
-            "price": 24500.0,
-            "stock_quantity": 15,
-            "status": "ACTIVE",
-
-            "images": [
-                "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80"
-            ],
-            "specifications": {
-                "Input Voltage": "230V AC ±10%, 50Hz",
-                "IC Support": "74 Series TTL & 4000 Series CMOS",
-                "Number of Inputs": "16 Logic Level Inputs with LED Status",
-                "Number of Outputs": "16 Logic Level Indicators",
-                "Display Type": "7-Segment LED Display (4 Output Digits)",
-                "Logic Family": "TTL / CMOS"
-            },
-            "catalog_document": {
-                "title": "Digital IC Trainer Datasheet 2026",
-                "url": "https://example.com/catalogs/dict-9000x.pdf",
-                "file_type": "pdf"
-            },
-            "lab_manual": {
-                "title": "Advanced Digital IC Trainer Practical Lab Manual & Experiment Guide",
-                "url": "http://localhost:8000/uploads/sample_lab_manual.pdf",
-                "file_type": "pdf"
-            },
-            "demo_video": {
-                "title": "DICT-9000X Equipment Overview & Practical Setup Demo Video",
-                "url": "http://localhost:8000/uploads/sample_demo_video.mp4",
-                "file_type": "mp4"
-            },
-            "warranty_service": {
-                "warranty_period": "2 Years",
-                "service_type": "Onsite & Technical Support",
-                "terms": "Full replacement of defective logic board within warranty period."
-            },
-            "dimensions": {
-                "height": 12.5,
-                "height_unit": "cm",
-                "width": 38.0,
-                "width_unit": "cm",
-                "length": 28.0,
-                "length_unit": "cm",
-                "weight": 4.2,
-                "weight_unit": "kg"
-            }
-        },
-        {
-            "product_id": "PRD-FGEN-002",
-            "product_name": "Precision DDS Function Generator",
-            "category_id": cat_map["CAT-SIGNAL-GEN"].id,
-            "hsn_code": "9030.84.00",
-            "model_number": "FG-DDS-20M",
-            "description": "High-precision Direct Digital Synthesis function generator with dual output channels.",
-            "price": 18900.0,
-            "stock_quantity": 12,
-            "status": "ACTIVE",
-
-            "images": [
-                "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
-            ],
-            "specifications": {
-                "Frequency Range": "0.1 Hz to 20 MHz",
-                "Waveform": "Sine, Square, Triangle, Ramp, Pulse, TTL",
-                "Amplitude": "0 to 20V p-p (Open Circuit)",
-                "DC Offset": "±10V adjustable",
-                "Frequency Accuracy": "±0.005% (50 ppm)",
-                "Output Impedance": "50 Ohms ±10%"
-            },
-            "catalog_document": {
-                "title": "FG-DDS-20M Technical Brochure",
-                "url": "https://example.com/catalogs/fg-dds-20m.pdf",
-                "file_type": "pdf"
-            },
-            "warranty_service": {
-                "warranty_period": "1 Year",
-                "service_type": "Carry-in Calibration Service",
-                "terms": "Includes annual free calibration certificate."
-            },
-            "dimensions": {
-                "height": 10.0,
-                "height_unit": "cm",
-                "width": 26.0,
-                "width_unit": "cm",
-                "length": 22.0,
-                "length_unit": "cm",
-                "weight": 2.8,
-                "weight_unit": "kg"
-            }
-        }
-    ]
-
-    for p_data in sample_products:
-        p = db.query(Product).filter(Product.product_id == p_data["product_id"]).first()
-        if not p:
-            p = Product(**p_data)
-            db.add(p)
-            db.commit()
-            logger.info(f"Seeded Product: {p.product_name} ({p.product_id})")
-
-    # 6. Seed Default Active Company
-    existing_company = db.query(Company).first()
-    if not existing_company:
-        default_comp = Company(
-            company_name="Kitrivo Equipment Systems",
-            logo_url=None,
-            gst_number="33AAACK1234F1Z9",
-            pan_number="AAACK1234F",
-            address="Plot No. 45, Technology Park, Industrial Estate, Chennai, Tamil Nadu - 600032",
-            billing_address="Plot No. 45, Technology Park, Industrial Estate, Chennai, Tamil Nadu - 600032",
-            email="info@kitrivo.com",
-            phone="+91 44 2345 6789",
-            website="https://www.kitrivo.com",
-            is_active=True
-        )
-        db.add(default_comp)
-        db.commit()
-        logger.info(f"Seeded default active Company: {default_comp.company_name}")
-
-    # 7. Seed Sample Initial Customers
-    if db.query(Customer).count() == 0:
-        sample_customers = [
-            {
-                "customer_code": "CUST-2026-0001",
-                "company_name": "ABC Engineering College",
-                "customer_type": "COLLEGE",
-                "contact_persons": [
-                    {"name": "Prof. Rajesh Sharma", "designation": "HOD Electronics & Comm", "phone": "+91 98765 43210", "email": "r.sharma@abc.edu.in"},
-                    {"name": "Dr. Sunita Patel", "designation": "Lab Incharge", "phone": "+91 98765 43211", "email": "s.patel@abc.edu.in"}
-                ],
-                "phone": "+91 98765 43210",
-                "email": "procurement@abc.edu.in",
-                "billing_address": "ABC College Campus, Sector 4, Technical Zone, Mumbai 400001",
-                "shipping_address": "Central Electronics Lab, ABC College Campus, Sector 4, Mumbai 400001",
-                "gstin": "27AAACA1234F1Z5",
-                "pan": "AAACA1234F",
-                "state": "Maharashtra",
-                "city": "Mumbai",
-                "notes": "Key repeat customer for Embedded Systems & Digital Oscilloscopes labs. Prefers 14 days credit terms.",
-                "documents": [
-                    {"title": "Institutional GST Certificate", "url": "/uploads/documents/gst_abc_college.pdf", "file_type": "PDF", "uploaded_at": "Jan 15, 2026"}
-                ]
-            },
-            {
-                "customer_code": "CUST-2026-0002",
-                "company_name": "BITS Pilani Institute of Technology",
-                "customer_type": "UNIVERSITY",
-                "contact_persons": [
-                    {"name": "Dr. Anita Desai", "designation": "Dean Research & Labs", "phone": "+91 98123 99881", "email": "anita.desai@pilani.bits-pilani.ac.in"}
-                ],
-                "phone": "+91 98123 99881",
-                "email": "purchase@bits-pilani.ac.in",
-                "billing_address": "Vidya Vihar, Pilani, Rajasthan 333031",
-                "shipping_address": "Department of EEE, BITS Pilani, Rajasthan 333031",
-                "gstin": "08AAAAA0000A1Z2",
-                "pan": "AAAAA0000A",
-                "state": "Rajasthan",
-                "city": "Pilani",
-                "notes": "Requires DSIR tax exemption certificate attachment with all quotations.",
-                "documents": []
-            }
-        ]
-        for cust_data in sample_customers:
-            cust = Customer(**cust_data)
-            db.add(cust)
-        db.commit()
-        logger.info("Seeded initial sample Customer accounts")
 
 
 

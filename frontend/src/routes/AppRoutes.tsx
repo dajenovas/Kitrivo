@@ -67,10 +67,6 @@ const AppRoutes = () => {
           <Route path="/logs" element={<SystemLogsPage />} />
         </Route>
       </Route>
-
-
-
-
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

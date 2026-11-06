@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { Product } from "@/models/product.models";
-import { FONTSIZE, THEME } from "@/assets/theme";
+import { FONTSIZE, THEME, useAppTheme } from "@/assets/theme";
 import {
   Dialog,
   DialogTitle,
@@ -42,6 +42,7 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
   onClose,
   onEdit,
 }) => {
+  const theme = useAppTheme();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   if (!product) return null;
@@ -51,15 +52,15 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "ACTIVE":
-        return { bg: "#e8f5e9", color: "#2e7d32", label: "Active" };
+        return { bg: THEME.emeraldLight, color: THEME.emerald, label: "Active" };
       case "INACTIVE":
-        return { bg: "#fff3e0", color: "#e65100", label: "Inactive" };
+        return { bg: THEME.amberLight, color: THEME.amber, label: "Inactive" };
       case "OUTOFSTOCK":
-        return { bg: "#ffebee", color: "#c62828", label: "Out of Stock" };
+        return { bg: THEME.redLight, color: THEME.red, label: "Out of Stock" };
       case "DISCONTINUED":
-        return { bg: "#f5f5f5", color: "#616161", label: "Discontinued" };
+        return { bg: THEME.slate100, color: THEME.slate600, label: "Discontinued" };
       default:
-        return { bg: "#f5f5f5", color: "#616161", label: status };
+        return { bg: THEME.slate100, color: THEME.slate600, label: status };
     }
   };
 
@@ -68,7 +69,7 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle sx={{ m: 0, p: 2.5, display: "flex", alignItems: "center", justifyContent: "space-between", bgcolor: THEME.white, borderBottom: `1px solid ${THEME.border}` }}>
+      <DialogTitle sx={{ m: 0, p: 2.5, display: "flex", alignItems: "center", justifyContent: "space-between", bgcolor: theme.paperBg, borderBottom: `1px solid ${THEME.border}` }}>
         <Box display="flex" alignItems="center" gap={1.5}>
           <Typography fontSize={FONTSIZE.large} fontWeight={700} color={THEME.textPrimary}>
             Product Details
@@ -80,7 +81,7 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
         </IconButton>
       </DialogTitle>
 
-      <DialogContent sx={{ p: 3, bgcolor: "#fafafa" }}>
+      <DialogContent sx={{ p: 3, bgcolor: theme.isDark ? theme.paperBg : THEME.slate50 }}>
         <Box display="flex" flexDirection={{ xs: "column", md: "row" }} gap={3} mb={3}>
           {/* Gallery Section */}
           <Box flex={1} display="flex" flexDirection="column" gap={1.5}>
@@ -95,7 +96,7 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                bgcolor: THEME.white,
+                bgcolor: theme.paperBg,
               }}
             >
               {images.length > 0 ? (
@@ -130,7 +131,7 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                       }`,
                       cursor: "pointer",
                       overflow: "hidden",
-                      bgcolor: THEME.white,
+                      bgcolor: theme.paperBg,
                       flexShrink: 0,
                     }}
                   >
@@ -157,9 +158,9 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
               <Chip
                 icon={
                   isECommerceReflected ? (
-                    <VerifiedIcon style={{ color: "#2e7d32", fontSize: 16 }} />
+                    <VerifiedIcon style={{ color: THEME.emerald, fontSize: 16 }} />
                   ) : (
-                    <StorefrontIcon style={{ color: "#ed6c02", fontSize: 16 }} />
+                    <StorefrontIcon style={{ color: THEME.amber, fontSize: 16 }} />
                   )
                 }
                 label={
@@ -170,9 +171,9 @@ export const ProductDetailsModal: React.FC<ProductDetailsModalProps> = ({
                 size="small"
                 variant="outlined"
                 sx={{
-                  borderColor: isECommerceReflected ? "#a5d6a7" : "#ffe0b2",
-                  bgcolor: isECommerceReflected ? "#f1f8e9" : "#fffde7",
-                  color: isECommerceReflected ? "#2e7d32" : "#e65100",
+                  borderColor: isECommerceReflected ? THEME.emeraldLight : THEME.amberLight,
+                  bgcolor: isECommerceReflected ? THEME.emeraldLight : THEME.amberLight,
+                  color: isECommerceReflected ? THEME.emerald : THEME.amber,
                   fontWeight: 600,
                   fontSize: FONTSIZE.small,
                 }}

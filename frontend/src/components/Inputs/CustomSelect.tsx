@@ -123,7 +123,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({ height = "40px", wid
             sx: {
               maxHeight: 320,
               border: `1px solid ${THEME.border}`,
-              boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
+              boxShadow: `0 8px 16px ${THEME.slate900}1A`,
               zIndex: (theme) => theme.zIndex.modal + 20,
             },
           },

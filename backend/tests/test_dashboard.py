@@ -71,8 +71,23 @@ def test_payment_verify_with_quotation_id():
     db = SessionLocal()
     try:
         product = db.query(Product).first()
-        product.stock_quantity = 10
-        product.status = "ACTIVE"
+        if not product:
+            product = Product(
+                product_id="PRD-TEST-001",
+                product_name="Test Product",
+                hsn_code="1234",
+                model_number="MD-01",
+                price=100.0,
+                stock_quantity=10,
+                status="ACTIVE"
+            )
+            db.add(product)
+            db.commit()
+            db.refresh(product)
+        else:
+            product.stock_quantity = 10
+            product.status = "ACTIVE"
+            db.commit()
         
         quote = db.query(Quotation).first()
         if not quote:

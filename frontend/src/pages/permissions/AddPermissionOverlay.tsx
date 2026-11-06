@@ -198,7 +198,7 @@ export const AddPermissionOverlay: React.FC<AddPermissionOverlayProps> = ({
                     borderRadius: 3,
                     p: 1,
                     border: `1px solid ${THEME.border}`,
-                    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
+                    boxShadow: `0 20px 40px ${THEME.slate900}26`,
                 },
             }}
         >

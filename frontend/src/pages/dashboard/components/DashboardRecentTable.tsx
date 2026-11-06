@@ -46,15 +46,15 @@ export const DashboardRecentTable: React.FC<DashboardRecentTableProps> = ({ data
     const getStatusChip = (status: string) => {
         const s = status.toUpperCase();
         if (s === "PAID") {
-            return <Chip label="PAID" size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: theme.isDark ? "rgba(22,163,74,0.2)" : "#DCFCE7", color: theme.isDark ? "#4ADE80" : "#15803D" }} />;
+            return <Chip label="PAID" size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: theme.isDark ? `${THEME.success}33` : THEME.green100, color: theme.isDark ? THEME.green500 : THEME.green700 }} />;
         }
         if (s === "GENERATED") {
-            return <Chip label="GENERATED" size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: theme.isDark ? "rgba(37,99,235,0.2)" : "#EFF6FF", color: theme.isDark ? "#60A5FA" : "#1D4ED8" }} />;
+            return <Chip label="GENERATED" size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: theme.isDark ? `${THEME.primary}33` : THEME.blue50, color: theme.isDark ? THEME.blue400 : THEME.primaryDark }} />;
         }
         if (s === "CHECKED_OUT") {
-            return <Chip label="CHECKED OUT" size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: theme.isDark ? "rgba(13,148,136,0.2)" : "#CCFBF1", color: theme.isDark ? "#2DD4BF" : "#0F766E" }} />;
+            return <Chip label="CHECKED OUT" size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: theme.isDark ? `${THEME.emerald600}33` : THEME.emerald100, color: theme.isDark ? THEME.emerald500 : THEME.emerald700 }} />;
         }
-        return <Chip label={status} size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: theme.isDark ? "rgba(245,158,11,0.2)" : "#FEF3C7", color: theme.isDark ? "#FBBF24" : "#B45309" }} />;
+        return <Chip label={status} size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: theme.isDark ? `${THEME.warning}33` : THEME.amber100, color: theme.isDark ? THEME.warning : THEME.amber700 }} />;
     };
 
     return (
@@ -62,7 +62,7 @@ export const DashboardRecentTable: React.FC<DashboardRecentTableProps> = ({ data
             {/* Header & Controls */}
             <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 2.5 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: theme.isDark ? "rgba(5, 150, 105, 0.15)" : "#D1FAE5", color: "#059669", display: "flex" }}>
+                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: theme.isDark ? `${THEME.emerald600}26` : THEME.emerald100, color: THEME.emerald600, display: "flex" }}>
                         <HistoryIcon sx={{ fontSize: 22 }} />
                     </Box>
                     <Box>
@@ -77,27 +77,27 @@ export const DashboardRecentTable: React.FC<DashboardRecentTableProps> = ({ data
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
                     {/* Tabs */}
-                    <Box sx={{ display: "flex", p: 0.5, borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9" }}>
-                        <Button size="small" onClick={() => setTabFilter("ALL")} sx={{ px: 1.5, py: 0.5, borderRadius: 1.5, fontSize: "0.75rem", fontWeight: 700, textTransform: "none", bgcolor: tabFilter === "ALL" ? theme.cardBg : "transparent", color: tabFilter === "ALL" ? THEME.primary : theme.textSecondary, boxShadow: tabFilter === "ALL" ? "0 2px 6px rgba(0,0,0,0.08)" : "none" }}>
+                    <Box sx={{ display: "flex", p: 0.5, borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.05)" : THEME.slate100 }}>
+                        <Button size="small" onClick={() => setTabFilter("ALL")} sx={{ px: 1.5, py: 0.5, borderRadius: 1.5, fontSize: "0.75rem", fontWeight: 700, textTransform: "none", bgcolor: tabFilter === "ALL" ? theme.cardBg : "transparent", color: tabFilter === "ALL" ? THEME.primary : theme.textSecondary, boxShadow: tabFilter === "ALL" ? `0 2px 6px ${THEME.slate900}14` : "none" }}>
                             All
                         </Button>
-                        <Button size="small" onClick={() => setTabFilter("INVOICE")} sx={{ px: 1.5, py: 0.5, borderRadius: 1.5, fontSize: "0.75rem", fontWeight: 700, textTransform: "none", bgcolor: tabFilter === "INVOICE" ? theme.cardBg : "transparent", color: tabFilter === "INVOICE" ? THEME.primary : theme.textSecondary, boxShadow: tabFilter === "INVOICE" ? "0 2px 6px rgba(0,0,0,0.08)" : "none" }}>
+                        <Button size="small" onClick={() => setTabFilter("INVOICE")} sx={{ px: 1.5, py: 0.5, borderRadius: 1.5, fontSize: "0.75rem", fontWeight: 700, textTransform: "none", bgcolor: tabFilter === "INVOICE" ? theme.cardBg : "transparent", color: tabFilter === "INVOICE" ? THEME.primary : theme.textSecondary, boxShadow: tabFilter === "INVOICE" ? `0 2px 6px ${THEME.slate900}14` : "none" }}>
                             Invoices
                         </Button>
-                        <Button size="small" onClick={() => setTabFilter("QUOTATION")} sx={{ px: 1.5, py: 0.5, borderRadius: 1.5, fontSize: "0.75rem", fontWeight: 700, textTransform: "none", bgcolor: tabFilter === "QUOTATION" ? theme.cardBg : "transparent", color: tabFilter === "QUOTATION" ? THEME.secondary : theme.textSecondary, boxShadow: tabFilter === "QUOTATION" ? "0 2px 6px rgba(0,0,0,0.08)" : "none" }}>
+                        <Button size="small" onClick={() => setTabFilter("QUOTATION")} sx={{ px: 1.5, py: 0.5, borderRadius: 1.5, fontSize: "0.75rem", fontWeight: 700, textTransform: "none", bgcolor: tabFilter === "QUOTATION" ? theme.cardBg : "transparent", color: tabFilter === "QUOTATION" ? THEME.secondary : theme.textSecondary, boxShadow: tabFilter === "QUOTATION" ? `0 2px 6px ${THEME.slate900}14` : "none" }}>
                             Quotations
                         </Button>
                     </Box>
 
                     {/* Search */}
-                    <TextField placeholder="Search ref or client..." value={search} onChange={(e) => setSearch(e.target.value)} size="small" InputProps={{ startAdornment: (<InputAdornment position="start"><SearchIcon sx={{ fontSize: 18, color: theme.textSecondary }} /></InputAdornment>) }} sx={{ width: { xs: "100%", sm: 200 }, "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#FFFFFF", fontSize: "0.82rem" } }} />
+                    <TextField placeholder="Search ref or client..." value={search} onChange={(e) => setSearch(e.target.value)} size="small" InputProps={{ startAdornment: (<InputAdornment position="start"><SearchIcon sx={{ fontSize: 18, color: theme.textSecondary }} /></InputAdornment>) }} sx={{ width: { xs: "100%", sm: 200 }, "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.white, fontSize: "0.82rem" } }} />
                 </Box>
             </Box>
 
             {/* Table */}
             <TableContainer sx={{ borderRadius: 2, border: `1px solid ${theme.border}`, overflowX: "auto" }}>
                 <Table size="medium">
-                    <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC" }}>
+                    <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50 }}>
                         <TableRow>
                             <TableCell sx={{ fontWeight: 700, color: theme.textSecondary, fontSize: "0.75rem", textTransform: "uppercase" }}>Reference #</TableCell>
                             <TableCell sx={{ fontWeight: 700, color: theme.textSecondary, fontSize: "0.75rem", textTransform: "uppercase" }}>Type</TableCell>
@@ -123,7 +123,7 @@ export const DashboardRecentTable: React.FC<DashboardRecentTableProps> = ({ data
                                     </TableCell>
 
                                     <TableCell>
-                                        <Chip icon={row.type === "INVOICE" ? <ReceiptIcon style={{ fontSize: 14 }} /> : <DescriptionIcon style={{ fontSize: 14 }} />} label={row.type} size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: row.type === "INVOICE" ? (theme.isDark ? "rgba(37,99,235,0.15)" : "#EFF6FF") : (theme.isDark ? "rgba(124,58,237,0.15)" : "#F5F3FF"), color: row.type === "INVOICE" ? THEME.primary : THEME.secondary, "& .MuiChip-icon": { color: "inherit" } }} />
+                                        <Chip icon={row.type === "INVOICE" ? <ReceiptIcon style={{ fontSize: 14 }} /> : <DescriptionIcon style={{ fontSize: 14 }} />} label={row.type} size="small" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 700, borderRadius: 1.5, bgcolor: row.type === "INVOICE" ? (theme.isDark ? `${THEME.primary}26` : THEME.blue50) : (theme.isDark ? `${THEME.secondary}26` : THEME.purple50), color: row.type === "INVOICE" ? THEME.primary : THEME.secondary, "& .MuiChip-icon": { color: "inherit" } }} />
                                     </TableCell>
 
                                     <TableCell sx={{ color: theme.textPrimary }}>
@@ -150,7 +150,7 @@ export const DashboardRecentTable: React.FC<DashboardRecentTableProps> = ({ data
                                     </TableCell>
 
                                     <TableCell align="center">
-                                        <IconButton size="small" onClick={() => navigate(row.type === "INVOICE" ? "/billing/history" : "/quotations/history")} sx={{ color: THEME.primary, bgcolor: theme.isDark ? "rgba(37,99,235,0.1)" : "#EFF6FF", "&:hover": { bgcolor: THEME.primary, color: "#fff" } }}>
+                                        <IconButton size="small" onClick={() => navigate(row.type === "INVOICE" ? "/billing/history" : "/quotations/history")} sx={{ color: THEME.primary, bgcolor: theme.isDark ? `${THEME.primary}1A` : THEME.blue50, "&:hover": { bgcolor: THEME.primary, color: THEME.white } }}>
                                             <VisibilityIcon sx={{ fontSize: 16 }} />
                                         </IconButton>
                                     </TableCell>

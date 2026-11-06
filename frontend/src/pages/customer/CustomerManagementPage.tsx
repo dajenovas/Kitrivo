@@ -84,11 +84,11 @@ const CustomerManagementPage: React.FC = () => {
     const totalColleges = customers.filter((c) => c.customer_type === "COLLEGE" || c.customer_type === "UNIVERSITY" || c.customer_type === "POLYTECHNIC").length;
 
     return (
-        <Box sx={{ p: { xs: 2, sm: 3 }, bgcolor: theme.background, minHeight: "100vh" }}>
+        <Box sx={{ p: { xs: 2, sm: 3 }, background: theme.background, minHeight: "100vh" }}>
             {/* Top Banner Header */}
-            <Paper elevation={0} sx={{ p: 3, mb: 3.5, borderRadius: 3, bgcolor: theme.isDark ? "rgba(37, 99, 235, 0.12)" : "#EFF6FF", border: `2px solid ${THEME.primary}`, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
+            <Paper elevation={0} sx={{ p: 3, mb: 3.5, borderRadius: 3, bgcolor: theme.isDark ? "rgba(37, 99, 235, 0.12)" : THEME.blueLight, border: `2px solid ${THEME.primary}`, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Box sx={{ width: 50, height: 50, borderRadius: 2.5, bgcolor: THEME.primary, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 16px rgba(37,99,235,0.3)" }}>
+                    <Box sx={{ width: 50, height: 50, borderRadius: 2.5, bgcolor: THEME.primary, color: THEME.white, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: THEME.shadowPrimary }}>
                         <BusinessIcon sx={{ fontSize: 28 }} />
                     </Box>
                     <Box>
@@ -103,12 +103,12 @@ const CustomerManagementPage: React.FC = () => {
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <Tooltip title="Refresh Customer List">
-                        <IconButton onClick={fetchCustomers} disabled={loading} sx={{ bgcolor: theme.cardBg, border: `1px solid ${theme.border}`, color: theme.textPrimary, "&:hover": { bgcolor: theme.isDark ? "rgba(255,255,255,0.1)" : "#E2E8F0" } }}>
+                        <IconButton onClick={fetchCustomers} disabled={loading} sx={{ bgcolor: theme.cardBg, border: `1px solid ${theme.border}`, color: theme.textPrimary, "&:hover": { bgcolor: theme.isDark ? "rgba(255,255,255,0.1)" : THEME.slate200 } }}>
                             <RefreshIcon sx={{ fontSize: 20, animation: loading ? "spin 1s linear infinite" : "none", "@keyframes spin": { "0%": { transform: "rotate(0deg)" }, "100%": { transform: "rotate(360deg)" } } }} />
                         </IconButton>
                     </Tooltip>
 
-                    <Button variant="contained" onClick={handleOpenAdd} startIcon={<AddIcon sx={{ fontSize: 18 }} />} sx={{ borderRadius: 2.5, px: 2.5, py: 1, fontWeight: 700, textTransform: "none", bgcolor: THEME.primary, boxShadow: "0 4px 12px rgba(37,99,235,0.3)", "&:hover": { bgcolor: THEME.primaryDark } }}>
+                    <Button variant="contained" onClick={handleOpenAdd} startIcon={<AddIcon sx={{ fontSize: 18 }} />} sx={{ borderRadius: 2.5, px: 2.5, py: 1, fontWeight: 700, textTransform: "none", bgcolor: THEME.primary, boxShadow: THEME.shadowPrimary, "&:hover": { bgcolor: THEME.primaryDark } }}>
                         Add Customer
                     </Button>
                 </Box>
@@ -122,7 +122,7 @@ const CustomerManagementPage: React.FC = () => {
                             <Typography variant="caption" sx={{ color: theme.textSecondary, fontWeight: 600, textTransform: "uppercase" }}>Total Customers</Typography>
                             <Typography variant="h4" sx={{ fontWeight: 800, color: theme.textPrimary, mt: 0.5 }}>{customers.length}</Typography>
                         </Box>
-                        <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(37,99,235,0.15)" : "#EFF6FF", color: THEME.primary, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(37,99,235,0.15)" : THEME.blueLight, color: THEME.primary, display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <BusinessIcon sx={{ fontSize: 24 }} />
                         </Box>
                     </Paper>
@@ -134,7 +134,7 @@ const CustomerManagementPage: React.FC = () => {
                             <Typography variant="caption" sx={{ color: theme.textSecondary, fontWeight: 600, textTransform: "uppercase" }}>Total Business Value</Typography>
                             <Typography variant="h4" sx={{ fontWeight: 800, color: THEME.primary, mt: 0.5 }}>₹{totalBusinessValue.toLocaleString()}</Typography>
                         </Box>
-                        <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(37,99,235,0.15)" : "#EFF6FF", color: THEME.primary, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(37,99,235,0.15)" : THEME.blueLight, color: THEME.primary, display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <TrendingUpIcon sx={{ fontSize: 24 }} />
                         </Box>
                     </Paper>
@@ -146,7 +146,7 @@ const CustomerManagementPage: React.FC = () => {
                             <Typography variant="caption" sx={{ color: theme.textSecondary, fontWeight: 600, textTransform: "uppercase" }}>Educational Inst.</Typography>
                             <Typography variant="h4" sx={{ fontWeight: 800, color: THEME.secondary, mt: 0.5 }}>{totalColleges}</Typography>
                         </Box>
-                        <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(124,58,237,0.15)" : "#F5F3FF", color: THEME.secondary, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(124,58,237,0.15)" : THEME.purpleLight, color: THEME.secondary, display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <SchoolIcon sx={{ fontSize: 24 }} />
                         </Box>
                     </Paper>
@@ -158,7 +158,7 @@ const CustomerManagementPage: React.FC = () => {
                             <Typography variant="caption" sx={{ color: theme.textSecondary, fontWeight: 600, textTransform: "uppercase" }}>Outstanding Balance</Typography>
                             <Typography variant="h4" sx={{ fontWeight: 800, color: THEME.error, mt: 0.5 }}>₹{totalOutstanding.toLocaleString()}</Typography>
                         </Box>
-                        <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(220,38,38,0.15)" : "#FEE2E2", color: THEME.error, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(220,38,38,0.15)" : THEME.redLight, color: THEME.error, display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <WalletIcon sx={{ fontSize: 24 }} />
                         </Box>
                     </Paper>
@@ -170,7 +170,7 @@ const CustomerManagementPage: React.FC = () => {
                 <form onSubmit={handleSearchSubmit}>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item xs={12} sm={5}>
-                            <TextField placeholder="Search by institution name, GSTIN, code, city..." value={search} onChange={(e) => setSearch(e.target.value)} size="small" fullWidth InputProps={{ startAdornment: (<InputAdornment position="start"><SearchIcon sx={{ fontSize: 20, color: theme.textSecondary }} /></InputAdornment>) }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#FFFFFF" } }} />
+                            <TextField placeholder="Search by institution name, GSTIN, code, city..." value={search} onChange={(e) => setSearch(e.target.value)} size="small" fullWidth InputProps={{ startAdornment: (<InputAdornment position="start"><SearchIcon sx={{ fontSize: 20, color: theme.textSecondary }} /></InputAdornment>) }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.white } }} />
                         </Grid>
 
                         <Grid item xs={6} sm={3}>
@@ -201,7 +201,7 @@ const CustomerManagementPage: React.FC = () => {
             <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, bgcolor: theme.cardBg, border: `1px solid ${theme.border}` }}>
                 <TableContainer sx={{ overflowX: "auto" }}>
                     <Table size="medium">
-                        <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC" }}>
+                        <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50 }}>
                             <TableRow>
                                 <TableCell sx={{ fontWeight: 700, color: theme.textSecondary, fontSize: "0.75rem", textTransform: "uppercase" }}>Customer Code</TableCell>
                                 <TableCell sx={{ fontWeight: 700, color: theme.textSecondary, fontSize: "0.75rem", textTransform: "uppercase" }}>Institution / Company</TableCell>
@@ -239,7 +239,7 @@ const CustomerManagementPage: React.FC = () => {
                                                     <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.9rem" }}>
                                                         {c.company_name}
                                                     </Typography>
-                                                    <Chip label={c.customer_type} size="small" sx={{ height: 20, fontSize: "0.68rem", fontWeight: 700, borderRadius: 1, bgcolor: theme.isDark ? "rgba(37,99,235,0.15)" : "#EFF6FF", color: THEME.primary }} />
+                                                    <Chip label={c.customer_type} size="small" sx={{ height: 20, fontSize: "0.68rem", fontWeight: 700, borderRadius: 1, bgcolor: theme.isDark ? "rgba(37,99,235,0.15)" : THEME.blueLight, color: THEME.primary }} />
                                                 </Box>
                                                 {c.email && (
                                                     <Typography variant="caption" sx={{ color: theme.textSecondary, display: "block" }}>
@@ -280,7 +280,7 @@ const CustomerManagementPage: React.FC = () => {
                                             <TableCell align="center">
                                                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5 }}>
                                                     <Tooltip title="View Profile & Interactive Timeline">
-                                                        <IconButton size="small" onClick={() => handleOpenDetails(c.id)} sx={{ color: THEME.primary, bgcolor: theme.isDark ? "rgba(37,99,235,0.1)" : "#EFF6FF", "&:hover": { bgcolor: THEME.primary, color: "#fff" } }}>
+                                                        <IconButton size="small" onClick={() => handleOpenDetails(c.id)} sx={{ color: THEME.primary, bgcolor: theme.isDark ? "rgba(37,99,235,0.1)" : THEME.blueLight, "&:hover": { bgcolor: THEME.primary, color: THEME.white } }}>
                                                             <ViewIcon sx={{ fontSize: 16 }} />
                                                         </IconButton>
                                                     </Tooltip>

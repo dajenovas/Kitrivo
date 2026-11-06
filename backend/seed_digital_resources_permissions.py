@@ -16,8 +16,8 @@ def update_permissions_and_roles():
         print("LAB_MANUAL_READ permission:", manual_perm.name if manual_perm else "NOT FOUND")
         print("DEMO_VIDEO_READ permission:", video_perm.name if video_perm else "NOT FOUND")
 
-        # Assign to SUPERADMIN & ADMIN if not already
-        roles = db.query(Role).filter(Role.code.in_(["ROLE_SUPERADMIN", "ROLE_ADMIN"])).all()
+        # Assign to SUPERADMIN if not already
+        roles = db.query(Role).filter(Role.code.in_(["ROLE_SUPERADMIN"])).all()
         for role in roles:
             current_codes = {p.code for p in role.permissions}
             if manual_perm and manual_perm.code not in current_codes:

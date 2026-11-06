@@ -149,11 +149,11 @@ export const LabManualsPage: React.FC = () => {
   return (
     <Box p={3.5} sx={{ maxWidth: 1400, margin: "0 auto" }}>
       {/* Header Banner */}
-      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: "linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%)", color: "#ffffff", display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "space-between", alignItems: { xs: "flex-start", md: "center" }, gap: 2.5, boxShadow: "0 10px 25px -5px rgba(30, 64, 175, 0.25)" }}>
+      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: `linear-gradient(135deg, ${THEME.blue800} 0%, ${THEME.primary} 100%)`, color: THEME.white, display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "space-between", alignItems: { xs: "flex-start", md: "center" }, gap: 2.5, boxShadow: "0 10px 25px -5px rgba(30, 64, 175, 0.25)" }}>
         <Box>
           <Box display="flex" alignItems="center" gap={1.5} mb={1}>
             <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: "rgba(255, 255, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)" }}>
-              <MenuBookIcon sx={{ fontSize: 26, color: "#ffffff" }} />
+              <MenuBookIcon sx={{ fontSize: 26, color: THEME.white }} />
             </Box>
             <Typography fontSize={24} fontWeight={800} letterSpacing="-0.5px">
               Product Lab Manuals & Technical Guides
@@ -284,7 +284,7 @@ export const LabManualsPage: React.FC = () => {
           <CircularProgress size={44} />
         </Box>
       ) : error ? (
-        <Paper elevation={0} sx={{ p: 4, textAlign: "center", borderRadius: 2, bgcolor: "#fef2f2", border: "1px solid #fecaca" }}>
+        <Paper elevation={0} sx={{ p: 4, textAlign: "center", borderRadius: 2, bgcolor: THEME.redLight, border: `1px solid ${THEME.redLight}` }}>
           <Typography color="error" fontWeight={600}>
             {error}
           </Typography>
@@ -317,7 +317,7 @@ export const LabManualsPage: React.FC = () => {
         /* LIST (TABLE) VIEW - ONLY PRODUCT NAME, LAB MANUAL NAME, AND ELLIPSIS ACTIONS */
         <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 3, border: `1px solid ${THEME.border}`, overflow: "hidden" }}>
           <Table>
-            <TableHead sx={{ bgcolor: "#f1f5f9" }}>
+            <TableHead sx={{ bgcolor: THEME.slate100 }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 800, color: THEME.textPrimary, py: 2 }}>Product Name</TableCell>
                 <TableCell sx={{ fontWeight: 800, color: THEME.textPrimary }}>Lab Manual Name</TableCell>
@@ -335,7 +335,7 @@ export const LabManualsPage: React.FC = () => {
                     hover
                     sx={{
                       transition: "all 0.15s ease",
-                      "&:hover": { bgcolor: "#f8fafc" },
+                      "&:hover": { bgcolor: THEME.slate50 },
                     }}
                   >
                     {/* 1. Product Name */}
@@ -345,7 +345,7 @@ export const LabManualsPage: React.FC = () => {
                           component="img"
                           src={product.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80"}
                           alt={product.product_name}
-                          sx={{ width: 48, height: 48, borderRadius: 2, objectFit: "cover", bgcolor: "#f1f5f9", border: `1px solid ${THEME.border}` }}
+                          sx={{ width: 48, height: 48, borderRadius: 2, objectFit: "cover", bgcolor: THEME.slate100, border: `1px solid ${THEME.border}` }}
                         />
                         <Box>
                           <Typography fontSize={14} fontWeight={700} color={THEME.textPrimary}>
@@ -355,7 +355,7 @@ export const LabManualsPage: React.FC = () => {
                             <Chip
                               label={product.product_id}
                               size="small"
-                              sx={{ height: 20, fontSize: 10, fontWeight: 700, bgcolor: "#eff6ff", color: THEME.primary }}
+                              sx={{ height: 20, fontSize: 10, fontWeight: 700, bgcolor: THEME.blueLight, color: THEME.primary }}
                             />
                             {product.model_number && (
                               <Typography fontSize={12} color={THEME.textSecondary}>
@@ -370,13 +370,13 @@ export const LabManualsPage: React.FC = () => {
                     {/* 2. Lab Manual Name */}
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={1.2}>
-                        <PictureAsPdfIcon sx={{ color: hasManual ? "#16a34a" : THEME.textSecondary, fontSize: 22 }} />
+                        <PictureAsPdfIcon sx={{ color: hasManual ? THEME.emerald : THEME.textSecondary, fontSize: 22 }} />
                         <Box>
                           <Typography fontSize={13} fontWeight={700} color={hasManual ? THEME.textPrimary : THEME.textSecondary}>
                             {product.lab_manual?.title || "No Lab Manual Attached"}
                           </Typography>
                           {hasManual && (
-                            <Typography fontSize={11} color="#16a34a" fontWeight={600}>
+                            <Typography fontSize={11} color={THEME.emerald} fontWeight={600}>
                               PDF Document Available
                             </Typography>
                           )}
@@ -419,17 +419,17 @@ export const LabManualsPage: React.FC = () => {
                     display: "flex",
                     flexDirection: "column",
                     borderRadius: 2.5,
-                    border: `1px solid ${hasManual ? THEME.border : "#fee2e2"}`,
+                    border: `1px solid ${hasManual ? THEME.border : THEME.redLight}`,
                     bgcolor: THEME.white,
                     transition: "all 0.25s ease",
                     "&:hover": {
                       boxShadow: "0 12px 24px -6px rgba(0, 0, 0, 0.08)",
                       transform: "translateY(-3px)",
-                      borderColor: hasManual ? THEME.primary : "#fca5a5",
+                      borderColor: hasManual ? THEME.primary : THEME.redLight,
                     },
                   }}
                 >
-                  <Box position="relative" sx={{ height: 170, bgcolor: "#f8fafc", overflow: "hidden" }}>
+                  <Box position="relative" sx={{ height: 170, bgcolor: THEME.slate50, overflow: "hidden" }}>
                     <CardMedia
                       component="img"
                       image={coverImg}
@@ -465,14 +465,14 @@ export const LabManualsPage: React.FC = () => {
                       sx={{
                         p: 1.5,
                         borderRadius: 2,
-                        bgcolor: hasManual ? "#f0fdf4" : "#fafafa",
-                        border: `1px solid ${hasManual ? "#bbf7d0" : THEME.border}`,
+                        bgcolor: hasManual ? THEME.emeraldLight : THEME.slate50,
+                        border: `1px solid ${hasManual ? THEME.emeraldLight : THEME.border}`,
                         display: "flex",
                         alignItems: "center",
                         gap: 1.2,
                       }}
                     >
-                      <PictureAsPdfIcon sx={{ color: hasManual ? "#16a34a" : THEME.textSecondary, fontSize: 24 }} />
+                      <PictureAsPdfIcon sx={{ color: hasManual ? THEME.emerald : THEME.textSecondary, fontSize: 24 }} />
                       <Box flex={1} overflow="hidden">
                         <Typography fontSize={12} fontWeight={700} color={THEME.textPrimary} noWrap>
                           {product.lab_manual?.title || "Standard Lab Manual"}
@@ -491,7 +491,7 @@ export const LabManualsPage: React.FC = () => {
                             variant="outlined"
                             startIcon={<VisibilityIcon fontSize="small" />}
                             onClick={() => handleOpenPdfPreview(product)}
-                            sx={{ flex: 1, minWidth: 100, borderRadius: 1.5, textTransform: "none", fontSize: 12, fontWeight: 600, borderColor: "#16a34a", color: "#16a34a" }}
+                            sx={{ flex: 1, minWidth: 100, borderRadius: 1.5, textTransform: "none", fontSize: 12, fontWeight: 600, borderColor: THEME.emerald, color: THEME.emerald }}
                           >
                             View
                           </CustomButton>
@@ -500,7 +500,7 @@ export const LabManualsPage: React.FC = () => {
                             variant="contained"
                             startIcon={<DownloadIcon fontSize="small" />}
                             onClick={() => handleDownloadManual(product)}
-                            sx={{ flex: 1, minWidth: 110, bgcolor: "#16a34a", "&:hover": { bgcolor: "#15803d" }, borderRadius: 1.5, textTransform: "none", fontSize: 12, fontWeight: 600 }}
+                            sx={{ flex: 1, minWidth: 110, bgcolor: THEME.emerald, "&:hover": { bgcolor: THEME.emeraldDark }, borderRadius: 1.5, textTransform: "none", fontSize: 12, fontWeight: 600 }}
                           >
                             Download
                           </CustomButton>
@@ -547,7 +547,7 @@ export const LabManualsPage: React.FC = () => {
               if (actionMenuProduct) handleOpenPdfPreview(actionMenuProduct);
               handleCloseActionMenu();
             }}
-            sx={{ gap: 1.5, fontSize: 13, fontWeight: 600, color: "#16a34a", borderRadius: 1.5, py: 1 }}
+            sx={{ gap: 1.5, fontSize: 13, fontWeight: 600, color: THEME.emerald, borderRadius: 1.5, py: 1 }}
           >
             <VisibilityIcon fontSize="small" />
             View PDF Manual
@@ -559,7 +559,7 @@ export const LabManualsPage: React.FC = () => {
               if (actionMenuProduct) handleDownloadManual(actionMenuProduct);
               handleCloseActionMenu();
             }}
-            sx={{ gap: 1.5, fontSize: 13, fontWeight: 600, color: "#16a34a", borderRadius: 1.5, py: 1 }}
+            sx={{ gap: 1.5, fontSize: 13, fontWeight: 600, color: THEME.emerald, borderRadius: 1.5, py: 1 }}
           >
             <DownloadIcon fontSize="small" />
             Download PDF
@@ -595,7 +595,7 @@ export const LabManualsPage: React.FC = () => {
           }}
         >
           <Box display="flex" alignItems="center" gap={1.5}>
-            <PictureAsPdfIcon sx={{ color: "#16a34a", fontSize: 28 }} />
+            <PictureAsPdfIcon sx={{ color: THEME.emerald, fontSize: 28 }} />
             <Box>
               <Typography fontSize={16} fontWeight={700} color={THEME.textPrimary}>
                 {pdfPreviewProduct?.lab_manual?.title || "Lab Manual Preview"}
@@ -612,7 +612,7 @@ export const LabManualsPage: React.FC = () => {
                 variant="contained"
                 startIcon={<DownloadIcon />}
                 onClick={() => handleDownloadManual(pdfPreviewProduct)}
-                sx={{ bgcolor: "#16a34a", "&:hover": { bgcolor: "#15803d" }, borderRadius: 1.5, textTransform: "none", fontSize: 12 }}
+                sx={{ bgcolor: THEME.emerald, "&:hover": { bgcolor: THEME.emeraldDark }, borderRadius: 1.5, textTransform: "none", fontSize: 12 }}
               >
                 Download PDF
               </CustomButton>
@@ -623,7 +623,7 @@ export const LabManualsPage: React.FC = () => {
           </Box>
         </DialogTitle>
 
-        <DialogContent sx={{ p: 0, bgcolor: "#f8fafc", display: "flex", flexDirection: "column" }}>
+        <DialogContent sx={{ p: 0, bgcolor: THEME.slate50, display: "flex", flexDirection: "column" }}>
           {pdfPreviewProduct?.lab_manual?.url ? (
             <Box sx={{ width: "100%", height: 560, border: "none" }}>
               <iframe

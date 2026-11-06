@@ -1,5 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { THEME, useAppTheme } from "@/assets/theme";
+import {
+  THEME,
+  useAppTheme,
+  COLOR_SLATE_800,
+  COLOR_SLATE_900,
+  COLOR_BLUE_50,
+  COLOR_BLUE_400,
+  COLOR_GREEN_600,
+  COLOR_SLATE_50,
+  COLOR_SLATE_700,
+  COLOR_SLATE_400,
+  COLOR_SLATE_200,
+  COLOR_SLATE_500,
+  COLOR_WHITE,
+  COLOR_PRIMARY_ALPHA_10,
+  COLOR_PRIMARY_ALPHA_12
+} from "@/assets/theme";
 import type { Company } from "@/models/company.models";
 import { CompanyService } from "@/services/company.service";
 import { CustomButton } from "@/components/Buttons/CustomButton";
@@ -181,13 +197,13 @@ export const CompanyManagementPage: React.FC = () => {
   return (
     <Box p={3.5} sx={{ maxWidth: 1250, margin: "0 auto" }}>
       {/* Top Banner Header */}
-      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: theme.isDark ? "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)" : "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: theme.isDark ? "0 10px 25px -5px rgba(0, 0, 0, 0.5)" : "0 10px 25px -5px rgba(15, 23, 42, 0.4)" }}>
+      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: theme.isDark ? `linear-gradient(135deg, ${COLOR_SLATE_800} 0%, ${COLOR_SLATE_900} 100%)` : `linear-gradient(135deg, ${COLOR_SLATE_900} 0%, ${COLOR_SLATE_800} 100%)`, color: THEME.white, display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: theme.isDark ? "0 10px 25px -5px rgba(0, 0, 0, 0.5)" : "0 10px 25px -5px rgba(15, 23, 42, 0.4)" }}>
         <Box display="flex" alignItems="center" gap={2}>
           <Box sx={{ width: 54, height: 54, borderRadius: 2.5, bgcolor: "rgba(255, 255, 255, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", border: "1px solid rgba(255, 255, 255, 0.15)" }}>
             <BusinessIcon sx={{ fontSize: 32, color: THEME.warning }} />
           </Box>
           <Box>
-            <Typography fontSize={22} fontWeight={800} letterSpacing="-0.5px" color="#ffffff">
+            <Typography fontSize={22} fontWeight={800} letterSpacing="-0.5px" color={THEME.white}>
               Organization & Company Module
             </Typography>
             <Typography fontSize={13.5} sx={{ color: "rgba(255, 255, 255, 0.8)", mt: 0.3 }}>
@@ -201,7 +217,7 @@ export const CompanyManagementPage: React.FC = () => {
           startIcon={<AddIcon />}
           onClick={handleOpenAddDialog}
           bgc={THEME.primary}
-          color="#ffffff"
+          color={THEME.white}
           width="auto"
           height="42px"
           sx={{ px: 3, borderRadius: 2 }}
@@ -210,12 +226,12 @@ export const CompanyManagementPage: React.FC = () => {
 
       {/* Active Company Highlight Banner */}
       {activeCompany && (
-        <Paper elevation={0} sx={{ p: 3, mb: 3.5, borderRadius: 3, bgcolor: theme.isDark ? "rgba(37, 99, 235, 0.12)" : "#eff6ff", border: `2px solid ${THEME.primary}`, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
+        <Paper elevation={0} sx={{ p: 3, mb: 3.5, borderRadius: 3, bgcolor: theme.isDark ? COLOR_PRIMARY_ALPHA_12 : COLOR_BLUE_50, border: `2px solid ${THEME.primary}`, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
           <Box display="flex" alignItems="center" gap={2.5}>
             {activeCompany.logo_url ? (
-              <Box component="img" src={activeCompany.logo_url} alt={activeCompany.company_name} sx={{ width: 64, height: 64, borderRadius: 2, objectFit: "contain", bgcolor: theme.isDark ? "#1e293b" : "#ffffff", p: 0.8, border: `1px solid ${theme.border}` }} />
+              <Box component="img" src={activeCompany.logo_url} alt={activeCompany.company_name} sx={{ width: 64, height: 64, borderRadius: 2, objectFit: "contain", bgcolor: theme.isDark ? COLOR_SLATE_800 : THEME.white, p: 0.8, border: `1px solid ${theme.border}` }} />
             ) : (
-              <Box sx={{ width: 64, height: 64, borderRadius: 2, bgcolor: THEME.primary, color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 24 }}>
+              <Box sx={{ width: 64, height: 64, borderRadius: 2, bgcolor: THEME.primary, color: THEME.white, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 24 }}>
                 {activeCompany.company_name.charAt(0)}
               </Box>
             )}
@@ -225,7 +241,7 @@ export const CompanyManagementPage: React.FC = () => {
                 <Typography fontSize={18} fontWeight={800} color={theme.textPrimary}>
                   {activeCompany.company_name}
                 </Typography>
-                <Chip icon={<CheckCircleIcon sx={{ fontSize: "16px !important", color: "#ffffff !important" }} />} label="ACTIVE SYSTEM COMPANY" sx={{ bgcolor: "#16a34a", color: "#ffffff", fontWeight: 800, fontSize: 11, height: 24 }} />
+                <Chip icon={<CheckCircleIcon sx={{ fontSize: "16px !important", color: `${THEME.white} !important` }} />} label="ACTIVE SYSTEM COMPANY" sx={{ bgcolor: COLOR_GREEN_600, color: THEME.white, fontWeight: 800, fontSize: 11, height: 24 }} />
               </Box>
               <Typography fontSize={13} color={theme.textSecondary} mt={0.5}>
                 GST: <strong style={{ color: theme.textPrimary }}>{activeCompany.gst_number || "N/A"}</strong> | PAN: <strong style={{ color: theme.textPrimary }}>{activeCompany.pan_number || "N/A"}</strong> | Phone: <strong style={{ color: theme.textPrimary }}>{activeCompany.phone || "N/A"}</strong> | Email: <strong style={{ color: theme.textPrimary }}>{activeCompany.email || "N/A"}</strong>
@@ -233,7 +249,7 @@ export const CompanyManagementPage: React.FC = () => {
             </Box>
           </Box>
 
-          <CustomButton size="small" variant="outlined" startIcon={<EditIcon />} onClick={() => handleOpenEditDialog(activeCompany)} sx={{ borderColor: THEME.primary, color: theme.isDark ? "#60a5fa" : THEME.primary, fontWeight: 700, borderRadius: 1.5, textTransform: "none" }}>
+          <CustomButton size="small" variant="outlined" startIcon={<EditIcon />} onClick={() => handleOpenEditDialog(activeCompany)} sx={{ borderColor: THEME.primary, color: theme.isDark ? COLOR_BLUE_400 : THEME.primary, fontWeight: 700, borderRadius: 1.5, textTransform: "none" }}>
             Edit Active Company
           </CustomButton>
         </Paper>
@@ -267,7 +283,7 @@ export const CompanyManagementPage: React.FC = () => {
                   borderRadius: 3,
                   border: `1px solid ${company.is_active ? THEME.primary : theme.border}`,
                   bgcolor: company.is_active
-                    ? (theme.isDark ? "rgba(37, 99, 235, 0.1)" : "#f8fafc")
+                    ? (theme.isDark ? COLOR_PRIMARY_ALPHA_10 : COLOR_SLATE_50)
                     : theme.cardBg,
                   boxShadow: company.is_active ? "0 4px 20px rgba(37, 99, 235, 0.15)" : "none",
                   transition: "all 0.2s ease",
@@ -287,7 +303,7 @@ export const CompanyManagementPage: React.FC = () => {
                             height: 52,
                             borderRadius: 2,
                             objectFit: "contain",
-                            bgcolor: theme.isDark ? "#0f172a" : "#ffffff",
+                            bgcolor: theme.isDark ? COLOR_SLATE_900 : THEME.white,
                             p: 0.5,
                             border: `1px solid ${theme.border}`,
                           }}
@@ -298,8 +314,8 @@ export const CompanyManagementPage: React.FC = () => {
                             width: 52,
                             height: 52,
                             borderRadius: 2,
-                            bgcolor: company.is_active ? THEME.primary : (theme.isDark ? "#334155" : "#94a3b8"),
-                            color: "#ffffff",
+                            bgcolor: company.is_active ? THEME.primary : (theme.isDark ? COLOR_SLATE_700 : COLOR_SLATE_400),
+                            color: THEME.white,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -320,8 +336,8 @@ export const CompanyManagementPage: React.FC = () => {
                             label="ACTIVE COMPANY"
                             size="small"
                             sx={{
-                              bgcolor: "#16a34a",
-                              color: "#ffffff",
+                              bgcolor: COLOR_GREEN_600,
+                              color: THEME.white,
                               fontWeight: 800,
                               fontSize: 10,
                               mt: 0.3,
@@ -332,8 +348,8 @@ export const CompanyManagementPage: React.FC = () => {
                             label="INACTIVE"
                             size="small"
                             sx={{
-                              bgcolor: theme.isDark ? "#334155" : "#e2e8f0",
-                              color: theme.isDark ? "#94a3b8" : "#64748b",
+                              bgcolor: theme.isDark ? COLOR_SLATE_700 : COLOR_SLATE_200,
+                              color: theme.isDark ? COLOR_SLATE_400 : COLOR_SLATE_500,
                               fontWeight: 700,
                               fontSize: 10,
                               mt: 0.3,
@@ -403,7 +419,7 @@ export const CompanyManagementPage: React.FC = () => {
                         disabled
                         size="small"
                         startIcon={<StarIcon />}
-                        sx={{ color: "#16a34a", fontWeight: 700, textTransform: "none" }}
+                        sx={{ color: COLOR_GREEN_600, fontWeight: 700, textTransform: "none" }}
                       >
                         Currently Active Company
                       </CustomButton>
@@ -415,7 +431,7 @@ export const CompanyManagementPage: React.FC = () => {
                         onClick={() => handleSetActive(company)}
                         sx={{
                           bgcolor: THEME.primary,
-                          color: "#ffffff",
+                          color: THEME.white,
                           textTransform: "none",
                           fontWeight: 700,
                           borderRadius: 1.5,
@@ -448,7 +464,7 @@ export const CompanyManagementPage: React.FC = () => {
                   height: 72,
                   borderRadius: 2.5,
                   border: `2px dashed ${theme.border}`,
-                  bgcolor: theme.isDark ? "#0f172a" : "#f8fafc",
+                  bgcolor: theme.isDark ? COLOR_SLATE_900 : COLOR_SLATE_50,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -593,7 +609,7 @@ export const CompanyManagementPage: React.FC = () => {
             onClick={handleSaveCompany}
             width="auto"
             bgc={THEME.primary}
-            color="#ffffff"
+            color={THEME.white}
             sx={{ px: 3, fontWeight: 700 }}
           />
         </DialogActions>

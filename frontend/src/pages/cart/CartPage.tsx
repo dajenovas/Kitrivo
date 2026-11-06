@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { THEME } from "@/assets/theme";
+import { THEME, COLOR_PRIMARY_DARK, COLOR_BLUE_50, COLOR_SLATE_50, COLOR_SLATE_500 } from "@/assets/theme";
 import { useNavigate } from "react-router-dom";
 import { useCartStore } from "@/store/useCartStore";
 import { QuotationService } from "@/services/quotation.service";
@@ -83,10 +83,10 @@ export const CartPage: React.FC = () => {
   return (
     <Box p={3.5} sx={{ maxWidth: 1200, margin: "0 auto" }}>
       {/* Header Banner */}
-      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.3)" }}>
+      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: `linear-gradient(135deg, ${THEME.primary} 0%, ${COLOR_PRIMARY_DARK} 100%)`, color: THEME.white, display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.3)" }}>
         <Box display="flex" alignItems="center" gap={2}>
           <Box sx={{ width: 52, height: 52, borderRadius: 2.5, bgcolor: "rgba(255, 255, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", }}>
-            <ShoppingCartIcon sx={{ fontSize: 30, color: "#ffffff" }} />
+            <ShoppingCartIcon sx={{ fontSize: 30, color: THEME.white }} />
           </Box>
           <Box>
             <Typography fontSize={24} fontWeight={800} letterSpacing="-0.5px"> Product Inquiry Cart & Quotation Builder </Typography>
@@ -94,13 +94,13 @@ export const CartPage: React.FC = () => {
           </Box>
         </Box>
 
-        <Chip label={`${getItemCount()} Items Selected`} sx={{ bgcolor: "rgba(255, 255, 255, 0.2)", color: "#ffffff", fontWeight: 700, fontSize: 13, px: 1, py: 2 }} />
+        <Chip label={`${getItemCount()} Items Selected`} sx={{ bgcolor: "rgba(255, 255, 255, 0.2)", color: THEME.white, fontWeight: 700, fontSize: 13, px: 1, py: 2 }} />
       </Paper>
 
       {/* Cart Content */}
       {items.length === 0 ? (
         <Paper elevation={0} sx={{ p: 6, textAlign: "center", borderRadius: 3, border: `1px solid ${THEME.border}`, bgcolor: THEME.white }}>
-          <Box sx={{ width: 80, height: 80, borderRadius: "50%", bgcolor: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", mx: "auto", mb: 2.5 }}>
+          <Box sx={{ width: 80, height: 80, borderRadius: "50%", bgcolor: COLOR_BLUE_50, display: "flex", alignItems: "center", justifyContent: "center", mx: "auto", mb: 2.5 }}>
             <ShoppingCartIcon sx={{ fontSize: 40, color: THEME.primary }} />
           </Box>
           <Typography fontSize={20} fontWeight={800} color={THEME.textPrimary}> Your Inquiry Cart is Empty </Typography>
@@ -128,7 +128,7 @@ export const CartPage: React.FC = () => {
                   const itemTotal = product.price * quantity;
                   return (
                     <Paper key={product.id} elevation={0} sx={{ p: 2, borderRadius: 2.5, border: `1px solid ${THEME.border}`, display: "flex", gap: 2, alignItems: "center" }}>
-                      <Box component="img" src={product.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80"} alt={product.product_name} sx={{ width: 72, height: 72, borderRadius: 2, objectFit: "contain", bgcolor: "#f8fafc", p: 1 }} />
+                      <Box component="img" src={product.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80"} alt={product.product_name} sx={{ width: 72, height: 72, borderRadius: 2, objectFit: "contain", bgcolor: COLOR_SLATE_50, p: 1 }} />
 
                       <Box flex={1}>
                         <Typography fontSize={15} fontWeight={700} color={THEME.textPrimary}>
@@ -139,7 +139,7 @@ export const CartPage: React.FC = () => {
                         </Typography>
                         <Typography fontSize={14} fontWeight={800} color={THEME.primary} mt={0.5}>
                           ₹{product.price.toLocaleString("en-IN")}{" "}
-                          <span style={{ fontSize: 11, fontWeight: 400, color: "#64748b" }}>(unit price)</span>
+                          <span style={{ fontSize: 11, fontWeight: 400, color: COLOR_SLATE_500 }}>(unit price)</span>
                         </Typography>
                       </Box>
 
@@ -180,7 +180,7 @@ export const CartPage: React.FC = () => {
                   Quotation & Organization Details
                 </Typography>
 
-                <Paper elevation={0} sx={{ p: 2.5, mb: 2.5, bgcolor: "#f8fafc", borderRadius: 2.5, border: `1px solid ${THEME.primary}30` }}>
+                <Paper elevation={0} sx={{ p: 2.5, mb: 2.5, bgcolor: COLOR_SLATE_50, borderRadius: 2.5, border: `1px solid ${THEME.primary}30` }}>
                   <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
                     <Typography fontSize={11} fontWeight={700} color={THEME.primary} textTransform="uppercase">
                       Quotation Issuer & Company Profile

@@ -1,5 +1,5 @@
 const getBaseUrl = (): string => {
-    const rawUrl = import.meta.env.VITE_API_BASE_URL || "https://kitrivo.vercel.app/api/v1/";
+    const rawUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/v1/";
     return rawUrl.endsWith("/") ? rawUrl : `${rawUrl}/`;
 };
 

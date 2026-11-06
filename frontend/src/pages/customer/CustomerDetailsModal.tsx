@@ -45,16 +45,16 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
     const getTimelineBadgeBg = (eventType: string) => {
         switch (eventType) {
             case "QUOTATION_CREATED":
-                return { bg: theme.isDark ? "rgba(37,99,235,0.15)" : "#EFF6FF", color: THEME.primary };
+                return { bg: theme.isDark ? "rgba(37,99,235,0.15)" : THEME.blueLight, color: THEME.primary };
             case "QUOTATION_CHECKED_OUT":
-                return { bg: theme.isDark ? "rgba(124,58,237,0.15)" : "#F5F3FF", color: THEME.secondary };
+                return { bg: theme.isDark ? "rgba(124,58,237,0.15)" : THEME.purpleLight, color: THEME.secondary };
             case "INVOICE_GENERATED":
             case "PAYMENT_RECEIVED":
-                return { bg: theme.isDark ? "rgba(22,163,74,0.15)" : "#DCFCE7", color: "#16A34A" };
+                return { bg: theme.isDark ? "rgba(22,163,74,0.15)" : THEME.emeraldLight, color: THEME.emerald };
             case "ACCOUNT_CREATED":
-                return { bg: theme.isDark ? "rgba(245,158,11,0.15)" : "#FEF3C7", color: THEME.warning };
+                return { bg: theme.isDark ? "rgba(245,158,11,0.15)" : THEME.amberLight, color: THEME.warning };
             default:
-                return { bg: theme.isDark ? "rgba(148,163,184,0.15)" : "#F1F5F9", color: theme.textSecondary };
+                return { bg: theme.isDark ? "rgba(148,163,184,0.15)" : THEME.slate100, color: theme.textSecondary };
         }
     };
 
@@ -72,7 +72,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                                 {details?.company_name || "Customer Profile"}
                             </Typography>
                             {details?.customer_type && (
-                                <Chip label={details.customer_type} size="small" sx={{ fontWeight: 700, fontSize: "0.72rem", bgcolor: theme.isDark ? "rgba(37,99,235,0.2)" : "#EFF6FF", color: THEME.primary }} />
+                                <Chip label={details.customer_type} size="small" sx={{ fontWeight: 700, fontSize: "0.72rem", bgcolor: theme.isDark ? "rgba(37,99,235,0.2)" : THEME.blueLight, color: THEME.primary }} />
                             )}
                         </Box>
                         <Typography variant="caption" sx={{ color: theme.textSecondary }}>
@@ -95,8 +95,8 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                         {/* Metrics Bar */}
                         <Grid container spacing={2} sx={{ mb: 3 }}>
                             <Grid item xs={12} sm={3}>
-                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(37,99,235,0.12)" : "#EFF6FF", border: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 1.5 }}>
-                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: THEME.primary, color: "#fff", display: "flex" }}>
+                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(37,99,235,0.12)" : THEME.blueLight, border: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 1.5 }}>
+                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: THEME.primary, color: THEME.white, display: "flex" }}>
                                         <TrendingUpIcon sx={{ fontSize: 22 }} />
                                     </Box>
                                     <Box>
@@ -107,8 +107,8 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                             </Grid>
 
                             <Grid item xs={12} sm={3}>
-                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(220,38,38,0.12)" : "#FEE2E2", border: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 1.5 }}>
-                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: THEME.error, color: "#fff", display: "flex" }}>
+                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(220,38,38,0.12)" : THEME.redLight, border: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 1.5 }}>
+                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: THEME.error, color: THEME.white, display: "flex" }}>
                                         <BillIcon sx={{ fontSize: 22 }} />
                                     </Box>
                                     <Box>
@@ -119,8 +119,8 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                             </Grid>
 
                             <Grid item xs={12} sm={3}>
-                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(124,58,237,0.12)" : "#F5F3FF", border: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 1.5 }}>
-                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: THEME.secondary, color: "#fff", display: "flex" }}>
+                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(124,58,237,0.12)" : THEME.purpleLight, border: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 1.5 }}>
+                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: THEME.secondary, color: THEME.white, display: "flex" }}>
                                         <QuoteIcon sx={{ fontSize: 22 }} />
                                     </Box>
                                     <Box>
@@ -131,13 +131,13 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                             </Grid>
 
                             <Grid item xs={12} sm={3}>
-                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(22,163,74,0.12)" : "#DCFCE7", border: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 1.5 }}>
-                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: "#16A34A", color: "#fff", display: "flex" }}>
+                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(22,163,74,0.12)" : THEME.emeraldLight, border: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: 1.5 }}>
+                                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: THEME.emerald, color: THEME.white, display: "flex" }}>
                                         <CheckIcon sx={{ fontSize: 22 }} />
                                     </Box>
                                     <Box>
                                         <Typography variant="caption" sx={{ color: theme.textSecondary, fontWeight: 600 }}>Orders / Invoices</Typography>
-                                        <Typography variant="h6" sx={{ fontWeight: 800, color: "#16A34A", fontSize: "1.1rem" }}>{details.orders_count}</Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 800, color: THEME.emerald, fontSize: "1.1rem" }}>{details.orders_count}</Typography>
                                     </Box>
                                 </Paper>
                             </Grid>
@@ -163,7 +163,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                                     <Grid container spacing={2}>
                                         {details.contact_persons.map((cp, idx) => (
                                             <Grid item xs={12} sm={6} key={idx}>
-                                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC", border: `1px solid ${theme.border}` }}>
+                                                <Paper elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50, border: `1px solid ${theme.border}` }}>
                                                     <Typography variant="body2" sx={{ fontWeight: 700, color: theme.textPrimary }}>{cp.name}</Typography>
                                                     {cp.designation && <Typography variant="caption" sx={{ color: THEME.primary, fontWeight: 600, display: "block" }}>{cp.designation}</Typography>}
                                                     {cp.phone && (
@@ -186,7 +186,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                                     <Typography variant="subtitle2" sx={{ fontWeight: 700, color: THEME.primary, mt: 3, mb: 1, textTransform: "uppercase", fontSize: "0.75rem" }}>
                                         Notes & Terms
                                     </Typography>
-                                    <Paper elevation={0} sx={{ p: 2, borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC", border: `1px solid ${theme.border}` }}>
+                                    <Paper elevation={0} sx={{ p: 2, borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50, border: `1px solid ${theme.border}` }}>
                                         <Typography variant="body2" sx={{ color: theme.textPrimary, fontStyle: details.notes ? "normal" : "italic" }}>
                                             {details.notes || "No custom notes recorded."}
                                         </Typography>
@@ -197,7 +197,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                                     <Typography variant="subtitle2" sx={{ fontWeight: 700, color: THEME.primary, mb: 1.5, textTransform: "uppercase", fontSize: "0.75rem" }}>
                                         Tax & Addresses
                                     </Typography>
-                                    <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC", border: `1px solid ${theme.border}`, display: "flex", flexDirection: "column", gap: 1.5 }}>
+                                    <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50, border: `1px solid ${theme.border}`, display: "flex", flexDirection: "column", gap: 1.5 }}>
                                         <Box>
                                             <Typography variant="caption" sx={{ color: theme.textSecondary, fontWeight: 600 }}>GSTIN</Typography>
                                             <Typography variant="body2" sx={{ fontWeight: 700, color: theme.textPrimary }}>{details.gstin || "N/A"}</Typography>
@@ -229,7 +229,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                                     details.timeline.map((evt) => {
                                         const badge = getTimelineBadgeBg(evt.event_type);
                                         return (
-                                            <Paper key={evt.id} elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC", border: `1px solid ${theme.border}`, position: "relative" }}>
+                                            <Paper key={evt.id} elevation={0} sx={{ p: 2, borderRadius: 2.5, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50, border: `1px solid ${theme.border}`, position: "relative" }}>
                                                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 0.75 }}>
                                                     <Chip label={evt.event_type.replace("_", " ")} size="small" sx={{ height: 22, fontSize: "0.7rem", fontWeight: 700, bgcolor: badge.bg, color: badge.color }} />
                                                     <Typography variant="caption" sx={{ color: theme.textSecondary, fontWeight: 600 }}>{evt.date}</Typography>
@@ -246,7 +246,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                         {/* TAB 2: Quotations History */}
                         {activeTab === 2 && (
                             <Table sx={{ border: `1px solid ${theme.border}`, borderRadius: 2 }}>
-                                <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC" }}>
+                                <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50 }}>
                                     <TableRow>
                                         <TableCell sx={{ fontWeight: 700 }}>Quote ID</TableCell>
                                         <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
@@ -278,7 +278,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                         {/* TAB 3: Orders / Bills History */}
                         {activeTab === 3 && (
                             <Table sx={{ border: `1px solid ${theme.border}`, borderRadius: 2 }}>
-                                <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC" }}>
+                                <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50 }}>
                                     <TableRow>
                                         <TableCell sx={{ fontWeight: 700 }}>Invoice #</TableCell>
                                         <TableCell sx={{ fontWeight: 700 }}>Quote Ref</TableCell>
@@ -300,7 +300,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
                                                 <TableCell>{b.payment_method}</TableCell>
                                                 <TableCell align="right" sx={{ fontWeight: 800 }}>₹{b.total_amount.toLocaleString()}</TableCell>
                                                 <TableCell align="center">
-                                                    <Chip label={b.status} size="small" sx={{ height: 22, fontSize: "0.7rem", fontWeight: 700, bgcolor: b.status === "PAID" ? "#DCFCE7" : "#FEF3C7", color: b.status === "PAID" ? "#16A34A" : "#B45309" }} />
+                                                    <Chip label={b.status} size="small" sx={{ height: 22, fontSize: "0.7rem", fontWeight: 700, bgcolor: b.status === "PAID" ? THEME.emeraldLight : THEME.amberLight, color: b.status === "PAID" ? THEME.emerald : THEME.amberDark }} />
                                                 </TableCell>
                                             </TableRow>
                                         ))
@@ -313,7 +313,7 @@ export const CustomerDetailsModal: React.FC<CustomerDetailsModalProps> = ({ open
             </DialogContent>
 
             <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${theme.border}` }}>
-                <CustomButton text="Close" onClick={onClose} bgc={THEME.primary} color="#FFFFFF" height={38} />
+                <CustomButton text="Close" onClick={onClose} bgc={THEME.primary} color={THEME.white} height={38} />
             </DialogActions>
         </Dialog>
     );

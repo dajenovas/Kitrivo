@@ -248,7 +248,7 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
             <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${theme.border}`, borderRadius: 2, bgcolor: theme.paperBg }}>
 
                 <Table>
-                    <TableHead sx={{ bgcolor: theme.isDark ? "#0f172a" : THEME.background }}>
+                    <TableHead sx={{ bgcolor: theme.isDark ? THEME.slate900 : THEME.background }}>
                         <TableRow>
                             {UserManagementTableHeaders.map((header) => (
                                 <TableCell key={header} sx={{ fontWeight: 600, color: theme.textPrimary, borderColor: theme.border }}>
@@ -271,7 +271,7 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                                     <TableCell sx={{ color: theme.textPrimary, borderColor: theme.border }}>{page * rowsPerPage + index + 1}</TableCell>
 
                                     {/* Employee ID */}
-                                    <TableCell sx={{ fontWeight: 600, color: theme.isDark ? "#60a5fa" : THEME.primary, borderColor: theme.border }}>
+                                    <TableCell sx={{ fontWeight: 600, color: theme.isDark ? THEME.blue400 : THEME.primary, borderColor: theme.border }}>
                                         {user.employee_id || "N/A"}
                                     </TableCell>
 
@@ -311,7 +311,7 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
                                                     sx={{
                                                         mr: 0.5,
                                                         mb: 0.5,
-                                                        borderColor: theme.isDark ? "#475569" : THEME.border,
+                                                        borderColor: theme.isDark ? THEME.slate600 : THEME.border,
                                                         color: theme.textPrimary,
                                                     }}
                                                 />
@@ -403,7 +403,7 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
             </Menu>
 
             {/* Delete User Confirmation Dialog */}
-            <Dialog open={deleteDialogOpen} onClose={handleCancelDelete} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, border: `1px solid ${THEME.border}`, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)" } }}>
+            <Dialog open={deleteDialogOpen} onClose={handleCancelDelete} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, border: `1px solid ${THEME.border}`, boxShadow: `0 20px 40px ${THEME.slate900}26` } }}>
                 <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1.5, pb: 1 }}>
                     <Box sx={{ width: 40, height: 40, borderRadius: "50%", bgcolor: `${THEME.error}15`, display: "flex", alignItems: "center", justifyContent: "center", color: THEME.error }}>
                         <DeleteIcon fontSize="small" />
@@ -430,12 +430,12 @@ const UserListTable: React.FC<UserListTableProps> = ({ refreshTrigger, onEditUse
 
                 <DialogActions sx={{ p: 2, pt: 1.5, gap: 1 }}>
                     <CustomButton text="Cancel" width={100} height="38px" bgc={THEME.transparent} color={THEME.textSecondary} border={`1px solid ${THEME.border}`} hov={`${THEME.border}40`} onClick={handleCancelDelete} isDisabled={deleting} />
-                    <CustomButton text={deleting ? "Deleting..." : "Delete"} width={110} height="38px" bgc={THEME.error} color={THEME.white} hov="#c62828" onClick={handleConfirmDelete} isDisabled={deleting} Sicon={deleting ? <CircularProgress size={16} color="inherit" /> : undefined} />
+                    <CustomButton text={deleting ? "Deleting..." : "Delete"} width={110} height="38px" bgc={THEME.error} color={THEME.white} hov={THEME.redDark} onClick={handleConfirmDelete} isDisabled={deleting} Sicon={deleting ? <CircularProgress size={16} color="inherit" /> : undefined} />
                 </DialogActions>
             </Dialog>
 
             {/* Reset Password Modal */}
-            <Dialog open={resetPasswordOpen} onClose={handleCancelResetPassword} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, border: `1px solid ${THEME.border}`, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)" } }}>
+            <Dialog open={resetPasswordOpen} onClose={handleCancelResetPassword} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, border: `1px solid ${THEME.border}`, boxShadow: `0 20px 40px ${THEME.slate900}26` } }}>
                 <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1.5, pb: 1 }}>
                     <Box sx={{ width: 40, height: 40, borderRadius: "50%", bgcolor: `${THEME.primary}15`, display: "flex", alignItems: "center", justifyContent: "center", color: THEME.primary }}>
                         <LockResetIcon fontSize="small" />

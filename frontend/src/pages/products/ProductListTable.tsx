@@ -173,13 +173,13 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
   const getStatusChip = (statusStr: string) => {
     switch (statusStr) {
       case "ACTIVE":
-        return <Chip label="ACTIVE" size="small" sx={{ bgcolor: "#e8f5e9", color: "#2e7d32", fontWeight: 700 }} />;
+        return <Chip label="ACTIVE" size="small" sx={{ bgcolor: THEME.green100, color: THEME.green700, fontWeight: 700 }} />;
       case "INACTIVE":
-        return <Chip label="INACTIVE" size="small" sx={{ bgcolor: "#fff3e0", color: "#e65100", fontWeight: 700 }} />;
+        return <Chip label="INACTIVE" size="small" sx={{ bgcolor: THEME.amber100, color: THEME.amber800, fontWeight: 700 }} />;
       case "OUTOFSTOCK":
-        return <Chip label="OUT OF STOCK" size="small" sx={{ bgcolor: "#ffebee", color: "#c62828", fontWeight: 700 }} />;
+        return <Chip label="OUT OF STOCK" size="small" sx={{ bgcolor: THEME.red100, color: THEME.redDark, fontWeight: 700 }} />;
       case "DISCONTINUED":
-        return <Chip label="DISCONTINUED" size="small" sx={{ bgcolor: "#f5f5f5", color: "#616161", fontWeight: 700 }} />;
+        return <Chip label="DISCONTINUED" size="small" sx={{ bgcolor: THEME.slate100, color: THEME.slate600, fontWeight: 700 }} />;
       default:
         return <Chip label={statusStr} size="small" />;
     }
@@ -275,7 +275,7 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
         sx={{ borderRadius: 2, border: `1px solid ${theme.border}`, bgcolor: theme.paperBg, overflow: "hidden" }}
       >
         <Table sx={{ minWidth: 800 }}>
-          <TableHead sx={{ bgcolor: theme.isDark ? "#0f172a" : `${THEME.border}30` }}>
+          <TableHead sx={{ bgcolor: theme.isDark ? THEME.slate900 : `${THEME.border}30` }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>Product</TableCell>
               <TableCell sx={{ fontWeight: 700, color: theme.textPrimary, borderColor: theme.border }}>SKU / Product ID</TableCell>
@@ -324,7 +324,7 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                             borderRadius: 1.5,
                             objectFit: "cover",
                             border: `1px solid ${theme.border}`,
-                            bgcolor: theme.isDark ? "#0f172a" : "#f5f5f5",
+                            bgcolor: theme.isDark ? THEME.slate900 : THEME.slate100,
                           }}
                           onError={(e: any) => {
                             e.target.src =
@@ -346,7 +346,7 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
 
                     {/* SKU */}
                     <TableCell sx={{ borderColor: theme.border }}>
-                      <Typography fontSize={FONTSIZE.small} fontWeight={600} color={theme.isDark ? "#60a5fa" : THEME.primary}>
+                      <Typography fontSize={FONTSIZE.small} fontWeight={600} color={theme.isDark ? THEME.blue400 : THEME.primary}>
                         {prod.product_id}
                       </Typography>
                     </TableCell>
@@ -373,18 +373,18 @@ export const ProductListTable: React.FC<ProductListTableProps> = ({
                       <Chip
                         icon={
                           isStoreReflected ? (
-                            <VerifiedIcon style={{ color: "#2e7d32", fontSize: 14 }} />
+                            <VerifiedIcon style={{ color: THEME.green700, fontSize: 14 }} />
                           ) : (
-                            <StorefrontIcon style={{ color: "#ed6c02", fontSize: 14 }} />
+                            <StorefrontIcon style={{ color: THEME.amber600, fontSize: 14 }} />
                           )
                         }
                         label={isStoreReflected ? "Reflected on Store" : "Internal / Draft"}
                         size="small"
                         variant="outlined"
                         sx={{
-                          borderColor: isStoreReflected ? "#a5d6a7" : "#ffe0b2",
-                          bgcolor: isStoreReflected ? (theme.isDark ? "rgba(46, 125, 50, 0.2)" : "#f1f8e9") : (theme.isDark ? "rgba(237, 108, 2, 0.2)" : "#fffde7"),
-                          color: isStoreReflected ? (theme.isDark ? "#81c784" : "#2e7d32") : (theme.isDark ? "#ffb74d" : "#e65100"),
+                          borderColor: isStoreReflected ? THEME.green500 : THEME.amber500,
+                          bgcolor: isStoreReflected ? (theme.isDark ? `${THEME.green700}33` : THEME.green100) : (theme.isDark ? `${THEME.amber600}33` : THEME.amber100),
+                          color: isStoreReflected ? (theme.isDark ? THEME.green500 : THEME.green700) : (theme.isDark ? THEME.amber500 : THEME.amber800),
                           fontWeight: 600,
                           fontSize: FONTSIZE.small,
                         }}

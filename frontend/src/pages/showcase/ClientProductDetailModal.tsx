@@ -279,7 +279,7 @@ export const ClientProductDetailModal: React.FC<ClientProductDetailModalProps> =
           </IconButton>
         </DialogTitle>
 
-        <DialogContent sx={{ p: 3, bgcolor: "#fafafa" }}>
+        <DialogContent sx={{ p: 3, bgcolor: THEME.slate50 }}>
           {/* Top Section: Gallery & Quick Info */}
           <Box display="flex" flexDirection={{ xs: "column", md: "row" }} gap={3} mb={3}>
             {/* Gallery Section */}
@@ -341,17 +341,17 @@ export const ClientProductDetailModal: React.FC<ClientProductDetailModalProps> =
                   label={product.status}
                   size="small"
                   sx={{
-                    bgcolor: product.status === "ACTIVE" ? "#e8f5e9" : "#fff3e0",
-                    color: product.status === "ACTIVE" ? "#2e7d32" : "#e65100",
+                    bgcolor: product.status === "ACTIVE" ? THEME.emeraldLight : THEME.amberLight,
+                    color: product.status === "ACTIVE" ? THEME.emerald : THEME.amber,
                     fontWeight: 700,
                   }}
                 />
                 <Chip
-                  icon={<VerifiedIcon style={{ color: "#2e7d32", fontSize: 14 }} />}
+                  icon={<VerifiedIcon style={{ color: THEME.emerald, fontSize: 14 }} />}
                   label="Official Product Line"
                   size="small"
                   variant="outlined"
-                  sx={{ borderColor: "#a5d6a7", bgcolor: "#f1f8e9", color: "#2e7d32", fontWeight: 600 }}
+                  sx={{ borderColor: THEME.emeraldLight, bgcolor: THEME.emeraldLight, color: THEME.emerald, fontWeight: 600 }}
                 />
               </Box>
 
@@ -531,7 +531,7 @@ export const ClientProductDetailModal: React.FC<ClientProductDetailModalProps> =
                   p: 2,
                   borderRadius: 2,
                   border: `1px solid ${THEME.primary}40`,
-                  bgcolor: "#eff6ff",
+                  bgcolor: THEME.blueLight,
                   display: "flex",
                   flexDirection: "column",
                   gap: 1.5,
@@ -597,8 +597,8 @@ export const ClientProductDetailModal: React.FC<ClientProductDetailModalProps> =
                 sx={{
                   p: 2,
                   borderRadius: 2,
-                  border: `1px solid ${product.lab_manual ? "#16a34a40" : THEME.border}`,
-                  bgcolor: product.lab_manual ? "#f0fdf4" : THEME.white,
+                  border: `1px solid ${product.lab_manual ? THEME.emerald + "40" : THEME.border}`,
+                  bgcolor: product.lab_manual ? THEME.emeraldLight : THEME.white,
                   display: "flex",
                   flexDirection: "column",
                   gap: 1.5,
@@ -606,7 +606,7 @@ export const ClientProductDetailModal: React.FC<ClientProductDetailModalProps> =
               >
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Box display="flex" alignItems="center" gap={1.5}>
-                    <MenuBookIcon sx={{ color: product.lab_manual ? "#16a34a" : THEME.textSecondary, fontSize: 26 }} />
+                    <MenuBookIcon sx={{ color: product.lab_manual ? THEME.emerald : THEME.textSecondary, fontSize: 26 }} />
                     <Box>
                       <Typography fontSize={FONTSIZE.small} fontWeight={700} color={THEME.textPrimary}>
                         {product.lab_manual?.title || "Product Lab Manual"}
@@ -643,8 +643,8 @@ export const ClientProductDetailModal: React.FC<ClientProductDetailModalProps> =
                         textTransform: "none",
                         fontSize: 12,
                         fontWeight: 600,
-                        borderColor: "#16a34a",
-                        color: "#16a34a",
+                        borderColor: THEME.emerald,
+                        color: THEME.emerald,
                       }}
                     >
                       View Manual
@@ -667,8 +667,8 @@ export const ClientProductDetailModal: React.FC<ClientProductDetailModalProps> =
                       sx={{
                         flex: 1,
                         minWidth: 130,
-                        bgcolor: "#16a34a",
-                        "&:hover": { bgcolor: "#15803d" },
+                        bgcolor: THEME.emerald,
+                        "&:hover": { bgcolor: THEME.emeraldDark },
                         borderRadius: 1.5,
                         textTransform: "none",
                         fontSize: 12,
@@ -720,7 +720,7 @@ export const ClientProductDetailModal: React.FC<ClientProductDetailModalProps> =
                 </Box>
 
                 {product.demo_video?.url ? (
-                  <Box sx={{ width: "100%", borderRadius: 2, overflow: "hidden", bgcolor: "#000", border: `1px solid ${THEME.border}` }}>
+                  <Box sx={{ width: "100%", borderRadius: 2, overflow: "hidden", bgcolor: THEME.black, border: `1px solid ${THEME.border}` }}>
                     <video
                       controls
                       src={product.demo_video.url}

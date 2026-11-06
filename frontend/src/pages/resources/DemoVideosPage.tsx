@@ -132,11 +132,11 @@ export const DemoVideosPage: React.FC = () => {
   return (
     <Box p={3.5} sx={{ maxWidth: 1400, margin: "0 auto" }}>
       {/* Top Banner */}
-      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)", color: "#ffffff", display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "space-between", alignItems: { xs: "flex-start", md: "center" }, gap: 2.5, boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.4)" }}>
+      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: `linear-gradient(135deg, ${THEME.slate900} 0%, ${THEME.slate800} 100%)`, color: THEME.white, display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "space-between", alignItems: { xs: "flex-start", md: "center" }, gap: 2.5, boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.4)" }}>
         <Box>
           <Box display="flex" alignItems="center" gap={1.5} mb={1}>
-            <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: "#ff0000", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(255, 0, 0, 0.4)" }}>
-              <PlayIcon sx={{ fontSize: 30, color: "#ffffff", ml: 0.3 }} />
+            <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: THEME.red, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(255, 0, 0, 0.4)" }}>
+              <PlayIcon sx={{ fontSize: 30, color: THEME.white, ml: 0.3 }} />
             </Box>
             <Typography fontSize={24} fontWeight={800} letterSpacing="-0.5px">
               YouTube-Style Equipment Video Demonstrations
@@ -150,7 +150,7 @@ export const DemoVideosPage: React.FC = () => {
         {/* Quick Metrics */}
         <Box display="flex" gap={2} flexWrap="wrap">
           <Box sx={{ px: 2.5, py: 1.5, bgcolor: "rgba(255, 255, 255, 0.08)", backdropFilter: "blur(8px)", borderRadius: 2.5, border: "1px solid rgba(255, 255, 255, 0.15)", textAlign: "center", minWidth: 120 }}>
-            <Typography fontSize={22} fontWeight={800} color="#38bdf8">
+            <Typography fontSize={22} fontWeight={800} color={THEME.sky}>
               {products.length}
             </Typography>
             <Typography fontSize={11} sx={{ opacity: 0.85, textTransform: "uppercase", fontWeight: 600 }}>
@@ -159,7 +159,7 @@ export const DemoVideosPage: React.FC = () => {
           </Box>
 
           <Box sx={{ px: 2.5, py: 1.5, bgcolor: "rgba(255, 255, 255, 0.08)", backdropFilter: "blur(8px)", borderRadius: 2.5, border: "1px solid rgba(255, 255, 255, 0.15)", textAlign: "center", minWidth: 120 }}>
-            <Typography fontSize={22} fontWeight={800} color="#38bdf8">
+            <Typography fontSize={22} fontWeight={800} color={THEME.sky}>
               {categories.length}
             </Typography>
             <Typography fontSize={11} sx={{ opacity: 0.85, textTransform: "uppercase", fontWeight: 600 }}>
@@ -275,7 +275,7 @@ export const DemoVideosPage: React.FC = () => {
           <CircularProgress size={44} />
         </Box>
       ) : error ? (
-        <Paper elevation={0} sx={{ p: 4, textAlign: "center", borderRadius: 2, bgcolor: "#fef2f2", border: "1px solid #fecaca" }}>
+        <Paper elevation={0} sx={{ p: 4, textAlign: "center", borderRadius: 2, bgcolor: THEME.redLight, border: `1px solid ${THEME.redLight}` }}>
           <Typography color="error" fontWeight={600}>
             {error}
           </Typography>
@@ -336,7 +336,7 @@ export const DemoVideosPage: React.FC = () => {
                     sx={{
                       width: "100%",
                       aspectRatio: "16 / 9",
-                      bgcolor: "#000000",
+                      bgcolor: THEME.black,
                       overflow: "hidden",
                       cursor: hasVideo ? "pointer" : "default",
                       "&:hover .yt-thumb-img": {
@@ -345,7 +345,7 @@ export const DemoVideosPage: React.FC = () => {
                       },
                       "&:hover .yt-play-btn": {
                         transform: "translate(-50%, -50%) scale(1.15)",
-                        bgcolor: "#ff0000",
+                        bgcolor: THEME.red,
                       },
                     }}
                     onClick={() => hasVideo && handleOpenVideoModal(product)}
@@ -376,7 +376,7 @@ export const DemoVideosPage: React.FC = () => {
                         top: 12,
                         left: 12,
                         bgcolor: "rgba(15, 23, 42, 0.8)",
-                        color: "#ffffff",
+                        color: THEME.white,
                         backdropFilter: "blur(6px)",
                         fontWeight: 700,
                         fontSize: 10,
@@ -392,7 +392,7 @@ export const DemoVideosPage: React.FC = () => {
                         bottom: 10,
                         right: 10,
                         bgcolor: "rgba(0, 0, 0, 0.85)",
-                        color: "#ffffff",
+                        color: THEME.white,
                         px: 1,
                         py: 0.3,
                         borderRadius: 1,
@@ -418,7 +418,7 @@ export const DemoVideosPage: React.FC = () => {
                           height: 58,
                           borderRadius: "50%",
                           bgcolor: "rgba(255, 0, 0, 0.9)",
-                          color: "#ffffff",
+                          color: THEME.white,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -439,7 +439,7 @@ export const DemoVideosPage: React.FC = () => {
                         sx={{
                           width: 38,
                           height: 38,
-                          bgcolor: "#1e40af",
+                          bgcolor: THEME.blue800,
                           fontSize: 14,
                           fontWeight: 800,
                           flexShrink: 0,
@@ -489,8 +489,8 @@ export const DemoVideosPage: React.FC = () => {
                             sx={{
                               flex: 1,
                               minWidth: 120,
-                              bgcolor: "#ff0000",
-                              "&:hover": { bgcolor: "#cc0000" },
+                              bgcolor: THEME.red,
+                              "&:hover": { bgcolor: THEME.redDark },
                               borderRadius: 1.5,
                               textTransform: "none",
                               fontSize: 12,
@@ -550,7 +550,7 @@ export const DemoVideosPage: React.FC = () => {
         /* TABLE VIEW */
         <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 3, border: `1px solid ${THEME.border}`, overflow: "hidden" }}>
           <Table>
-            <TableHead sx={{ bgcolor: "#f1f5f9" }}>
+            <TableHead sx={{ bgcolor: THEME.slate100 }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 800, color: THEME.textPrimary, py: 2 }}>Product & Equipment SKU</TableCell>
                 <TableCell sx={{ fontWeight: 800, color: THEME.textPrimary }}>Category</TableCell>
@@ -565,14 +565,14 @@ export const DemoVideosPage: React.FC = () => {
               {sortedProducts.map((product) => {
                 const hasVideo = Boolean(product.demo_video?.url);
                 return (
-                  <TableRow key={product.id} hover sx={{ "&:hover": { bgcolor: "#f8fafc" } }}>
+                  <TableRow key={product.id} hover sx={{ "&:hover": { bgcolor: THEME.slate50 } }}>
                     <TableCell sx={{ py: 2 }}>
                       <Box display="flex" alignItems="center" gap={2}>
                         <Box
                           component="img"
                           src={product.images?.[0] || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80"}
                           alt={product.product_name}
-                          sx={{ width: 54, height: 54, borderRadius: 2, objectFit: "cover", bgcolor: "#f1f5f9", border: `1px solid ${THEME.border}` }}
+                          sx={{ width: 54, height: 54, borderRadius: 2, objectFit: "cover", bgcolor: THEME.slate100, border: `1px solid ${THEME.border}` }}
                         />
                         <Box>
                           <Typography fontSize={14} fontWeight={700} color={THEME.textPrimary}>
@@ -591,7 +591,7 @@ export const DemoVideosPage: React.FC = () => {
 
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={1.2}>
-                        <OndemandVideoIcon sx={{ color: hasVideo ? "#ff0000" : THEME.textSecondary, fontSize: 22 }} />
+                        <OndemandVideoIcon sx={{ color: hasVideo ? THEME.red : THEME.textSecondary, fontSize: 22 }} />
                         <Box>
                           <Typography fontSize={13} fontWeight={700} color={hasVideo ? THEME.textPrimary : THEME.textSecondary}>
                             {product.demo_video?.title || "No Demo Video Attached"}
@@ -621,7 +621,7 @@ export const DemoVideosPage: React.FC = () => {
                               variant="contained"
                               startIcon={<PlayIcon fontSize="small" />}
                               onClick={() => handleOpenVideoModal(product)}
-                              sx={{ bgcolor: "#ff0000", "&:hover": { bgcolor: "#cc0000" }, textTransform: "none", fontSize: 12, borderRadius: 1.5, fontWeight: 700, px: 2 }}
+                              sx={{ bgcolor: THEME.red, "&:hover": { bgcolor: THEME.redDark }, textTransform: "none", fontSize: 12, borderRadius: 1.5, fontWeight: 700, px: 2 }}
                             >
                               Watch
                             </CustomButton>
@@ -660,7 +660,7 @@ export const DemoVideosPage: React.FC = () => {
         onClose={() => setVideoModalOpen(false)}
         maxWidth="md"
         fullWidth
-        PaperProps={{ sx: { borderRadius: 3, bgcolor: "#0f172a", color: "#ffffff", overflow: "hidden" } }}
+        PaperProps={{ sx: { borderRadius: 3, bgcolor: THEME.slate900, color: THEME.white, overflow: "hidden" } }}
       >
         <DialogTitle
           sx={{
@@ -669,7 +669,7 @@ export const DemoVideosPage: React.FC = () => {
             alignItems: "center",
             justifyContent: "space-between",
             borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-            bgcolor: "#0f172a",
+            bgcolor: THEME.slate900,
           }}
         >
           <Box display="flex" alignItems="center" gap={1.5}>
@@ -678,19 +678,19 @@ export const DemoVideosPage: React.FC = () => {
                 width: 32,
                 height: 32,
                 borderRadius: 1.5,
-                bgcolor: "#ff0000",
+                bgcolor: THEME.red,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <PlayIcon sx={{ fontSize: 22, color: "#ffffff", ml: 0.2 }} />
+              <PlayIcon sx={{ fontSize: 22, color: THEME.white, ml: 0.2 }} />
             </Box>
             <Box>
-              <Typography fontSize={16} fontWeight={700} color="#ffffff">
+              <Typography fontSize={16} fontWeight={700} color={THEME.white}>
                 {videoProduct?.demo_video?.title || "Equipment Demo Video"}
               </Typography>
-              <Typography fontSize={12} color="#94a3b8">
+              <Typography fontSize={12} color={THEME.slate400}>
                 Product: {videoProduct?.product_name} ({videoProduct?.product_id})
               </Typography>
             </Box>
@@ -702,20 +702,20 @@ export const DemoVideosPage: React.FC = () => {
                 variant="contained"
                 startIcon={<DownloadIcon />}
                 onClick={() => handleDownloadVideo(videoProduct)}
-                sx={{ bgcolor: "#ff0000", "&:hover": { bgcolor: "#cc0000" }, borderRadius: 1.5, textTransform: "none", fontSize: 12, fontWeight: 700 }}
+                sx={{ bgcolor: THEME.red, "&:hover": { bgcolor: THEME.redDark }, borderRadius: 1.5, textTransform: "none", fontSize: 12, fontWeight: 700 }}
               >
                 Download MP4
               </CustomButton>
             )}
-            <IconButton onClick={() => setVideoModalOpen(false)} size="small" sx={{ color: "#94a3b8" }}>
+            <IconButton onClick={() => setVideoModalOpen(false)} size="small" sx={{ color: THEME.slate400 }}>
               <CloseIcon />
             </IconButton>
           </Box>
         </DialogTitle>
 
-        <DialogContent sx={{ p: 0, bgcolor: "#000000", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <DialogContent sx={{ p: 0, bgcolor: THEME.black, display: "flex", justifyContent: "center", alignItems: "center" }}>
           {videoProduct?.demo_video?.url ? (
-            <Box sx={{ width: "100%", maxH: 520, bgcolor: "#000000" }}>
+            <Box sx={{ width: "100%", maxH: 520, bgcolor: THEME.black }}>
               <video
                 controls
                 autoPlay
@@ -727,7 +727,7 @@ export const DemoVideosPage: React.FC = () => {
             </Box>
           ) : (
             <Box p={6} textAlign="center">
-              <Typography color="#94a3b8">Video stream unavailable.</Typography>
+              <Typography color={THEME.slate400}>Video stream unavailable.</Typography>
             </Box>
           )}
         </DialogContent>

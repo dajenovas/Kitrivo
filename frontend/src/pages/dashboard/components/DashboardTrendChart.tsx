@@ -75,7 +75,7 @@ export const DashboardTrendChart: React.FC<DashboardTrendChartProps> = ({ data =
             {/* Header Controls */}
             <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: theme.isDark ? "rgba(37, 99, 235, 0.15)" : "#EFF6FF", color: THEME.primary, display: "flex" }}>
+                    <Box sx={{ p: 1, borderRadius: 2, bgcolor: theme.isDark ? `${THEME.primary}26` : THEME.blue50, color: THEME.primary, display: "flex" }}>
                         <ShowChartIcon sx={{ fontSize: 22 }} />
                     </Box>
                     <Box>
@@ -89,14 +89,14 @@ export const DashboardTrendChart: React.FC<DashboardTrendChartProps> = ({ data =
                 </Box>
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Chip label="All Metrics" onClick={() => setFilter("all")} size="small" sx={{ fontWeight: 600, fontSize: "0.75rem", bgcolor: filter === "all" ? THEME.primary : theme.isDark ? "rgba(255,255,255,0.06)" : "#F1F5F9", color: filter === "all" ? "#fff" : theme.textPrimary, cursor: "pointer", "&:hover": { opacity: 0.9 } }} />
-                    <Chip label="Revenue (₹)" onClick={() => setFilter("revenue")} size="small" sx={{ fontWeight: 600, fontSize: "0.75rem", bgcolor: filter === "revenue" ? THEME.primary : theme.isDark ? "rgba(255,255,255,0.06)" : "#F1F5F9", color: filter === "revenue" ? "#fff" : theme.textPrimary, cursor: "pointer", "&:hover": { opacity: 0.9 } }} />
-                    <Chip label="Quotations" onClick={() => setFilter("quotations")} size="small" sx={{ fontWeight: 600, fontSize: "0.75rem", bgcolor: filter === "quotations" ? THEME.secondary : theme.isDark ? "rgba(255,255,255,0.06)" : "#F1F5F9", color: filter === "quotations" ? "#fff" : theme.textPrimary, cursor: "pointer", "&:hover": { opacity: 0.9 } }} />
+                    <Chip label="All Metrics" onClick={() => setFilter("all")} size="small" sx={{ fontWeight: 600, fontSize: "0.75rem", bgcolor: filter === "all" ? THEME.primary : theme.isDark ? "rgba(255,255,255,0.06)" : THEME.slate100, color: filter === "all" ? THEME.white : theme.textPrimary, cursor: "pointer", "&:hover": { opacity: 0.9 } }} />
+                    <Chip label="Revenue (₹)" onClick={() => setFilter("revenue")} size="small" sx={{ fontWeight: 600, fontSize: "0.75rem", bgcolor: filter === "revenue" ? THEME.primary : theme.isDark ? "rgba(255,255,255,0.06)" : THEME.slate100, color: filter === "revenue" ? THEME.white : theme.textPrimary, cursor: "pointer", "&:hover": { opacity: 0.9 } }} />
+                    <Chip label="Quotations" onClick={() => setFilter("quotations")} size="small" sx={{ fontWeight: 600, fontSize: "0.75rem", bgcolor: filter === "quotations" ? THEME.secondary : theme.isDark ? "rgba(255,255,255,0.06)" : THEME.slate100, color: filter === "quotations" ? THEME.white : theme.textPrimary, cursor: "pointer", "&:hover": { opacity: 0.9 } }} />
                 </Box>
             </Box>
 
             {/* Active Hover Display / Metric Summary */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 3, mb: 1, px: 1, py: 0.75, borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC", border: `1px solid ${theme.border}` }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 3, mb: 1, px: 1, py: 0.75, borderRadius: 2, bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50, border: `1px solid ${theme.border}` }}>
                 <Box>
                     <Typography variant="caption" sx={{ color: theme.textSecondary, display: "block", fontSize: "0.7rem", fontWeight: 600, textTransform: "uppercase" }}>
                         Selected Period
@@ -128,26 +128,26 @@ export const DashboardTrendChart: React.FC<DashboardTrendChartProps> = ({ data =
                 <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "auto", overflow: "visible" }}>
                     <defs>
                         <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#2563EB" stopOpacity="0.35" />
-                            <stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
+                            <stop offset="0%" stopColor={THEME.primary} stopOpacity="0.35" />
+                            <stop offset="100%" stopColor={THEME.primary} stopOpacity="0.0" />
                         </linearGradient>
                         <linearGradient id="quotGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.25" />
-                            <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.0" />
+                            <stop offset="0%" stopColor={THEME.secondary} stopOpacity="0.25" />
+                            <stop offset="100%" stopColor={THEME.secondary} stopOpacity="0.0" />
                         </linearGradient>
                     </defs>
 
                     {/* Horizontal Grid lines */}
                     {[0.2, 0.5, 0.8].map((ratio, idx) => {
                         const y = paddingY + ratio * (height - paddingY * 2);
-                        return <line key={idx} x1={paddingX} y1={y} x2={width - paddingX} y2={y} stroke={theme.isDark ? "rgba(255,255,255,0.08)" : "#E2E8F0"} strokeDasharray="4 4" strokeWidth="1" />;
+                        return <line key={idx} x1={paddingX} y1={y} x2={width - paddingX} y2={y} stroke={theme.isDark ? "rgba(255,255,255,0.08)" : THEME.border} strokeDasharray="4 4" strokeWidth="1" />;
                     })}
 
                     {/* Revenue Area & Curve */}
                     {(filter === "all" || filter === "revenue") && (
                         <>
                             <path d={areaRevPath} fill="url(#revGrad)" />
-                            <path d={pathRev} fill="none" stroke="#2563EB" strokeWidth="3" strokeLinecap="round" />
+                            <path d={pathRev} fill="none" stroke={THEME.primary} strokeWidth="3" strokeLinecap="round" />
                         </>
                     )}
 
@@ -155,7 +155,7 @@ export const DashboardTrendChart: React.FC<DashboardTrendChartProps> = ({ data =
                     {(filter === "all" || filter === "quotations") && (
                         <>
                             <path d={areaQuotPath} fill="url(#quotGrad)" />
-                            <path d={pathQuot} fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeDasharray="5 3" strokeLinecap="round" />
+                            <path d={pathQuot} fill="none" stroke={THEME.secondary} strokeWidth="2.5" strokeDasharray="5 3" strokeLinecap="round" />
                         </>
                     )}
 
@@ -176,10 +176,10 @@ export const DashboardTrendChart: React.FC<DashboardTrendChartProps> = ({ data =
                                 </text>
 
                                 {/* Revenue Dot */}
-                                {(filter === "all" || filter === "revenue") && <circle cx={ptRev.x} cy={ptRev.y} r={isHovered ? 6 : 4} fill="#2563EB" stroke={theme.cardBg} strokeWidth={isHovered ? 3 : 2} style={{ transition: "all 0.2s" }} />}
+                                {(filter === "all" || filter === "revenue") && <circle cx={ptRev.x} cy={ptRev.y} r={isHovered ? 6 : 4} fill={THEME.primary} stroke={theme.cardBg} strokeWidth={isHovered ? 3 : 2} style={{ transition: "all 0.2s" }} />}
 
                                 {/* Quotations Dot */}
-                                {(filter === "all" || filter === "quotations") && <circle cx={ptQuot.x} cy={ptQuot.y} r={isHovered ? 5 : 3.5} fill="#7C3AED" stroke={theme.cardBg} strokeWidth={isHovered ? 2.5 : 1.5} style={{ transition: "all 0.2s" }} />}
+                                {(filter === "all" || filter === "quotations") && <circle cx={ptQuot.x} cy={ptQuot.y} r={isHovered ? 5 : 3.5} fill={THEME.secondary} stroke={theme.cardBg} strokeWidth={isHovered ? 2.5 : 1.5} style={{ transition: "all 0.2s" }} />}
 
                                 {/* Vertical Hover Line */}
                                 {isHovered && <line x1={ptRev.x} y1={paddingY} x2={ptRev.x} y2={height - paddingY} stroke={THEME.primary} strokeWidth="1.5" strokeDasharray="3 3" />}

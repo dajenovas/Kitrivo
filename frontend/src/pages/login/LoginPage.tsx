@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import { THEME } from "@/assets/theme";
+import {
+  THEME,
+  COLOR_SLATE_900,
+  COLOR_DARK_HERO_BG,
+  COLOR_INDIGO_950,
+  COLOR_SKY_400,
+  COLOR_INDIGO_400,
+  COLOR_GREEN_500,
+  COLOR_ROSE_500,
+  COLOR_BLUE_300,
+  COLOR_PURPLE_100,
+  COLOR_BLUE_500
+} from "@/assets/theme";
 import { CustomButton } from "@/components/Buttons/CustomButton";
 import { CustomInput } from "@/components/Inputs/CustomInput";
 import { AuthService } from "@/services/auth.service";
@@ -82,7 +94,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", bgcolor: "#0f172a", color: THEME.textPrimary }}>
+    <Box sx={{ minHeight: "100vh", display: "flex", bgcolor: COLOR_SLATE_900, color: THEME.textPrimary }}>
       {/* Keyframe Animation Styles */}
       <style>{`
         @keyframes floatOrb1 {
@@ -152,7 +164,7 @@ export const LoginPage: React.FC = () => {
       `}</style>
 
       {/* Left Animated Hero Banner */}
-      <Box sx={{ width: { xs: "0%", md: "50%" }, display: { xs: "none", md: "flex" }, flexDirection: "column", justifyContent: "space-between", p: 6, position: "relative", overflow: "hidden", background: "linear-gradient(135deg, #090d16 0%, #0f172a 40%, #1e1b4b 100%)" }}>
+      <Box sx={{ width: { xs: "0%", md: "50%" }, display: { xs: "none", md: "flex" }, flexDirection: "column", justifyContent: "space-between", p: 6, position: "relative", overflow: "hidden", background: `linear-gradient(135deg, ${COLOR_DARK_HERO_BG} 0%, ${COLOR_SLATE_900} 40%, ${COLOR_INDIGO_950} 100%)` }}>
         {/* Tech Grid Pattern Background Overlay */}
         <Box sx={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px)", backgroundSize: "32px 32px", opacity: 0.3, animation: "gridWave 20s linear infinite", pointerEvents: "none" }} />
 
@@ -170,10 +182,10 @@ export const LoginPage: React.FC = () => {
         <Box sx={{ position: "absolute", top: "40%", left: "5%", width: 220, height: 2, background: "linear-gradient(90deg, transparent, rgba(168,85,247,0.9), transparent)", animation: "shootingStar 10s linear infinite 3s", pointerEvents: "none" }} />
 
         {/* Floating Glowing Particle Nodes */}
-        <Box sx={{ position: "absolute", top: "70%", left: "15%", width: 6, height: 6, borderRadius: "50%", bgcolor: "#38bdf8", boxShadow: "0 0 10px #38bdf8", animation: "floatParticle 6s ease-in-out infinite" }} />
-        <Box sx={{ position: "absolute", top: "30%", left: "70%", width: 8, height: 8, borderRadius: "50%", bgcolor: "#818cf8", boxShadow: "0 0 12px #818cf8", animation: "floatParticle 8s ease-in-out infinite 2s" }} />
-        <Box sx={{ position: "absolute", top: "50%", left: "45%", width: 5, height: 5, borderRadius: "50%", bgcolor: "#4ade80", boxShadow: "0 0 8px #4ade80", animation: "floatParticle 7s ease-in-out infinite 1s" }} />
-        <Box sx={{ position: "absolute", top: "80%", left: "65%", width: 7, height: 7, borderRadius: "50%", bgcolor: "#f43f5e", boxShadow: "0 0 10px #f43f5e", animation: "floatParticle 9s ease-in-out infinite 3s" }} />
+        <Box sx={{ position: "absolute", top: "70%", left: "15%", width: 6, height: 6, borderRadius: "50%", bgcolor: COLOR_SKY_400, boxShadow: `0 0 10px ${COLOR_SKY_400}`, animation: "floatParticle 6s ease-in-out infinite" }} />
+        <Box sx={{ position: "absolute", top: "30%", left: "70%", width: 8, height: 8, borderRadius: "50%", bgcolor: COLOR_INDIGO_400, boxShadow: `0 0 12px ${COLOR_INDIGO_400}`, animation: "floatParticle 8s ease-in-out infinite 2s" }} />
+        <Box sx={{ position: "absolute", top: "50%", left: "45%", width: 5, height: 5, borderRadius: "50%", bgcolor: COLOR_GREEN_500, boxShadow: `0 0 8px ${COLOR_GREEN_500}`, animation: "floatParticle 7s ease-in-out infinite 1s" }} />
+        <Box sx={{ position: "absolute", top: "80%", left: "65%", width: 7, height: 7, borderRadius: "50%", bgcolor: COLOR_ROSE_500, boxShadow: `0 0 10px ${COLOR_ROSE_500}`, animation: "floatParticle 9s ease-in-out infinite 3s" }} />
 
         {/* Vertical Shimmer Divider Line */}
         <Box sx={{ position: "absolute", top: 0, right: 0, width: 2, height: "100%", background: "linear-gradient(180deg, transparent 0%, rgba(59,130,246,0.8) 50%, transparent 100%)", animation: "borderShimmer 3s ease-in-out infinite" }} />
@@ -181,24 +193,24 @@ export const LoginPage: React.FC = () => {
         {/* Top Header & Status Chip */}
         <Box display="flex" alignItems="center" justifyContent="space-between" zIndex={1}>
           <Box display="flex" alignItems="center" gap={1.5}>
-            <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: THEME.primary, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 900, fontSize: 22, boxShadow: "0 8px 20px rgba(37,99,235,0.6)", animation: "logoGlow 3s ease-in-out infinite" }}> K </Box>
-            <Typography fontSize={20} fontWeight={800} color="#ffffff" letterSpacing="-0.5px"> KITRIVO EQUIPMENT </Typography>
+            <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: THEME.primary, display: "flex", alignItems: "center", justifyContent: "center", color: THEME.white, fontWeight: 900, fontSize: 22, boxShadow: "0 8px 20px rgba(37,99,235,0.6)", animation: "logoGlow 3s ease-in-out infinite" }}> K </Box>
+            <Typography fontSize={20} fontWeight={800} color={THEME.white} letterSpacing="-0.5px"> KITRIVO EQUIPMENT </Typography>
           </Box>
 
-          <Chip icon={<Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: "#22c55e", animation: "pulseDot 2s infinite" }} />} label="SYSTEM ONLINE v2.4" size="small" sx={{ bgcolor: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.9)", border: "1px solid rgba(255,255,255,0.15)", fontSize: 11, fontWeight: 700, px: 1 }} />
+          <Chip icon={<Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: COLOR_GREEN_500, animation: "pulseDot 2s infinite" }} />} label="SYSTEM ONLINE v2.4" size="small" sx={{ bgcolor: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.9)", border: "1px solid rgba(255,255,255,0.15)", fontSize: 11, fontWeight: 700, px: 1 }} />
         </Box>
 
         {/* Hero Body Content & Floating Animated Cards */}
         <Box my="auto" zIndex={1} maxWidth={500}>
-          <Typography fontSize={34} fontWeight={800} lineHeight={1.2} mb={2} letterSpacing="-0.8px" sx={{ background: "linear-gradient(90deg, #ffffff 0%, #93c5fd 50%, #e0e7ff 100%)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "textGradientShimmer 6s ease infinite" }}> Enterprise Equipment & Soft-Copy Quotation System </Typography>
+          <Typography fontSize={34} fontWeight={800} lineHeight={1.2} mb={2} letterSpacing="-0.8px" sx={{ background: `linear-gradient(90deg, ${THEME.white} 0%, ${COLOR_BLUE_300} 50%, ${COLOR_PURPLE_100} 100%)`, backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "textGradientShimmer 6s ease infinite" }}> Enterprise Equipment & Soft-Copy Quotation System </Typography>
           <Typography fontSize={15} color="rgba(255,255,255,0.7)" lineHeight={1.6} mb={4}> Manage technical lab kits, generate commercial PDF soft-copy quotes, and govern role permissions efficiently. </Typography>
 
           {/* Floating Animated Card 1 */}
           <Paper elevation={0} sx={{ p: 2, mb: 2, borderRadius: 2.5, bgcolor: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.12)", animation: "floatCard1 4s ease-in-out infinite", boxShadow: "0 10px 25px rgba(0,0,0,0.3)", transition: "all 0.3s ease", "&:hover": { transform: "translateY(-4px) scale(1.02)", bgcolor: "rgba(255,255,255,0.1)" } }}>
             <Box display="flex" alignItems="center" gap={1.8}>
-              <Box sx={{ width: 38, height: 38, borderRadius: 2, bgcolor: "rgba(37,99,235,0.2)", color: "#3b82f6", display: "flex", alignItems: "center", justifyContent: "center" }}> <QuoteIcon fontSize="small" /> </Box>
+              <Box sx={{ width: 38, height: 38, borderRadius: 2, bgcolor: "rgba(37,99,235,0.2)", color: COLOR_BLUE_500, display: "flex", alignItems: "center", justifyContent: "center" }}> <QuoteIcon fontSize="small" /> </Box>
               <Box>
-                <Typography fontSize={13} fontWeight={700} color="#ffffff"> Real-time Quotation Builder & Soft-Copy PDF </Typography>
+                <Typography fontSize={13} fontWeight={700} color={THEME.white}> Real-time Quotation Builder & Soft-Copy PDF </Typography>
                 <Typography fontSize={11} color="rgba(255,255,255,0.65)"> Automated 18% GST calculation, discount overrides & instant export </Typography>
               </Box>
             </Box>
@@ -207,9 +219,9 @@ export const LoginPage: React.FC = () => {
           {/* Floating Animated Card 2 */}
           <Paper elevation={0} sx={{ p: 2, mb: 2, borderRadius: 2.5, bgcolor: "rgba(255,255,255,0.06)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.12)", animation: "floatCard2 5s ease-in-out infinite 0.5s", boxShadow: "0 10px 25px rgba(0,0,0,0.3)", transition: "all 0.3s ease", "&:hover": { transform: "translateY(-4px) scale(1.02)", bgcolor: "rgba(255,255,255,0.1)" } }}>
             <Box display="flex" alignItems="center" gap={1.8}>
-              <Box sx={{ width: 38, height: 38, borderRadius: 2, bgcolor: "rgba(34,197,94,0.2)", color: "#22c55e", display: "flex", alignItems: "center", justifyContent: "center" }}> <SecurityIcon fontSize="small" /> </Box>
+              <Box sx={{ width: 38, height: 38, borderRadius: 2, bgcolor: "rgba(34,197,94,0.2)", color: COLOR_GREEN_500, display: "flex", alignItems: "center", justifyContent: "center" }}> <SecurityIcon fontSize="small" /> </Box>
               <Box>
-                <Typography fontSize={13} fontWeight={700} color="#ffffff"> Granular Role & Permission Control </Typography>
+                <Typography fontSize={13} fontWeight={700} color={THEME.white}> Granular Role & Permission Control </Typography>
                 <Typography fontSize={11} color="rgba(255,255,255,0.65)"> Secure JWT authentication with 401 automatic token refresh </Typography>
               </Box>
             </Box>
@@ -218,7 +230,7 @@ export const LoginPage: React.FC = () => {
           {/* Floating Animated Card 3 */}
           <Paper elevation={0} sx={{ p: 1.8, borderRadius: 2.5, bgcolor: "rgba(255,255,255,0.05)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", animation: "floatCard3 4.5s ease-in-out infinite 1s", boxShadow: "0 10px 25px rgba(0,0,0,0.3)", transition: "all 0.3s ease", "&:hover": { transform: "translateY(-4px) scale(1.02)", bgcolor: "rgba(255,255,255,0.1)" } }}>
             <Box display="flex" alignItems="center" justifyContent="space-between">
-              <Typography fontSize={12} fontWeight={700} color="#38bdf8"> ⚡ High Performance Architecture </Typography>
+              <Typography fontSize={12} fontWeight={700} color={COLOR_SKY_400}> ⚡ High Performance Architecture </Typography>
               <Typography fontSize={11} color="rgba(255,255,255,0.6)"> Fast 100ms API response time </Typography>
             </Box>
           </Paper>
@@ -259,7 +271,7 @@ export const LoginPage: React.FC = () => {
               </Box>
 
               <Box mt={1}>
-                <CustomButton type="submit" text={loading ? "Signing in..." : "Sign In"} disabled={loading} fullWidth height="42px" bgc={THEME.primary} color="#ffffff" font={14} sx={{ fontWeight: 700 }} />
+                <CustomButton type="submit" text={loading ? "Signing in..." : "Sign In"} disabled={loading} fullWidth height="42px" bgc={THEME.primary} color={THEME.white} font={14} sx={{ fontWeight: 700 }} />
               </Box>
 
               <Box textAlign="center" mt={1}>
@@ -295,7 +307,7 @@ export const LoginPage: React.FC = () => {
               </Box>
 
               <Box mt={1}>
-                <CustomButton type="submit" text={loading ? "Creating Account..." : "Create Account"} disabled={loading} fullWidth height="42px" bgc={THEME.primary} color="#ffffff" font={14} sx={{ fontWeight: 700 }} />
+                <CustomButton type="submit" text={loading ? "Creating Account..." : "Create Account"} disabled={loading} fullWidth height="42px" bgc={THEME.primary} color={THEME.white} font={14} sx={{ fontWeight: 700 }} />
               </Box>
 
               <Box textAlign="center" mt={1}>

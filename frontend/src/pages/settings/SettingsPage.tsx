@@ -124,10 +124,10 @@ export const SettingsPage: React.FC = () => {
   return (
     <Box p={3.5} sx={{ maxWidth: 1200, margin: "0 auto" }}>
       {/* Settings Header Banner */}
-      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.3)" }}>
+      <Paper elevation={0} sx={{ p: 3.5, mb: 3.5, borderRadius: 3, background: `linear-gradient(135deg, ${THEME.slate800} 0%, ${THEME.slate900} 100%)`, color: THEME.white, display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.3)" }}>
         <Box display="flex" alignItems="center" gap={2}>
           <Box sx={{ width: 52, height: 52, borderRadius: 2.5, bgcolor: "rgba(255, 255, 255, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)" }}>
-            <SettingsIcon sx={{ fontSize: 30, color: "#38bdf8" }} />
+            <SettingsIcon sx={{ fontSize: 30, color: THEME.sky }} />
           </Box>
           <Box>
             <Typography fontSize={24} fontWeight={800} letterSpacing="-0.5px">
@@ -376,7 +376,7 @@ export const SettingsPage: React.FC = () => {
                     p: 3,
                     borderRadius: 3,
                     border: `2px solid ${mode === "light" ? THEME.primary : THEME.border}`,
-                    bgcolor: "#ffffff",
+                    bgcolor: THEME.white,
                     cursor: "pointer",
                     transition: "all 0.2s ease",
                     "&:hover": { borderColor: THEME.primary },
@@ -384,8 +384,8 @@ export const SettingsPage: React.FC = () => {
                 >
                   <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <Box display="flex" alignItems="center" gap={1.5}>
-                      <LightModeIcon sx={{ color: "#f59e0b", fontSize: 28 }} />
-                      <Typography fontSize={16} fontWeight={700} color="#0f172a">
+                      <LightModeIcon sx={{ color: THEME.amber, fontSize: 28 }} />
+                      <Typography fontSize={16} fontWeight={700} color={THEME.slate900}>
                         Light Mode
                       </Typography>
                     </Box>
@@ -396,7 +396,7 @@ export const SettingsPage: React.FC = () => {
                       sx={{ fontWeight: 700 }}
                     />
                   </Box>
-                  <Typography fontSize={12} color="#64748b" lineHeight={1.5}>
+                  <Typography fontSize={12} color={THEME.slate500} lineHeight={1.5}>
                     Clean high-contrast bright theme tailored for daylight usage and clear documentation readability.
                   </Typography>
                 </Card>
@@ -410,8 +410,8 @@ export const SettingsPage: React.FC = () => {
                     p: 3,
                     borderRadius: 3,
                     border: `2px solid ${mode === "dark" ? THEME.primary : THEME.border}`,
-                    bgcolor: "#0f172a",
-                    color: "#ffffff",
+                    bgcolor: THEME.slate900,
+                    color: THEME.white,
                     cursor: "pointer",
                     transition: "all 0.2s ease",
                     "&:hover": { borderColor: THEME.primary },
@@ -419,8 +419,8 @@ export const SettingsPage: React.FC = () => {
                 >
                   <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <Box display="flex" alignItems="center" gap={1.5}>
-                      <DarkModeIcon sx={{ color: "#38bdf8", fontSize: 28 }} />
-                      <Typography fontSize={16} fontWeight={700} color="#ffffff">
+                      <DarkModeIcon sx={{ color: THEME.sky, fontSize: 28 }} />
+                      <Typography fontSize={16} fontWeight={700} color={THEME.white}>
                         Dark Mode
                       </Typography>
                     </Box>
@@ -431,7 +431,7 @@ export const SettingsPage: React.FC = () => {
                       sx={{ fontWeight: 700 }}
                     />
                   </Box>
-                  <Typography fontSize={12} color="#94a3b8" lineHeight={1.5}>
+                  <Typography fontSize={12} color={THEME.slate400} lineHeight={1.5}>
                     Sleek slate dark theme optimized for low-light environments and reduced eye strain.
                   </Typography>
                 </Card>

@@ -352,7 +352,7 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
           </Box>
         </DialogTitle>
 
-        <DialogContent sx={{ p: 3, bgcolor: isEditing ? "#ffffff" : "#f8fafc" }}>
+        <DialogContent sx={{ p: 3, bgcolor: isEditing ? THEME.white : THEME.slate50 }}>
           {isEditing ? (
             /* EDITABLE TEMPLATE MODE */
             <Box display="flex" flexDirection="column" gap={2.5}>
@@ -365,7 +365,7 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
                   <Chip label="Fetched from Company Profile" size="small" color="primary" variant="outlined" sx={{ fontSize: 11, fontWeight: 700 }} />
                 </Box>
 
-                <Paper elevation={0} sx={{ p: 2, mb: 2.5, bgcolor: "#f8fafc", borderRadius: 2, border: `1px solid ${THEME.border}` }}>
+                <Paper elevation={0} sx={{ p: 2, mb: 2.5, bgcolor: THEME.slate50, borderRadius: 2, border: `1px solid ${THEME.border}` }}>
                   <Typography fontSize={14} fontWeight={800} color={THEME.textPrimary}> {activeCompany?.company_name || institutionName || "Kitrivo Equipment Systems"} </Typography>
                   <Typography fontSize={12} color={THEME.textSecondary} mt={0.3}> Email: <strong>{activeCompany?.email || email || "N/A"}</strong> | Phone: <strong>{activeCompany?.phone || phone || "N/A"}</strong> </Typography>
                   {(activeCompany?.billing_address || activeCompany?.address || billingAddress) && (<Typography fontSize={12} color={THEME.textSecondary} mt={0.3}> Address: {activeCompany?.billing_address || activeCompany?.address || billingAddress} </Typography>)}
@@ -409,7 +409,7 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
               <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: `1px solid ${THEME.border}` }}>
                 <Typography fontSize={14} fontWeight={700} mb={2} color={THEME.textPrimary}> Editable Quote Line Items </Typography>
                 <Table size="small">
-                  <TableHead sx={{ bgcolor: "#f1f5f9" }}>
+                  <TableHead sx={{ bgcolor: THEME.slate100 }}>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 700 }}>SKU</TableCell>
                       <TableCell sx={{ fontWeight: 700 }}>Product Name</TableCell>
@@ -438,7 +438,7 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
             </Box>
           ) : (
             /* PREVIEW / SOFT COPY TEMPLATE MODE */
-            <Paper elevation={0} sx={{ p: 4, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: "#ffffff", boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}>
+            <Paper elevation={0} sx={{ p: 4, borderRadius: 2.5, border: `1px solid ${THEME.border}`, bgcolor: THEME.white, boxShadow: `0 4px 20px ${THEME.slate900}0D` }}>
               {/* Soft Copy Header Banner */}
               <Box display="flex" justifyContent="space-between" alignItems="flex-start" borderBottom={`2px solid ${THEME.primary}`} pb={2.5} mb={3}>
                 <Box display="flex" alignItems="center" gap={2}>
@@ -461,7 +461,7 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
 
 
               {/* Customer Box */}
-              <Paper elevation={0} sx={{ p: 2, mb: 3, bgcolor: "#f8fafc", borderRadius: 2, border: `1px solid ${THEME.border}` }}>
+              <Paper elevation={0} sx={{ p: 2, mb: 3, bgcolor: THEME.slate50, borderRadius: 2, border: `1px solid ${THEME.border}` }}>
                 <Typography fontSize={12} fontWeight={700} color={THEME.textSecondary} textTransform="uppercase" mb={0.5}> Quotation Prepared For: </Typography>
                 <Typography fontSize={14} fontWeight={700} color={THEME.textPrimary}> {institutionName || "Client Institution"} </Typography>
                 <Typography fontSize={13} color={THEME.textSecondary}> Attention: {contactName || "Procurement Officer"} | Email: {email || "N/A"} | Phone: {phone || "N/A"} </Typography>
@@ -469,7 +469,7 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
 
               {/* Items Table */}
               <Table size="small" sx={{ mb: 3 }}>
-                <TableHead sx={{ bgcolor: "#f1f5f9" }}>
+                <TableHead sx={{ bgcolor: THEME.slate100 }}>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 700 }}>SKU</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>Product Name</TableCell>
@@ -493,7 +493,7 @@ export const QuotationTemplateModal: React.FC<QuotationTemplateModalProps> = ({ 
 
               {/* Summary Totals */}
               <Box display="flex" justifyContent="flex-end" mb={3}>
-                <Paper elevation={0} sx={{ p: 2, minWidth: 280, bgcolor: "#eff6ff", borderRadius: 2, border: `1px solid ${THEME.primary}30` }}>
+                <Paper elevation={0} sx={{ p: 2, minWidth: 280, bgcolor: THEME.blue50, borderRadius: 2, border: `1px solid ${THEME.primary}30` }}>
                   <Box display="flex" justifyContent="space-between" mb={0.5}>
                     <Typography fontSize={13}>Subtotal:</Typography>
                     <Typography fontSize={13} fontWeight={600}>₹{subtotal.toLocaleString("en-IN")}</Typography>

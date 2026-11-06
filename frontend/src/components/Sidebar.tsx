@@ -87,11 +87,11 @@ const Sidebar = () => {
     };
 
     return (
-        <Box height="100vh" width={SIDEBAR_WIDTH} borderRight={`1px solid ${theme.border}`} position="fixed" left={0} top={0} bgcolor={theme.sidebarBg} display="flex" flexDirection="column" sx={{ transition: 'all 0.25s ease-in-out' }}>
+        <Box height="100vh" width={SIDEBAR_WIDTH} position="fixed" left={0} top={0} display="flex" flexDirection="column" sx={{ transition: 'all 0.25s ease-in-out' }}>
             {/* Fixed Top Logo Header */}
             <Box px={3} pt={3} pb={2} flexShrink={0}>
                 <Box p={2.5} bgcolor={THEME.warning} borderRadius={2} textAlign="center">
-                    <Typography fontWeight={700} color="#FFFFFF"> LOGO </Typography>
+                    <Typography fontWeight={700} color={THEME.white}> LOGO </Typography>
                 </Box>
             </Box>
 
@@ -112,13 +112,13 @@ const Sidebar = () => {
                                 {items.map((item) => {
                                     const isActive = location.pathname === item.path;
                                     return (
-                                        <Box key={item.id} onClick={() => item.path && navigate(item.path)} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.2, my: 0.5, borderRadius: 1.5, cursor: 'pointer', bgcolor: isActive ? THEME.primary : 'transparent', color: isActive ? '#FFFFFF' : theme.textPrimary, transition: 'all 0.2s ease', '&:hover': { bgcolor: isActive ? THEME.primaryDark : (theme.isDark ? 'rgba(255, 255, 255, 0.08)' : `${THEME.border}60`) } }}>
+                                        <Box key={item.id} onClick={() => item.path && navigate(item.path)} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.2, my: 0.5, borderRadius: 1.5, cursor: 'pointer', bgcolor: isActive ? THEME.primary : 'transparent', color: isActive ? THEME.white : theme.textPrimary, transition: 'all 0.2s ease', '&:hover': { bgcolor: isActive ? THEME.primaryDark : (theme.isDark ? 'rgba(255, 255, 255, 0.08)' : `${THEME.border}60`) } }}>
                                             {/* Left Icon */}
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, flexShrink: 0, '& svg': { width: 20, height: 20, stroke: isActive ? '#FFFFFF' : (theme.isDark ? '#60A5FA' : THEME.primary), fill: 'none' } }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, flexShrink: 0, '& svg': { width: 20, height: 20, stroke: isActive ? THEME.white : (theme.isDark ? THEME.blue400 : THEME.primary), fill: 'none' } }}>
                                                 {item.icon ? (
                                                     <span dangerouslySetInnerHTML={{ __html: item.icon }} />
                                                 ) : (
-                                                    <CircleOutlinedIcon sx={{ fontSize: 18, color: isActive ? '#FFFFFF' : (theme.isDark ? '#60A5FA' : THEME.primary) }} />
+                                                    <CircleOutlinedIcon sx={{ fontSize: 18, color: isActive ? THEME.white : (theme.isDark ? THEME.blue400 : THEME.primary) }} />
                                                 )}
                                             </Box>
 
@@ -135,7 +135,7 @@ const Sidebar = () => {
 
             {/* Fixed Bottom Logout Section */}
             <Box p={2.5} flexShrink={0} borderTop={`1px solid ${theme.border}`}>
-                <CustomButton text='Logout' height={46} width="100%" bgc={THEME.transparent} color={THEME.error} hoverTextColor={'#FFFFFF'} border={`1px solid ${THEME.error}`} hov={THEME.error} Sicon={<Logout />} onClick={handleLogout} />
+                <CustomButton text='Logout' height={46} width="100%" bgc={THEME.transparent} color={THEME.error} hoverTextColor={THEME.white} border={`1px solid ${THEME.error}`} hov={THEME.error} Sicon={<Logout />} onClick={handleLogout} />
             </Box>
         </Box>
     );

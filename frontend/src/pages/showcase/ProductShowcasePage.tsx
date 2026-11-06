@@ -111,12 +111,12 @@ export const ProductShowcasePage: React.FC = () => {
   return (
     <Box p={3}>
       {/* Header Banner */}
-      <Paper elevation={0} sx={{ p: 3.5, mb: 3, borderRadius: 3, background: `linear-gradient(135deg, ${THEME.primary} 0%, #1e3a8a 100%)`, color: THEME.white, boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.3)" }}>
+      <Paper elevation={0} sx={{ p: 3.5, mb: 3, borderRadius: 3, background: `linear-gradient(135deg, ${THEME.primary} 0%, ${THEME.blue900} 100%)`, color: THEME.white, boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.3)" }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
           <Box maxWidth={700}>
             <Box display="flex" alignItems="center" gap={1} mb={1}>
-              <StorefrontIcon sx={{ fontSize: 28, color: "#93c5fd" }} />
-              <Typography fontSize={12} fontWeight={700} letterSpacing={1.2} textTransform="uppercase" color="#93c5fd">
+              <StorefrontIcon sx={{ fontSize: 28, color: THEME.blueLight }} />
+              <Typography fontSize={12} fontWeight={700} letterSpacing={1.2} textTransform="uppercase" color={THEME.blueLight}>
                 Client Showcase & Catalog
               </Typography>
             </Box>
@@ -209,7 +209,7 @@ export const ProductShowcasePage: React.FC = () => {
               <Grid item xs={12} sm={6} md={4} lg={3} key={prod.id}>
                 <Card elevation={0} onClick={() => handleOpenDetail(prod)} sx={{ height: "100%", display: "flex", flexDirection: "column", borderRadius: 2.5, border: `1px solid ${THEME.border}`, transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)", cursor: "pointer", overflow: "hidden", "&:hover": { transform: "translateY(-3px)", boxShadow: "0 10px 20px -5px rgba(0, 0, 0, 0.08)", borderColor: THEME.primary } }}>
                   {/* Image Container */}
-                  <Box position="relative" bgcolor="#f8fafc" height={150}>
+                  <Box position="relative" bgcolor={THEME.slate50} height={150}>
                     <CardMedia
                       component="img"
                       height="150"

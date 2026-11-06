@@ -56,6 +56,10 @@ export const ProductService = {
     return await apiClient.get<ApiResponse<ProductCategory[]>>("/products/categories");
   },
 
+  createCategory: async (payload: { name: string; code: string; description?: string }): Promise<ApiResponse<ProductCategory>> => {
+    return await apiClient.post<ApiResponse<ProductCategory>>("/products/categories", payload);
+  },
+
   uploadSingleFile: async (file: File): Promise<ApiResponse<FileUploadResult>> => {
     const formData = new FormData();
     formData.append("file", file);

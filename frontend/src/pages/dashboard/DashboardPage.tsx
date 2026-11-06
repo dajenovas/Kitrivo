@@ -50,11 +50,11 @@ const DashboardPage: React.FC = () => {
     };
 
     return (
-        <Box sx={{ p: { xs: 2, sm: 3 }, bgcolor: theme.background, minHeight: "100vh" }}>
+        <Box sx={{ p: { xs: 2, sm: 3 }, background: theme.background, minHeight: "100vh" }}>
             {/* Header Banner */}
-            <Paper elevation={0} sx={{ p: 3, mb: 3.5, borderRadius: 3, bgcolor: theme.isDark ? "rgba(37, 99, 235, 0.12)" : "#EFF6FF", border: `2px solid ${THEME.primary}`, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
+            <Paper elevation={0} sx={{ p: 3, mb: 3.5, borderRadius: 3, bgcolor: theme.isDark ? THEME.blue900 : THEME.blue50, border: `2px solid ${THEME.primary}`, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Box sx={{ width: 50, height: 50, borderRadius: 2.5, bgcolor: THEME.primary, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 16px rgba(37,99,235,0.3)" }}>
+                    <Box sx={{ width: 50, height: 50, borderRadius: 2.5, bgcolor: THEME.primary, color: THEME.white, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 6px 16px ${THEME.primary}4D` }}>
                         <DashboardIcon sx={{ fontSize: 28 }} />
                     </Box>
                     <Box>
@@ -69,7 +69,7 @@ const DashboardPage: React.FC = () => {
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                     <Tooltip title="Refresh Dashboard Data">
-                        <IconButton onClick={handleRefresh} disabled={loading} sx={{ bgcolor: theme.cardBg, border: `1px solid ${theme.border}`, color: theme.textPrimary, "&:hover": { bgcolor: theme.isDark ? "rgba(255,255,255,0.1)" : "#E2E8F0" } }}>
+                        <IconButton onClick={handleRefresh} disabled={loading} sx={{ bgcolor: theme.cardBg, border: `1px solid ${theme.border}`, color: theme.textPrimary, "&:hover": { bgcolor: theme.isDark ? "rgba(255,255,255,0.1)" : THEME.border } }}>
                             <RefreshIcon sx={{ fontSize: 20, animation: loading ? "spin 1s linear infinite" : "none", "@keyframes spin": { "0%": { transform: "rotate(0deg)" }, "100%": { transform: "rotate(360deg)" } } }} />
                         </IconButton>
                     </Tooltip>
@@ -84,7 +84,7 @@ const DashboardPage: React.FC = () => {
                             }
                         }}
                         startIcon={<DownloadIcon sx={{ fontSize: 18 }} />}
-                        sx={{ borderRadius: 2.5, px: 2.5, py: 1, fontWeight: 700, textTransform: "none", bgcolor: THEME.primary, boxShadow: "0 4px 12px rgba(37,99,235,0.3)", "&:hover": { bgcolor: THEME.primaryDark } }}
+                        sx={{ borderRadius: 2.5, px: 2.5, py: 1, fontWeight: 700, textTransform: "none", bgcolor: THEME.primary, boxShadow: `0 4px 12px ${THEME.primary}4D`, "&:hover": { bgcolor: THEME.primaryDark } }}
                     >
                         Export CSV Report
                     </Button>

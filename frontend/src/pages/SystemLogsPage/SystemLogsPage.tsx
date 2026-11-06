@@ -114,7 +114,7 @@ export const SystemLogsPage: React.FC = () => {
             textAlign: "center",
             borderRadius: 3,
             border: `1px solid ${THEME.error}40`,
-            bgcolor: theme.isDark ? "rgba(220, 38, 38, 0.05)" : "#FEF2F2",
+            bgcolor: theme.isDark ? "rgba(220, 38, 38, 0.05)" : THEME.redLight,
           }}
         >
           <SecurityIcon sx={{ fontSize: 64, color: THEME.error, mb: 2 }} />
@@ -127,7 +127,7 @@ export const SystemLogsPage: React.FC = () => {
           <CustomButton
             text="Return to Dashboard"
             bgc={THEME.primary}
-            color="#FFFFFF"
+            color={THEME.white}
             onClick={() => (window.location.href = "/dashboard")}
           />
         </Paper>
@@ -143,16 +143,16 @@ export const SystemLogsPage: React.FC = () => {
   const getActionChip = (action: string) => {
     switch (action.toUpperCase()) {
       case "CREATE":
-        return <Chip label="CREATE" size="small" sx={{ bgcolor: "#DCFCE7", color: "#166534", fontWeight: 800, fontSize: "11px" }} icon={<AddIcon style={{ color: "#166534", fontSize: 14 }} />} />;
+        return <Chip label="CREATE" size="small" sx={{ bgcolor: THEME.emeraldLight, color: THEME.emeraldDark, fontWeight: 800, fontSize: "11px" }} icon={<AddIcon style={{ color: THEME.emeraldDark, fontSize: 14 }} />} />;
       case "UPDATE":
-        return <Chip label="UPDATE" size="small" sx={{ bgcolor: "#E0F2FE", color: "#075985", fontWeight: 800, fontSize: "11px" }} icon={<EditIcon style={{ color: "#075985", fontSize: 14 }} />} />;
+        return <Chip label="UPDATE" size="small" sx={{ bgcolor: THEME.skyLight, color: THEME.skyDark, fontWeight: 800, fontSize: "11px" }} icon={<EditIcon style={{ color: THEME.skyDark, fontSize: 14 }} />} />;
       case "DELETE":
-        return <Chip label="DELETE" size="small" sx={{ bgcolor: "#FEE2E2", color: "#991B1B", fontWeight: 800, fontSize: "11px" }} icon={<DeleteIcon style={{ color: "#991B1B", fontSize: 14 }} />} />;
+        return <Chip label="DELETE" size="small" sx={{ bgcolor: THEME.redLight, color: THEME.redDark, fontWeight: 800, fontSize: "11px" }} icon={<DeleteIcon style={{ color: THEME.redDark, fontSize: 14 }} />} />;
       case "LOGIN":
-        return <Chip label="LOGIN" size="small" sx={{ bgcolor: "#FEF3C7", color: "#92400E", fontWeight: 800, fontSize: "11px" }} icon={<SecurityIcon style={{ color: "#92400E", fontSize: 14 }} />} />;
+        return <Chip label="LOGIN" size="small" sx={{ bgcolor: THEME.amberLight, color: THEME.amberDark, fontWeight: 800, fontSize: "11px" }} icon={<SecurityIcon style={{ color: THEME.amberDark, fontSize: 14 }} />} />;
       case "PASSWORD_CHANGE":
       case "PASSWORD_RESET":
-        return <Chip label={action.replace("_", " ")} size="small" sx={{ bgcolor: "#F3E8FF", color: "#6B21A8", fontWeight: 800, fontSize: "11px" }} icon={<SecurityIcon style={{ color: "#6B21A8", fontSize: 14 }} />} />;
+        return <Chip label={action.replace("_", " ")} size="small" sx={{ bgcolor: THEME.purpleLight, color: THEME.purpleDark, fontWeight: 800, fontSize: "11px" }} icon={<SecurityIcon style={{ color: THEME.purpleDark, fontSize: 14 }} />} />;
       default:
         return <Chip label={action} size="small" sx={{ bgcolor: `${THEME.primary}15`, color: THEME.primary, fontWeight: 800, fontSize: "11px" }} />;
     }
@@ -196,7 +196,7 @@ export const SystemLogsPage: React.FC = () => {
           </Typography>
         </Box>
 
-        <IconButton onClick={() => fetchLogs(page)} sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9" }}>
+        <IconButton onClick={() => fetchLogs(page)} sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.05)" : THEME.slate100 }}>
           <RefreshIcon sx={{ color: THEME.primary }} />
         </IconButton>
       </Box>
@@ -215,30 +215,30 @@ export const SystemLogsPage: React.FC = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, border: `1px solid ${theme.border}`, bgcolor: theme.cardBg }}>
-            <Typography fontSize="12px" fontWeight={700} color="#166534" textTransform="uppercase" mb={0.5}>
+            <Typography fontSize="12px" fontWeight={700} color={THEME.emeraldDark} textTransform="uppercase" mb={0.5}>
               Create Operations (Page)
             </Typography>
-            <Typography variant="h4" fontWeight={800} color="#166534">
+            <Typography variant="h4" fontWeight={800} color={THEME.emeraldDark}>
               {createCount}
             </Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, border: `1px solid ${theme.border}`, bgcolor: theme.cardBg }}>
-            <Typography fontSize="12px" fontWeight={700} color="#075985" textTransform="uppercase" mb={0.5}>
+            <Typography fontSize="12px" fontWeight={700} color={THEME.skyDark} textTransform="uppercase" mb={0.5}>
               Update Operations (Page)
             </Typography>
-            <Typography variant="h4" fontWeight={800} color="#075985">
+            <Typography variant="h4" fontWeight={800} color={THEME.skyDark}>
               {updateCount}
             </Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, border: `1px solid ${theme.border}`, bgcolor: theme.cardBg }}>
-            <Typography fontSize="12px" fontWeight={700} color="#991B1B" textTransform="uppercase" mb={0.5}>
+            <Typography fontSize="12px" fontWeight={700} color={THEME.redDark} textTransform="uppercase" mb={0.5}>
               Delete Operations (Page)
             </Typography>
-            <Typography variant="h4" fontWeight={800} color="#991B1B">
+            <Typography variant="h4" fontWeight={800} color={THEME.redDark}>
               {deleteCount}
             </Typography>
           </Paper>
@@ -322,7 +322,7 @@ export const SystemLogsPage: React.FC = () => {
       {/* Main Audit Logs Table */}
       <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 3, border: `1px solid ${theme.border}`, bgcolor: theme.cardBg }}>
         <Table size="medium">
-          <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC" }}>
+          <TableHead sx={{ bgcolor: theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50 }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 800, width: 190 }}>Timestamp (Date & Time)</TableCell>
               <TableCell sx={{ fontWeight: 800 }}>User Identity</TableCell>
@@ -354,7 +354,7 @@ export const SystemLogsPage: React.FC = () => {
               </TableRow>
             ) : (
               logs.map((log) => (
-                <TableRow key={log.id} hover sx={{ "&:hover": { bgcolor: theme.isDark ? "rgba(255,255,255,0.02)" : "#F8FAFC" } }}>
+                <TableRow key={log.id} hover sx={{ "&:hover": { bgcolor: theme.isDark ? "rgba(255,255,255,0.02)" : THEME.slate50 } }}>
                   {/* Timestamp */}
                   <TableCell sx={{ fontSize: "13px", fontWeight: 600, color: theme.textPrimary }}>
                     {formatDate(log.created_at)}
@@ -466,7 +466,7 @@ export const SystemLogsPage: React.FC = () => {
                 </Grid>
               </Grid>
 
-              <Box bgcolor={theme.isDark ? "rgba(255,255,255,0.03)" : "#F8FAFC"} p={2} borderRadius={2} border={`1px solid ${theme.border}`}>
+              <Box bgcolor={theme.isDark ? "rgba(255,255,255,0.03)" : THEME.slate50} p={2} borderRadius={2} border={`1px solid ${theme.border}`}>
                 <Typography fontSize="13px" fontWeight={700} mb={1}>
                   Description:
                 </Typography>
@@ -483,8 +483,8 @@ export const SystemLogsPage: React.FC = () => {
                   elevation={0}
                   sx={{
                     p: 2,
-                    bgcolor: "#1E293B",
-                    color: "#38BDF8",
+                    bgcolor: THEME.slate800,
+                    color: THEME.sky,
                     borderRadius: 2,
                     fontFamily: "monospace",
                     fontSize: "12px",
@@ -504,7 +504,7 @@ export const SystemLogsPage: React.FC = () => {
         </DialogContent>
 
         <DialogActions sx={{ px: 3, py: 2 }}>
-          <CustomButton text="Close" bgc={THEME.primary} color="#FFFFFF" onClick={closeDetailModal} />
+          <CustomButton text="Close" bgc={THEME.primary} color={THEME.white} onClick={closeDetailModal} />
         </DialogActions>
       </Dialog>
     </Box>

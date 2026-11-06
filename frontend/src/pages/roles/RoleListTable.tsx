@@ -195,7 +195,7 @@ export const RoleListTable: React.FC<RoleListTableProps> = ({
         <Box>
             <TableContainer component={Paper} elevation={0} sx={{ border: `1px solid ${theme.border}`, borderRadius: 2, bgcolor: theme.paperBg }}>
                 <Table>
-                    <TableHead sx={{ bgcolor: theme.isDark ? "#0f172a" : THEME.background }}>
+                    <TableHead sx={{ bgcolor: theme.isDark ? THEME.slate900 : THEME.background }}>
                         <TableRow>
                             {RoleManagementTableHeaders.map((header) => (
                                 <TableCell key={header} sx={{ fontWeight: 600, color: theme.textPrimary, borderColor: theme.border }}>
@@ -311,7 +311,7 @@ export const RoleListTable: React.FC<RoleListTableProps> = ({
                         borderRadius: 3,
                         p: 1,
                         border: `1px solid ${THEME.border}`,
-                        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
+                        boxShadow: `0 20px 40px ${THEME.slate900}26`,
                     },
                 }}
             >
@@ -368,7 +368,7 @@ export const RoleListTable: React.FC<RoleListTableProps> = ({
                         height="38px"
                         bgc={THEME.error}
                         color={THEME.white}
-                        hov="#c62828"
+                        hov={THEME.redDark}
                         onClick={handleConfirmDelete}
                         isDisabled={deleting}
                         Sicon={deleting ? <CircularProgress size={16} color="inherit" /> : undefined}

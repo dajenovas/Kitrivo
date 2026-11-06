@@ -109,10 +109,10 @@ export const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({ label, p
       {error && <FormHelperText error>{error}</FormHelperText>}
 
       {/* Popover Dropdown Menu */}
-      <Popover open={open} anchorEl={anchorEl} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "left" }} transformOrigin={{ vertical: "top", horizontal: "left" }} PaperProps={{ sx: { width: anchorEl ? Math.max(anchorEl.clientWidth, 280) : 280, borderRadius: "10px", border: `1px solid ${THEME.border}`, boxShadow: "0 10px 25px rgba(0,0,0,0.12)", p: 1.5, mt: 0.8, display: "flex", flexDirection: "column", maxHeight: 420 } }}>
+      <Popover open={open} anchorEl={anchorEl} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "left" }} transformOrigin={{ vertical: "top", horizontal: "left" }} PaperProps={{ sx: { width: anchorEl ? Math.max(anchorEl.clientWidth, 280) : 280, borderRadius: "10px", border: `1px solid ${THEME.border}`, boxShadow: `0 10px 25px ${THEME.slate900}1F`, p: 1.5, mt: 0.8, display: "flex", flexDirection: "column", maxHeight: 420 } }}>
         {/* Search Header */}
         {enableSearch && (
-          <Box mb={1}> <CustomInput size="small" fullWidth autoFocus placeholder="Search options..." value={activeSearchTerm} onChange={(e) => handleSearchChange(e.target.value)} InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ color: THEME.textSecondary, mr: 0.8 }} />, endAdornment: activeSearchTerm ? (<IconButton size="small" onClick={() => handleSearchChange("")}> <ClearIcon fontSize="small" /> </IconButton>) : null }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: "6px", fontSize: "13px", bgcolor: "#f8fafc" } }} /> </Box>
+          <Box mb={1}> <CustomInput size="small" fullWidth autoFocus placeholder="Search options..." value={activeSearchTerm} onChange={(e) => handleSearchChange(e.target.value)} InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ color: THEME.textSecondary, mr: 0.8 }} />, endAdornment: activeSearchTerm ? (<IconButton size="small" onClick={() => handleSearchChange("")}> <ClearIcon fontSize="small" /> </IconButton>) : null }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: "6px", fontSize: "13px", bgcolor: THEME.slate50 } }} /> </Box>
         )}
 
         {/* Quick Select Actions for Multi-Select */}
@@ -125,7 +125,7 @@ export const CustomSearchSelect: React.FC<CustomSearchSelectProps> = ({ label, p
         )}
 
         {/* Options List Container */}
-        <Box onScroll={handleScroll} sx={{ flex: 1, overflowY: "auto", maxHeight: 240, pr: 0.5, "&::-webkit-scrollbar": { width: 5 }, "&::-webkit-scrollbar-thumb": { borderRadius: 3, bgcolor: "#cbd5e1" } }}>
+        <Box onScroll={handleScroll} sx={{ flex: 1, overflowY: "auto", maxHeight: 240, pr: 0.5, "&::-webkit-scrollbar": { width: 5 }, "&::-webkit-scrollbar-thumb": { borderRadius: 3, bgcolor: THEME.slate300 } }}>
           {isLoading && options.length === 0 ? (
             <Box display="flex" justifyContent="center" alignItems="center" py={4} gap={1.5}>
               <CircularProgress size={20} sx={{ color: THEME.primary }} />

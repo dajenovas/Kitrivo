@@ -80,7 +80,7 @@ export const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ open, onClose })
     const initials = (user.full_name || user.username || "U").split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, maxHeight: "90vh", border: `1px solid ${THEME.border}`, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)" } }}>
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, p: 1, maxHeight: "90vh", border: `1px solid ${THEME.border}`, boxShadow: `0 20px 40px ${THEME.slate900}26` } }}>
             {/* Dialog Header */}
             <DialogTitle sx={{ pb: 1 }}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -102,7 +102,7 @@ export const ProfileOverlay: React.FC<ProfileOverlayProps> = ({ open, onClose })
                 {/* Avatar Banner Section */}
                 <Box sx={{ p: 2.5, borderRadius: 2.5, bgcolor: THEME.background, border: `1px solid ${THEME.border}`, display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: "center", gap: 2.5, mb: 3 }}>
                     <Badge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} badgeContent={<IconButton size="small" onClick={() => fileInputRef.current?.click()} sx={{ bgcolor: THEME.primary, color: THEME.white, border: `2px solid ${THEME.white}`, "&:hover": { bgcolor: THEME.primaryDark }, width: 32, height: 32 }}> <PhotoCameraIcon fontSize="inherit" /> </IconButton>}>
-                        <Avatar src={profilePic || undefined} sx={{ width: 84, height: 84, bgcolor: THEME.primary, fontSize: "28px", fontWeight: 700, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)" }}> {!profilePic && initials} </Avatar>
+                        <Avatar src={profilePic || undefined} sx={{ width: 84, height: 84, bgcolor: THEME.primary, fontSize: "28px", fontWeight: 700, boxShadow: `0 4px 12px ${THEME.slate900}1A` }}> {!profilePic && initials} </Avatar>
                     </Badge>
 
                     <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />

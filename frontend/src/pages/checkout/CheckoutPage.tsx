@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { THEME } from "@/assets/theme";
+import { THEME, COLOR_GREEN_500, COLOR_GREEN_600, COLOR_GREEN_700, COLOR_GREEN_50, COLOR_GREEN_800, COLOR_SLATE_50 } from "@/assets/theme";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { QuotationService } from "@/services/quotation.service";
 import { CompanyService } from "@/services/company.service";
@@ -227,7 +227,7 @@ export const CheckoutPage: React.FC = () => {
             contact: phone,
           },
           theme: {
-            color: "#2563eb",
+            color: THEME.primary,
           },
         };
 
@@ -281,8 +281,8 @@ export const CheckoutPage: React.FC = () => {
           p: 3.5,
           mb: 3.5,
           borderRadius: 3,
-          background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
-          color: "#ffffff",
+          background: `linear-gradient(135deg, ${COLOR_GREEN_600} 0%, ${COLOR_GREEN_700} 100%)`,
+          color: THEME.white,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -302,7 +302,7 @@ export const CheckoutPage: React.FC = () => {
               backdropFilter: "blur(4px)",
             }}
           >
-            <ShoppingCartIcon sx={{ fontSize: 30, color: "#ffffff" }} />
+            <ShoppingCartIcon sx={{ fontSize: 30, color: THEME.white }} />
           </Box>
           <Box>
             <Typography fontSize={24} fontWeight={800} letterSpacing="-0.5px">
@@ -336,23 +336,23 @@ export const CheckoutPage: React.FC = () => {
             Our technical sales team will contact <strong>{quotation.email}</strong> regarding delivery schedules.
           </Typography>
 
-          <Paper elevation={0} sx={{ p: 3, maxWidth: 540, mx: "auto", bgcolor: "#f0fdf4", borderRadius: 2.5, border: "1px solid #bbf7d0", mb: 4, textAlign: "left" }}>
-            <Typography fontSize={14} fontWeight={700} color="#166534" mb={1}>
+          <Paper elevation={0} sx={{ p: 3, maxWidth: 540, mx: "auto", bgcolor: COLOR_GREEN_50, borderRadius: 2.5, border: `1px solid ${COLOR_GREEN_500}50`, mb: 4, textAlign: "left" }}>
+            <Typography fontSize={14} fontWeight={700} color={COLOR_GREEN_800} mb={1}>
               Order Summary & Tax Invoice Details:
             </Typography>
-            <Typography fontSize={13} color="#14532d">
+            <Typography fontSize={13} color={COLOR_GREEN_800}>
               • Quote ID: <strong>{quotation.quote_id}</strong>
             </Typography>
             {quotation.bill_number && (
-              <Typography fontSize={13} color="#14532d">
+              <Typography fontSize={13} color={COLOR_GREEN_800}>
                 • Generated Bill No: <strong>{quotation.bill_number}</strong>
               </Typography>
             )}
-            <Typography fontSize={13} color="#14532d">
+            <Typography fontSize={13} color={COLOR_GREEN_800}>
               • Total Amount Paid: <strong>₹{quotation.total_amount.toLocaleString("en-IN")}</strong>
             </Typography>
-            <Typography fontSize={13} color="#14532d">
-              • Status: <strong style={{ color: "#16a34a" }}>CHECKED OUT & BILLED</strong>
+            <Typography fontSize={13} color={COLOR_GREEN_800}>
+              • Status: <strong style={{ color: COLOR_GREEN_600 }}>CHECKED OUT & BILLED</strong>
             </Typography>
           </Paper>
 
@@ -451,7 +451,7 @@ export const CheckoutPage: React.FC = () => {
 
                 {/* Items Table */}
                 <Table size="small" sx={{ mb: 2 }}>
-                  <TableHead sx={{ bgcolor: "#f8fafc" }}>
+                  <TableHead sx={{ bgcolor: COLOR_SLATE_50 }}>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 700 }}>SKU</TableCell>
                       <TableCell sx={{ fontWeight: 700 }}>Item Description</TableCell>
@@ -622,7 +622,7 @@ export const CheckoutPage: React.FC = () => {
                 startIcon={<SendIcon />}
                 sx={{
                   bgcolor: THEME.success,
-                  "&:hover": { bgcolor: "#15803d" },
+                  "&:hover": { bgcolor: COLOR_GREEN_700 },
                   py: 1.4,
                   borderRadius: 2,
                   textTransform: "none",

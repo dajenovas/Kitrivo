@@ -153,7 +153,7 @@ export const StockManagementPage: React.FC = () => {
 
         <Box display="flex" gap={1.5}>
           <CustomButton text="Audit History" bgc={THEME.white} color={THEME.textPrimary} height="40px" font={13} icon={<HistoryIcon fontSize="small" />} onClick={handleOpenHistory} sx={{ border: `1px solid ${THEME.border}`, fontWeight: 600 }} />
-          <CustomButton text="Refresh Data" bgc={THEME.primary} color="#ffffff" height="40px" font={13} icon={<RefreshIcon fontSize="small" />} onClick={fetchStockSummary} sx={{ fontWeight: 600 }} />
+          <CustomButton text="Refresh Data" bgc={THEME.primary} color={THEME.white} height="40px" font={13} icon={<RefreshIcon fontSize="small" />} onClick={fetchStockSummary} sx={{ fontWeight: 600 }} />
         </Box>
       </Box>
 
@@ -176,9 +176,9 @@ export const StockManagementPage: React.FC = () => {
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
                 <Typography fontSize={12} fontWeight={700} color={THEME.textSecondary}> TOTAL UNITS IN STOCK </Typography>
-                <Typography fontSize={26} fontWeight={800} color="#22c55e" mt={0.5}> {summary?.total_stock_units ?? 0} </Typography>
+                <Typography fontSize={26} fontWeight={800} color={THEME.emerald} mt={0.5}> {summary?.total_stock_units ?? 0} </Typography>
               </Box>
-              <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: "rgba(34,197,94,0.12)", color: "#22c55e", display: "flex", alignItems: "center", justifyContent: "center" }}> <CheckIcon /> </Box>
+              <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: `${THEME.emerald}20`, color: THEME.emerald, display: "flex", alignItems: "center", justifyContent: "center" }}> <CheckIcon /> </Box>
             </Box>
           </Paper>
         </Grid>
@@ -188,9 +188,9 @@ export const StockManagementPage: React.FC = () => {
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
                 <Typography fontSize={12} fontWeight={700} color={THEME.textSecondary}> OUT OF STOCK ITEMS </Typography>
-                <Typography fontSize={26} fontWeight={800} color="#ef4444" mt={0.5}> {summary?.out_of_stock_count ?? 0} </Typography>
+                <Typography fontSize={26} fontWeight={800} color={THEME.red} mt={0.5}> {summary?.out_of_stock_count ?? 0} </Typography>
               </Box>
-              <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: "rgba(239,68,68,0.12)", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }}> <ErrorIcon /> </Box>
+              <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: `${THEME.red}20`, color: THEME.red, display: "flex", alignItems: "center", justifyContent: "center" }}> <ErrorIcon /> </Box>
             </Box>
           </Paper>
         </Grid>
@@ -200,9 +200,9 @@ export const StockManagementPage: React.FC = () => {
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <Box>
                 <Typography fontSize={12} fontWeight={700} color={THEME.textSecondary}> LOW STOCK WARNING </Typography>
-                <Typography fontSize={26} fontWeight={800} color="#f59e0b" mt={0.5}> {summary?.low_stock_count ?? 0} </Typography>
+                <Typography fontSize={26} fontWeight={800} color={THEME.amber} mt={0.5}> {summary?.low_stock_count ?? 0} </Typography>
               </Box>
-              <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: "rgba(245,158,11,0.12)", color: "#f59e0b", display: "flex", alignItems: "center", justifyContent: "center" }}> <WarningIcon /> </Box>
+              <Box sx={{ width: 44, height: 44, borderRadius: 2.5, bgcolor: `${THEME.amber}20`, color: THEME.amber, display: "flex", alignItems: "center", justifyContent: "center" }}> <WarningIcon /> </Box>
             </Box>
           </Paper>
         </Grid>
@@ -264,18 +264,18 @@ export const StockManagementPage: React.FC = () => {
                       <TableCell>
                         <Box display="flex" alignItems="center" gap={1}>
                           <IconButton size="small" onClick={() => handleQuickAdd(prod, -1)} disabled={prod.stock_quantity <= 0} sx={{ border: `1px solid ${THEME.border}` }}> <RemoveIcon fontSize="small" /> </IconButton>
-                          <Typography fontSize={15} fontWeight={800} color={isOutOfStock ? "#ef4444" : isLowStock ? "#f59e0b" : "#22c55e"}> {prod.stock_quantity} </Typography>
+                          <Typography fontSize={15} fontWeight={800} color={isOutOfStock ? THEME.red : isLowStock ? THEME.amber : THEME.emerald}> {prod.stock_quantity} </Typography>
                           <IconButton size="small" onClick={() => handleQuickAdd(prod, 1)} sx={{ border: `1px solid ${THEME.border}` }}> <AddIcon fontSize="small" /> </IconButton>
                         </Box>
                       </TableCell>
 
                       <TableCell>
                         {isOutOfStock ? (
-                          <Chip label="OUT OF STOCK" size="small" sx={{ bgcolor: "#fee2e2", color: "#dc2626", fontWeight: 800, fontSize: 11 }} />
+                          <Chip label="OUT OF STOCK" size="small" sx={{ bgcolor: THEME.redLight, color: THEME.redDark, fontWeight: 800, fontSize: 11 }} />
                         ) : isLowStock ? (
-                          <Chip label={`LOW STOCK (${prod.stock_quantity})`} size="small" sx={{ bgcolor: "#fef3c7", color: "#d97706", fontWeight: 800, fontSize: 11 }} />
+                          <Chip label={`LOW STOCK (${prod.stock_quantity})`} size="small" sx={{ bgcolor: THEME.amberLight, color: THEME.amberDark, fontWeight: 800, fontSize: 11 }} />
                         ) : (
-                          <Chip label="ACTIVE / IN STOCK" size="small" sx={{ bgcolor: "#dcfce7", color: "#15803d", fontWeight: 800, fontSize: 11 }} />
+                          <Chip label="ACTIVE / IN STOCK" size="small" sx={{ bgcolor: THEME.emeraldLight, color: THEME.emeraldDark, fontWeight: 800, fontSize: 11 }} />
                         )}
                       </TableCell>
 
@@ -299,8 +299,8 @@ export const StockManagementPage: React.FC = () => {
             <Typography fontSize={13} color={THEME.textSecondary}> Product: <strong>{selectedProduct?.product_name}</strong> (Current Stock: {selectedProduct?.stock_quantity}) </Typography>
 
             <Box display="flex" gap={1}>
-              <CustomButton text="Add Quantity (+)" bgc={adjustMode === "ADD" ? THEME.primary : THEME.white} color={adjustMode === "ADD" ? "#ffffff" : THEME.textPrimary} height="36px" font={13} onClick={() => setAdjustMode("ADD")} fullWidth sx={{ border: `1px solid ${THEME.border}` }} />
-              <CustomButton text="Set Exact Stock (=)" bgc={adjustMode === "SET" ? THEME.primary : THEME.white} color={adjustMode === "SET" ? "#ffffff" : THEME.textPrimary} height="36px" font={13} onClick={() => setAdjustMode("SET")} fullWidth sx={{ border: `1px solid ${THEME.border}` }} />
+              <CustomButton text="Add Quantity (+)" bgc={adjustMode === "ADD" ? THEME.primary : THEME.white} color={adjustMode === "ADD" ? THEME.white : THEME.textPrimary} height="36px" font={13} onClick={() => setAdjustMode("ADD")} fullWidth sx={{ border: `1px solid ${THEME.border}` }} />
+              <CustomButton text="Set Exact Stock (=)" bgc={adjustMode === "SET" ? THEME.primary : THEME.white} color={adjustMode === "SET" ? THEME.white : THEME.textPrimary} height="36px" font={13} onClick={() => setAdjustMode("SET")} fullWidth sx={{ border: `1px solid ${THEME.border}` }} />
             </Box>
 
             <Box>
@@ -316,7 +316,7 @@ export const StockManagementPage: React.FC = () => {
         </DialogContent>
         <DialogActions sx={{ p: 2.5 }}>
           <CustomButton text="Cancel" bgc={THEME.white} color={THEME.textPrimary} height="38px" font={13} onClick={() => setAdjustDialogOpen(false)} sx={{ border: `1px solid ${THEME.border}` }} />
-          <CustomButton text={submittingAdjust ? "Updating..." : "Save Stock"} bgc={THEME.primary} color="#ffffff" height="38px" font={13} disabled={submittingAdjust} onClick={handleSaveAdjustment} sx={{ fontWeight: 700 }} />
+          <CustomButton text={submittingAdjust ? "Updating..." : "Save Stock"} bgc={THEME.primary} color={THEME.white} height="38px" font={13} disabled={submittingAdjust} onClick={handleSaveAdjustment} sx={{ fontWeight: 700 }} />
         </DialogActions>
       </Dialog>
 
@@ -344,7 +344,7 @@ export const StockManagementPage: React.FC = () => {
                     <TableCell> {new Date(tx.created_at).toLocaleString()} </TableCell>
                     <TableCell sx={{ fontWeight: 700 }}> {tx.product_name} </TableCell>
                     <TableCell> <Chip label={tx.transaction_type} size="small" sx={{ fontSize: 10, fontWeight: 700 }} /> </TableCell>
-                    <TableCell sx={{ fontWeight: 800, color: tx.change_amount >= 0 ? "#22c55e" : "#ef4444" }}> {tx.change_amount > 0 ? `+${tx.change_amount}` : tx.change_amount} </TableCell>
+                    <TableCell sx={{ fontWeight: 800, color: tx.change_amount >= 0 ? THEME.emerald : THEME.red }}> {tx.change_amount > 0 ? `+${tx.change_amount}` : tx.change_amount} </TableCell>
                     <TableCell sx={{ fontWeight: 700 }}> {tx.new_quantity} </TableCell>
                     <TableCell sx={{ fontSize: 12, color: THEME.textSecondary }}> {tx.notes || "-"} </TableCell>
                   </TableRow>
@@ -354,7 +354,7 @@ export const StockManagementPage: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <CustomButton text="Close" bgc={THEME.primary} color="#ffffff" height="36px" font={13} onClick={() => setHistoryOpen(false)} />
+          <CustomButton text="Close" bgc={THEME.primary} color={THEME.white} height="36px" font={13} onClick={() => setHistoryOpen(false)} />
         </DialogActions>
       </Dialog>
 
