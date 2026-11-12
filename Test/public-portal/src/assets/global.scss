@@ -1,0 +1,12 @@
+@use './styles/tokens';
+@use './styles/base';
+@use './styles/ui';
+@use './styles/layout';
+@use './styles/home';
+@use './styles/pages';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

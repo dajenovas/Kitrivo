@@ -1,0 +1,46 @@
+:root {
+  color-scheme: dark;
+
+  /* surfaces */
+  --bg: #0a0b0e;
+  --bg-2: #0f1117;
+  --bg-3: #151821;
+  --surface: rgba(255, 255, 255, 0.045);
+  --surface-2: rgba(255, 255, 255, 0.075);
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.2);
+
+  /* text */
+  --text: #f4f1ea;
+  --muted: #a6a8b0;
+  --faint: #70727b;
+
+  /* accent (one warm metal tone, used sparingly) */
+  --accent: #e2a45a;
+  --accent-2: #f3c58a;
+  --accent-ink: #1b1206;
+
+  /* status */
+  --ok: #6ec79a;
+  --warn: #f0b35a;
+  --bad: #ef7b7b;
+
+  /* type */
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+
+  /* shape & depth */
+  --r-sm: 10px;
+  --r: 18px;
+  --r-lg: 28px;
+  --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.75);
+  --shadow-glow: 0 0 0 1px var(--line), 0 24px 50px -24px rgba(226, 164, 90, 0.35);
+
+  /* motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* layout */
+  --container: 1240px;
+  --gutter: clamp(20px, 4vw, 48px);
+  --header-h: 72px;
+}
